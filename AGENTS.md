@@ -1,0 +1,362 @@
+# Discipline App - Agent Instructions
+
+This repository contains **Discipline App**, a production-style productivity,
+routine, fitness, and self-improvement web application.
+
+The app is being built incrementally as a portfolio-quality full-stack project.
+The goal is to demonstrate real-world engineering practices without
+overengineering the first version.
+
+This file defines persistent instructions for coding agents working in this
+repository.
+
+## 1. Project Identity
+
+- Application name: **Discipline App**
+- Existing local workspace directory name: **Productivity App**
+- Do not rename the local workspace directory unless explicitly asked.
+- The current milestone is **Milestone 1: Runnable Application Skeletons**.
+- Milestone 1 establishes runnable frontend and backend foundations only.
+
+The planned product includes tasks, journaling, notes, gym and running workout
+tracking, a dashboard, and future calendar, Strava, and possible AI
+integrations.
+
+## 2. Architecture Decision
+
+Use a **modular monolith**.
+
+Do not use microservices, Kubernetes, Kafka, RabbitMQ, complex event-driven
+architecture, full hexagonal architecture, premature domain-driven design
+abstractions, or LLM/AI features in V1.
+
+The backend will eventually be one FastAPI application with internal modules:
+
+```text
+HTTP request
+  -> router.py
+  -> service.py
+  -> repository.py
+  -> PostgreSQL
+```
+
+Each future backend module should contain:
+
+```text
+router.py       # HTTP routes and request/response handling
+schemas.py      # Pydantic request/response models
+models.py       # SQLAlchemy/SQLModel database models
+service.py      # business logic
+repository.py   # database queries
+tests/          # module-specific tests
+```
+
+Keep routers thin. Put business rules in services. Put persistence logic in
+repositories.
+
+## 3. Technology Choices
+
+Standardize future development on:
+
+- Frontend: Next.js, TypeScript, Tailwind CSS, mobile-first design, npm
+- Backend: Python 3.12, FastAPI, uv, SQLAlchemy or SQLModel, Alembic, Docker
+- Database/Auth: Supabase PostgreSQL and Supabase Auth
+- Authentication: prefer Supabase JWT validation through JWKS
+- Infrastructure: GitHub Actions, AWS S3 and CloudFront for the static
+  frontend, Cloudflare for DNS, and ECS/Fargate or Elastic Beanstalk later for
+  the containerized backend
+
+The Supabase service-role key is optional and must not be required by default.
+S3 can host the static frontend only. S3 cannot host the FastAPI backend.
+
+## 4. Current Milestone Rules
+
+Milestone 1 may create:
+
+- A runnable Next.js, TypeScript, and Tailwind CSS application shell
+- A runnable FastAPI application with `/health` and `/ready`
+- npm and uv manifests and lockfiles
+- Focused system endpoint tests
+- Working local development, lint, test, build, and formatting commands
+- Backend Docker and Docker Compose support
+- Active frontend and backend pull-request CI
+
+Milestone 1 must not create:
+
+- Authentication or profile behavior
+- Database models, connections, tables, or migrations
+- Feature routers, services, repositories, or business logic
+- Real deployment resources, AWS configuration, secrets, tokens, or populated
+  environment values
+
+Authentication begins in **Milestone 2**.
+
+## 5. Repository Structure Contract
+
+Maintain this planned structure:
+
+```text
+Productivity App/
+|-- AGENTS.md
+|-- apps/
+|   |-- web/
+|   |   |-- src/
+|   |   |   |-- app/
+|   |   |   |-- components/{ui,layout,forms,charts,navigation}/
+|   |   |   |-- features/{dashboard,tasks,workouts,journal,notes,running}/
+|   |   |   |-- hooks/
+|   |   |   |-- lib/
+|   |   |   |-- types/
+|   |   |   `-- styles/
+|   |   |-- public/
+|   |   |-- .env.example
+|   |   `-- README.md
+|   `-- api/
+|       |-- app/
+|       |   |-- main.py
+|       |   |-- core/
+|       |   |-- shared/
+|       |   `-- modules/{users,tasks,workouts,journal,notes,running,integrations}/
+|       |-- alembic/
+|       |-- .env.example
+|       `-- README.md
+|-- docs/
+|   |-- architecture.md
+|   |-- api-design.md
+|   |-- database-schema.md
+|   |-- deployment.md
+|   |-- local-development.md
+|   `-- decisions/
+|       |-- 001-use-modular-monolith.md
+|       |-- 002-use-fastapi.md
+|       |-- 003-use-supabase-postgres.md
+|       |-- 004-use-supabase-auth.md
+|       |-- 005-use-aws-s3-cloudfront-for-frontend.md
+|       `-- 006-use-docker-for-backend.md
+|-- infra/{aws,cloudflare,diagrams}/
+|-- .github/workflows/{web-ci.yml,api-ci.yml,deploy-web.yml,deploy-api.yml}
+|-- .env.example
+|-- .gitignore
+|-- docker-compose.yml
+|-- Makefile
+`-- README.md
+```
+
+Do not create a nested `discipline-app/` directory. Initialize Git at the
+current workspace root if needed. Do not create a commit unless explicitly
+asked.
+
+## 6. Documentation Standards
+
+Documentation should be concise, professional, useful, and honest about what is
+implemented versus planned. Use Mermaid diagrams when helpful.
+
+The root README should explain the product vision, current milestone,
+architecture, technology stack, Deployment Option A, local development plan,
+roadmap, and intentionally unimplemented work.
+
+Required documentation:
+
+- `docs/architecture.md`
+- `docs/api-design.md`
+- `docs/database-schema.md`
+- `docs/deployment.md`
+- `docs/local-development.md`
+
+## 7. ADR Standards
+
+Architecture Decision Records live in `docs/decisions/` and use this format:
+
+```markdown
+# ADR Title
+
+## Status
+
+Accepted
+
+## Context
+
+Explain the problem or decision.
+
+## Decision
+
+Explain the chosen approach.
+
+## Consequences
+
+Explain tradeoffs, benefits, and costs.
+```
+
+Keep ADRs concise and focused on real engineering tradeoffs.
+
+## 8. API Design Guardrails
+
+- Planned API prefix: `/api/v1`
+- Planned system endpoints: `GET /health` and `GET /ready`
+- Planned user endpoints: `GET /api/v1/me` and `PATCH /api/v1/me`
+- Future feature endpoints follow REST-style conventions.
+- All user-owned resources must be scoped by authenticated `user_id`.
+- Never trust the frontend to determine ownership.
+- Supabase service-role keys must never be exposed in frontend code.
+
+Expected auth flow:
+
+```text
+Supabase Auth login
+  -> frontend receives session/JWT
+  -> frontend sends Authorization: Bearer <token>
+  -> FastAPI validates JWT and extracts user_id
+  -> backend queries are scoped by user_id
+```
+
+## 9. Database Guardrails
+
+- Use PostgreSQL with Supabase as the production provider.
+- Use Alembic for future migrations.
+- Do not create migrations until the first persistence milestone.
+- Every user-owned table must include `user_id`.
+- Planned tables include profiles, tasks, journal entries, notes, exercises,
+  workout sessions and sets, run sessions, and integration accounts.
+- Implement tables incrementally rather than all at once.
+
+## 10. Frontend Guardrails
+
+Organize frontend code by feature. Future feature folders should contain
+`api.ts`, `types.ts`, `hooks.ts`, `components/`, and `utils.ts` as needed.
+
+The UI should be mobile-first:
+
+- Desktop: sidebar navigation and main content
+- Mobile: bottom navigation and full-width pages
+- Suggested mobile navigation: Dashboard, Tasks, Gym, Journal, More
+
+Avoid placing business logic directly inside page components.
+
+## 11. Environment Variable Rules
+
+Never add real secrets. Only create `.env.example` files with empty or clearly
+example values.
+
+Planned frontend variables:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_API_URL=
+```
+
+Planned backend variables:
+
+```text
+DATABASE_URL=
+SUPABASE_URL=
+SUPABASE_JWKS_URL=
+SUPABASE_JWT_ISSUER=
+SUPABASE_JWT_AUDIENCE=
+SUPABASE_SERVICE_ROLE_KEY=
+CORS_ALLOWED_ORIGINS=
+ENVIRONMENT=local
+```
+
+Planned future AWS variables:
+
+```text
+AWS_REGION=
+AWS_S3_FRONTEND_BUCKET=
+AWS_CLOUDFRONT_DISTRIBUTION_ID=
+AWS_S3_FILES_BUCKET=
+```
+
+The service-role key is optional and server-side only.
+
+## 12. CI/CD Guardrails
+
+Milestone 1 frontend and backend CI workflows run on pull requests, pushes to
+`main`, and manual dispatch. They require no secrets and perform no deployment.
+Deployment workflows remain manual-only placeholders.
+
+Do not assume AWS credentials exist or add real cloud resource names.
+
+## 13. Docker Guardrails
+
+The backend must have a production-style Dockerfile and be runnable through
+Docker Compose. Do not add database or frontend containers before they solve a
+current milestone need. Do not report Docker verification success when Docker
+is unavailable.
+
+## 14. Makefile Guardrails
+
+The Makefile should be self-documenting. Milestone 1 commands for development,
+test, lint, format, build, and backend Docker builds should work. Commands for
+future capabilities, such as migrations, must exit with a clear explanation.
+
+## 15. Verification Requirements
+
+For Milestone 1:
+
+1. Run frontend lint, typecheck, formatting check, and static production build.
+2. Run backend Ruff checks, formatting check, pytest, and import/compile checks.
+3. Confirm `/health` and `/ready` return successful typed responses.
+4. Confirm no auth, database, migration, or feature implementation was added.
+5. Search repository files for accidental credentials or populated secrets.
+6. Build and health-check the backend container when Docker is available.
+
+## 16. Incremental Development Rule
+
+For every milestone:
+
+1. State what will change.
+2. Make the smallest coherent implementation.
+3. Add or update tests where appropriate.
+4. Run available verification.
+5. Update documentation when architecture or workflow changes.
+6. Summarize the changes.
+7. Recommend the next small step.
+
+Do not jump ahead or implement future features unless explicitly asked.
+
+## 17. Milestone Roadmap
+
+- Milestone 0: planning, documentation, file structure, repository foundation
+- Milestone 1: runnable Next.js and FastAPI skeletons, dependencies, local
+  commands, and health endpoints
+- Milestone 2: Supabase Auth and protected `/api/v1/me`
+- Milestone 3: tasks CRUD
+- Milestone 4: gym workout tracking
+- Milestone 5: journal
+- Milestone 6: dashboard aggregation
+- Milestone 7: frontend deployment to S3, CloudFront, and Cloudflare
+- Milestone 8: backend container deployment
+- Milestone 9: notes and running
+- Milestone 10: future integrations
+
+## 18. Agent Behavior Rules
+
+Before editing:
+
+- Inspect and preserve existing work.
+- Do not create a nested project directory.
+- Do not install dependencies unless the milestone requires it.
+- Do not introduce secrets or make commits unless explicitly asked.
+
+When editing:
+
+- Prefer small, clear changes and explicit names.
+- Avoid unnecessary abstractions and fake implementation.
+- Keep documentation honest about implemented versus planned behavior.
+
+After editing:
+
+- Summarize files changed and verification performed.
+- Mention anything that could not be verified.
+- Recommend the next small milestone.
+
+## 19. Definition of Done for Milestone 1
+
+Milestone 1 is complete when the frontend and backend run locally, dependency
+manifests and lockfiles exist, system health endpoints are tested, local
+commands and CI checks work, backend container support exists, and documentation
+matches the implemented workflow.
+
+Milestone 1 is not complete if authentication, persistence, feature business
+logic, migrations, secrets, or real deployment resources were added.

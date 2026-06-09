@@ -1,0 +1,11 @@
+name: Web Deployment Placeholder
+
+on:
+  workflow_dispatch:
+
+jobs:
+  milestone-zero-placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain future workflow
+        run: echo "Static frontend deployment will be activated in Milestone 7."

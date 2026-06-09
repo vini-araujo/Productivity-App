@@ -1,0 +1,33 @@
+[project]
+name = "discipline-app-api"
+version = "0.1.0"
+description = "FastAPI backend for Discipline App"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi>=0.116.0,<1.0.0",
+    "pydantic-settings>=2.10.0,<3.0.0",
+    "uvicorn[standard]>=0.35.0,<1.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.0,<1.0.0",
+    "pytest>=8.4.0,<10.0.0",
+    "pytest-cov>=6.2.0,<8.0.0",
+    "ruff>=0.12.0,<1.0.0",
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov=app --cov-report=term-missing --cov-fail-under=90"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.uv]
+package = false

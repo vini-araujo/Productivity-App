@@ -1,0 +1,48 @@
+name: API CI
+
+on:
+  pull_request:
+    paths:
+      - "apps/api/**"
+      - "docker-compose.yml"
+      - ".github/workflows/api-ci.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/api/**"
+      - "docker-compose.yml"
+      - ".github/workflows/api-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up uv and Python
+        uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: apps/api
+        run: uv sync --locked
+
+      - name: Lint
+        working-directory: apps/api
+        run: uv run ruff check .
+
+      - name: Check formatting
+        working-directory: apps/api
+        run: uv run ruff format --check .
+
+      - name: Test
+        working-directory: apps/api
+        run: uv run pytest
+
+      - name: Build backend image
+        run: docker build --file apps/api/Dockerfile apps/api

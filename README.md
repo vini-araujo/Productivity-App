@@ -1,6 +1,6 @@
-# Discipline App
+# Productiviy App
 
-Discipline App is a planned productivity, routine, fitness, and
+Productivity App is a planned productivity, routine, fitness, and
 self-improvement platform. It will bring tasks, journaling, gym tracking, and
 personal progress into one mobile-first application.
 
@@ -18,7 +18,7 @@ persistence, and feature behavior remain intentionally deferred.
 
 ## Architecture
 
-Discipline App uses a modular monolith:
+Productivity App uses a modular monolith:
 
 - One Next.js frontend organized by feature.
 - One FastAPI backend divided into internal feature modules.

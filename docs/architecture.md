@@ -2,9 +2,8 @@
 
 ## Current State
 
-Milestone 1 provides a runnable static Next.js shell and FastAPI application.
-The backend currently exposes only system health endpoints. Authentication,
-database access, and product modules are not active yet.
+Milestone 2 provides a runnable static Next.js frontend, Supabase Auth browser
+sessions, FastAPI JWT validation, and the first persisted user module.
 
 ## System Context
 
@@ -13,14 +12,14 @@ flowchart LR
     User[User] --> Web[Next.js static frontend]
     Web --> Auth[Supabase Auth]
     Web --> API[FastAPI modular monolith]
-    API --> Auth
+    API --> JWKS[Supabase JWKS]
     API --> DB[(Supabase PostgreSQL)]
     Web -. future uploads .-> Files[AWS S3 files bucket]
 ```
 
 ## Modular Monolith
 
-The backend will be one deployable FastAPI application with modules for users,
+The backend is one deployable FastAPI application with modules for users,
 tasks, workouts, journal, notes, running, and integrations. A modular monolith
 keeps deployment and operations simple while providing clear ownership
 boundaries inside the codebase.
@@ -61,6 +60,10 @@ Supabase Auth issues the user JWT. The frontend sends the JWT to FastAPI in the
 scopes every user-owned query to that identifier.
 
 The backend never trusts resource ownership supplied by the frontend.
+
+The frontend uses `supabase-js` for authentication only. Application data flows
+through FastAPI rather than the Supabase Data API. The backend does not require
+a Supabase service-role key.
 
 ## Deployment Shape
 

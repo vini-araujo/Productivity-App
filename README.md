@@ -1,4 +1,4 @@
-# Productiviy App
+# Productivity App
 
 Productivity App is a planned productivity, routine, fitness, and
 self-improvement platform. It will bring tasks, journaling, gym tracking, and
@@ -10,11 +10,12 @@ improvement.
 
 ## Current Status
 
-**Milestone 1: Runnable Application Skeletons**
+**Milestone 2: Authentication and Protected Profiles**
 
-The repository now contains a static-export-compatible Next.js shell and a
-FastAPI backend with tested liveness and readiness endpoints. Authentication,
-persistence, and feature behavior remain intentionally deferred.
+The repository now contains Supabase email/password authentication, FastAPI
+JWT validation through Supabase JWKS, a protected profile API, and the first
+Alembic-managed PostgreSQL table. Product features such as tasks remain
+intentionally deferred.
 
 ## Architecture
 
@@ -34,7 +35,7 @@ preserving clear module boundaries. See [docs/architecture.md](docs/architecture
 | Area | Technology |
 | --- | --- |
 | Frontend | Next.js, TypeScript, Tailwind CSS, npm |
-| Backend | Python 3.12, FastAPI, uv, SQLAlchemy or SQLModel |
+| Backend | Python 3.12, FastAPI, uv, SQLAlchemy |
 | Database | Supabase PostgreSQL, Alembic migrations |
 | Authentication | Supabase Auth with backend JWT validation |
 | Local infrastructure | Docker Compose |
@@ -92,8 +93,15 @@ The local endpoints are:
 See [docs/local-development.md](docs/local-development.md) for the current setup
 contract and planned commands.
 
-## Intentionally Not Implemented
+## Milestone 2 Boundary
 
-Milestone 1 does not include authentication, database connections, migrations,
-feature business logic, real cloud resources, or secrets. These will be
-introduced one coherent milestone at a time.
+Implemented now:
+
+- Supabase Auth signup, login, logout, and browser sessions
+- Asymmetric Supabase JWT validation in FastAPI
+- Protected `GET /api/v1/me` and `PATCH /api/v1/me`
+- SQLAlchemy profile persistence and Alembic migration
+- English and Brazilian Portuguese profile-language preference
+
+Tasks, translated UI copy, real cloud resources, deployment automation, and
+secrets remain intentionally unimplemented.

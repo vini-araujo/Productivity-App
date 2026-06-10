@@ -1,9 +1,9 @@
 # Discipline App Web
 
-This directory contains the mobile-first Next.js frontend shell.
+This directory contains the mobile-first Next.js frontend.
 
-Milestone 1 provides Next.js, TypeScript, Tailwind CSS, linting, formatting,
-typechecking, and a static production build.
+Milestone 2 provides Supabase Auth registration, login, logout, session
+handling, and a protected profile screen that calls FastAPI.
 
 The planned deployment target is a static export hosted on AWS S3 behind
 CloudFront. Avoid introducing Next.js server-only runtime requirements without

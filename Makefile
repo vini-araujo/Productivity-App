@@ -7,7 +7,7 @@ UV ?= uv
 	format format-check build build-web migrate docker-build docker-up docker-down
 
 help:
-	@echo "Discipline App - Milestone 1 commands"
+	@echo "Discipline App - Milestone 2 commands"
 	@echo ""
 	@echo "  make setup        Install locked frontend and backend dependencies"
 	@echo "  make dev          Run frontend and backend"
@@ -64,8 +64,7 @@ build-web:
 	cd apps/web && $(NPM) run build
 
 migrate:
-	@echo "Alembic migrations are planned for the first persistence milestone."
-	@exit 1
+	cd apps/api && $(UV) run alembic upgrade head
 
 docker-build:
 	docker compose build api

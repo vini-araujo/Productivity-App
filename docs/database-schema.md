@@ -2,8 +2,8 @@
 
 ## Status
 
-The production database will be Supabase PostgreSQL. This document records the
-planned schema; Milestone 1 creates no tables or migrations.
+The production database is Supabase PostgreSQL. Milestone 2 introduces Alembic
+as the schema source of truth and creates the first user-owned table.
 
 Alembic will be the source of truth for schema changes beginning when the first
 persisted feature is implemented.
@@ -17,7 +17,7 @@ authenticated user identifier, including reads, updates, and deletes.
 
 | Table | Purpose | Planned milestone |
 | --- | --- | --- |
-| `profiles` | Application profile linked to Supabase Auth | 2 |
+| `profiles` | Application profile linked to Supabase Auth (implemented) | 2 |
 | `tasks` | User task management | 3 |
 | `exercises` | Shared and user-created exercise catalog | 4 |
 | `workout_sessions` | Gym workout sessions | 4 |
@@ -44,3 +44,18 @@ erDiagram
 Detailed columns, constraints, indexes, delete behavior, and migration strategy
 will be finalized with each feature. This avoids committing to unused schema
 before its behavior is implemented and tested.
+
+## Profiles
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | UUID | Primary key |
+| `user_id` | UUID | Unique foreign key to `auth.users.id` |
+| `display_name` | varchar(80) | Optional |
+| `timezone` | varchar(64) | Defaults to `UTC` |
+| `locale` | varchar(10) | `en-US` or `pt-BR` at the API boundary |
+| `created_at` | timestamptz | Creation timestamp |
+| `updated_at` | timestamptz | Last application update timestamp |
+
+The migration enables Row Level Security on `profiles`. No Data API policies
+are added because application data is accessed through FastAPI.

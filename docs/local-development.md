@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Milestone 1 contains runnable frontend and backend application skeletons.
+Milestone 2 contains runnable authentication and protected profile behavior.
 
 ## Prerequisites
 
@@ -34,8 +34,35 @@ files when configuration overrides are needed:
 - Frontend reference: `apps/web/.env.example`
 - Backend reference: `apps/api/.env.example`
 
-Never commit secrets. The Supabase service-role key is optional, server-side
-only, and should not be used unless a later feature requires it.
+Never commit secrets. The Supabase publishable key is intentionally public and
+may be used by the frontend. The Supabase service-role key is optional,
+server-side only, and is not required by Milestone 2.
+
+For `apps/web/.env.local`, configure:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-public-publishable-key
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+For `apps/api/.env`, configure `DATABASE_URL` from Supabase's connection panel
+plus `SUPABASE_URL`. The conventional JWKS URL and issuer are derived from
+`SUPABASE_URL`; explicit overrides remain available when needed.
+
+```text
+DATABASE_URL=your-supabase-postgresql-connection-string
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_JWT_AUDIENCE=authenticated
+```
+
+For local development on an IPv4-only network, Supabase's session-pooler
+connection string is usually the easiest `DATABASE_URL`. Use the root `.env`
+instead when passing the same backend values through Docker Compose.
+
+Use a Supabase asymmetric signing key so FastAPI can validate access tokens
+through JWKS. Do not put the database password or any secret key in the
+frontend environment file.
 
 ## Setup
 
@@ -53,6 +80,7 @@ cd apps/api && uv sync --locked
 ## Development and Quality Commands
 
 ```bash
+make migrate
 make dev
 make test
 make lint
@@ -63,5 +91,6 @@ make build
 Run one application directly with `make dev-web` or `make dev-api`. Run the API
 container with `make docker-up`; stop it with `make docker-down`.
 
-`make migrate` intentionally fails until Alembic is initialized with the first
-persistence milestone.
+Run `make migrate` after configuring `apps/api/.env` to create or update the
+Supabase schema. Tests and CI use fakes and an in-memory database, so they do
+not require Supabase credentials.

@@ -4,7 +4,12 @@ services:
       context: ./apps/api
     environment:
       CORS_ALLOWED_ORIGINS: '["http://localhost:3000"]'
+      DATABASE_URL: ${DATABASE_URL:-}
       ENVIRONMENT: local
+      SUPABASE_JWKS_URL: ${SUPABASE_JWKS_URL:-}
+      SUPABASE_JWT_AUDIENCE: ${SUPABASE_JWT_AUDIENCE:-authenticated}
+      SUPABASE_JWT_ISSUER: ${SUPABASE_JWT_ISSUER:-}
+      SUPABASE_URL: ${SUPABASE_URL:-}
     ports:
       - "8000:8000"
     healthcheck:

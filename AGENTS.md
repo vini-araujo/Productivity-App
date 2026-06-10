@@ -15,8 +15,9 @@ repository.
 - Application name: **Discipline App**
 - Existing local workspace directory name: **Productivity App**
 - Do not rename the local workspace directory unless explicitly asked.
-- The current milestone is **Milestone 1: Runnable Application Skeletons**.
-- Milestone 1 establishes runnable frontend and backend foundations only.
+- The current milestone is **Milestone 2: Authentication and Protected
+  Profiles**.
+- Milestone 2 establishes the first identity and persistence boundary.
 
 The planned product includes tasks, journaling, notes, gym and running workout
 tracking, a dashboard, and future calendar, Strava, and possible AI
@@ -71,25 +72,22 @@ S3 can host the static frontend only. S3 cannot host the FastAPI backend.
 
 ## 4. Current Milestone Rules
 
-Milestone 1 may create:
+Milestone 2 may create:
 
-- A runnable Next.js, TypeScript, and Tailwind CSS application shell
-- A runnable FastAPI application with `/health` and `/ready`
-- npm and uv manifests and lockfiles
-- Focused system endpoint tests
-- Working local development, lint, test, build, and formatting commands
-- Backend Docker and Docker Compose support
-- Active frontend and backend pull-request CI
+- Supabase email/password signup, login, logout, and browser sessions
+- FastAPI JWT validation through Supabase JWKS
+- Protected `GET /api/v1/me` and `PATCH /api/v1/me`
+- The users module router, service, repository, schemas, and profile model
+- SQLAlchemy database infrastructure and the first Alembic migration
+- Focused auth, ownership, profile, and migration tests
 
-Milestone 1 must not create:
+Milestone 2 must not create:
 
-- Authentication or profile behavior
-- Database models, connections, tables, or migrations
-- Feature routers, services, repositories, or business logic
-- Real deployment resources, AWS configuration, secrets, tokens, or populated
-  environment values
-
-Authentication begins in **Milestone 2**.
+- Tasks, workouts, journal, dashboard, notes, or running behavior
+- Direct frontend database access through the Supabase Data API
+- Supabase service-role key dependencies
+- Full UI translation, real deployment resources, AWS configuration, secrets,
+  tokens, or populated environment values
 
 ## 5. Repository Structure Contract
 
@@ -212,8 +210,8 @@ Supabase Auth login
 ## 9. Database Guardrails
 
 - Use PostgreSQL with Supabase as the production provider.
-- Use Alembic for future migrations.
-- Do not create migrations until the first persistence milestone.
+- Use Alembic for all application schema migrations.
+- The first migration creates only the Milestone 2 `profiles` table.
 - Every user-owned table must include `user_id`.
 - Planned tables include profiles, tasks, journal entries, notes, exercises,
   workout sessions and sets, run sessions, and integration accounts.
@@ -241,6 +239,7 @@ Planned frontend variables:
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 NEXT_PUBLIC_API_URL=
 ```
@@ -252,7 +251,7 @@ DATABASE_URL=
 SUPABASE_URL=
 SUPABASE_JWKS_URL=
 SUPABASE_JWT_ISSUER=
-SUPABASE_JWT_AUDIENCE=
+SUPABASE_JWT_AUDIENCE=authenticated
 SUPABASE_SERVICE_ROLE_KEY=
 CORS_ALLOWED_ORIGINS=
 ENVIRONMENT=local
@@ -271,7 +270,7 @@ The service-role key is optional and server-side only.
 
 ## 12. CI/CD Guardrails
 
-Milestone 1 frontend and backend CI workflows run on pull requests, pushes to
+Frontend and backend CI workflows run on pull requests, pushes to
 `main`, and manual dispatch. They require no secrets and perform no deployment.
 Deployment workflows remain manual-only placeholders.
 
@@ -286,20 +285,21 @@ is unavailable.
 
 ## 14. Makefile Guardrails
 
-The Makefile should be self-documenting. Milestone 1 commands for development,
-test, lint, format, build, and backend Docker builds should work. Commands for
-future capabilities, such as migrations, must exit with a clear explanation.
+The Makefile should be self-documenting. Commands for development, test, lint,
+format, build, migrations, and backend Docker builds should work.
 
 ## 15. Verification Requirements
 
-For Milestone 1:
+For Milestone 2:
 
 1. Run frontend lint, typecheck, formatting check, and static production build.
-2. Run backend Ruff checks, formatting check, pytest, and import/compile checks.
-3. Confirm `/health` and `/ready` return successful typed responses.
-4. Confirm no auth, database, migration, or feature implementation was added.
+2. Run backend Ruff checks, formatting check, pytest, and migration checks.
+3. Confirm protected endpoints reject missing or invalid bearer tokens.
+4. Confirm profile ownership is derived only from the validated JWT subject.
 5. Search repository files for accidental credentials or populated secrets.
 6. Build and health-check the backend container when Docker is available.
+7. Verify the real Supabase signup, login, migration, and profile flow locally
+   only after ignored environment files are configured.
 
 ## 16. Incremental Development Rule
 
@@ -351,12 +351,14 @@ After editing:
 - Mention anything that could not be verified.
 - Recommend the next small milestone.
 
-## 19. Definition of Done for Milestone 1
+## 19. Definition of Done for Milestone 2
 
-Milestone 1 is complete when the frontend and backend run locally, dependency
-manifests and lockfiles exist, system health endpoints are tested, local
-commands and CI checks work, backend container support exists, and documentation
-matches the implemented workflow.
+Milestone 2 is complete when Supabase Auth works in the frontend, FastAPI
+validates access tokens through JWKS, protected profile reads and updates are
+scoped to the authenticated user, the first Alembic migration applies to
+Supabase PostgreSQL, tests and CI checks pass, and documentation matches the
+implemented workflow.
 
-Milestone 1 is not complete if authentication, persistence, feature business
-logic, migrations, secrets, or real deployment resources were added.
+Milestone 2 is not complete if ownership can be supplied by the frontend,
+secrets are committed, a service-role key is required, or future product
+features are added.

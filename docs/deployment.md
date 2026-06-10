@@ -2,9 +2,9 @@
 
 ## Status
 
-Cloud deployment is planned but not active. Milestone 1 includes a backend
-Dockerfile, a local Compose service, and CI image-build validation. No cloud
-resources, credentials, or automated deployments exist.
+Cloud deployment is planned but not active. Milestone 2 includes a backend
+Dockerfile, a local Compose service, Alembic migrations, and CI image-build
+validation. No cloud resources, credentials, or automated deployments exist.
 
 ## Option A
 

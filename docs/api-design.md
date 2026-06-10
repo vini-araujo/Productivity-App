@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestone 1 implements `GET /health` and `GET /ready`. All versioned feature
-endpoints remain planned.
+Milestone 2 implements system probes and the protected current-profile
+endpoints. Product feature endpoints remain planned.
 
 ## Conventions
 
@@ -23,7 +23,7 @@ and repositories perform persistence operations.
 | Area | Planned routes |
 | --- | --- |
 | System | `GET /health`, `GET /ready` (implemented) |
-| Profile | `GET /api/v1/me`, `PATCH /api/v1/me` |
+| Profile | `GET /api/v1/me`, `PATCH /api/v1/me` (implemented) |
 | Tasks | CRUD at `/api/v1/tasks` |
 | Journal | CRUD at `/api/v1/journal-entries` |
 | Workouts | Exercises, sessions, sets, and progress under `/api/v1` |
@@ -60,3 +60,8 @@ sequenceDiagram
     API->>Supabase: Validate JWT through JWKS
     API-->>Web: User-scoped response
 ```
+
+`GET /api/v1/me` creates the initial application profile when an authenticated
+Supabase user does not have one. `PATCH /api/v1/me` accepts only
+`display_name`, `timezone`, and `locale`. Ownership always comes from the
+validated token subject.

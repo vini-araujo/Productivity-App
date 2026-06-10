@@ -81,13 +81,21 @@ export default function ProfilePage() {
         >
           Discipline App
         </Link>
-        <button
-          className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
-          onClick={handleSignOut}
-          type="button"
-        >
-          Sign out
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
+            href="/tasks"
+          >
+            Tasks
+          </Link>
+          <button
+            className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
+            onClick={handleSignOut}
+            type="button"
+          >
+            Sign out
+          </button>
+        </div>
       </header>
 
       <section className="mt-12 rounded-3xl border border-slate-800 bg-slate-900/80 p-7 shadow-2xl shadow-emerald-950/30 sm:p-9">

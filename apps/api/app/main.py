@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.system import router as system_router
+from app.modules.tasks.router import router as tasks_router
 from app.modules.users.router import router as users_router
 
 
@@ -24,6 +25,7 @@ def create_app() -> FastAPI:
     )
     application.include_router(system_router)
     application.include_router(users_router)
+    application.include_router(tasks_router)
     return application
 
 

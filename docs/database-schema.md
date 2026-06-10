@@ -2,11 +2,15 @@
 
 ## Status
 
-The production database is Supabase PostgreSQL. Milestone 2 introduces Alembic
-as the schema source of truth and creates the first user-owned table.
+The production database is Supabase PostgreSQL. Alembic is the schema source
+of truth. Milestone 3 adds the first product table after profiles.
 
 Alembic will be the source of truth for schema changes beginning when the first
 persisted feature is implemented.
+
+Foreign keys to Supabase-managed `auth.users` are defined explicitly in
+migrations. Alembic target metadata includes the expected ownership constraints
+while excluding the externally managed Auth table itself from autogeneration.
 
 ## Ownership Rule
 
@@ -18,7 +22,7 @@ authenticated user identifier, including reads, updates, and deletes.
 | Table | Purpose | Planned milestone |
 | --- | --- | --- |
 | `profiles` | Application profile linked to Supabase Auth (implemented) | 2 |
-| `tasks` | User task management | 3 |
+| `tasks` | User task management (implemented) | 3 |
 | `exercises` | Shared and user-created exercise catalog | 4 |
 | `workout_sessions` | Gym workout sessions | 4 |
 | `workout_sets` | Sets recorded within sessions | 4 |
@@ -59,3 +63,20 @@ before its behavior is implemented and tested.
 
 The migration enables Row Level Security on `profiles`. No Data API policies
 are added because application data is accessed through FastAPI.
+
+## Tasks
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | UUID | Primary key |
+| `user_id` | UUID | Foreign key to `auth.users.id`; ownership boundary |
+| `title` | varchar(200) | Required |
+| `description` | text | Optional |
+| `due_at` | timestamptz | Optional |
+| `priority` | varchar(10) | `low`, `medium`, or `high` |
+| `completed_at` | timestamptz | Null while open |
+| `created_at` | timestamptz | Creation timestamp |
+| `updated_at` | timestamptz | Last application update timestamp |
+
+Indexes support user-scoped creation-order and completion-state queries. RLS is
+enabled as defense in depth; FastAPI remains the application data boundary.

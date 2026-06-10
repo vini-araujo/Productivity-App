@@ -2,8 +2,8 @@
 
 ## Current State
 
-Milestone 2 provides a runnable static Next.js frontend, Supabase Auth browser
-sessions, FastAPI JWT validation, and the first persisted user module.
+Milestone 3 adds the first complete product module: user-owned task CRUD
+through the existing authenticated modular-monolith boundary.
 
 ## System Context
 

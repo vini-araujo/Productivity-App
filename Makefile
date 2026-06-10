@@ -4,10 +4,11 @@ NPM ?= npm
 UV ?= uv
 
 .PHONY: help setup dev dev-web dev-api test test-api lint lint-web lint-api \
-	format format-check build build-web migrate docker-build docker-up docker-down
+	format format-check build build-web migrate migration-check docker-build \
+	docker-up docker-down
 
 help:
-	@echo "Discipline App - Milestone 2 commands"
+	@echo "Discipline App - Milestone 3 commands"
 	@echo ""
 	@echo "  make setup        Install locked frontend and backend dependencies"
 	@echo "  make dev          Run frontend and backend"
@@ -19,6 +20,7 @@ help:
 	@echo "  make format-check Check project formatting"
 	@echo "  make build        Build the static frontend"
 	@echo "  make migrate      Run Alembic migrations"
+	@echo "  make migration-check Check live database schema against Alembic metadata"
 	@echo "  make docker-build Build the backend image"
 	@echo "  make docker-up    Run the backend container"
 	@echo "  make docker-down  Stop local containers"
@@ -65,6 +67,9 @@ build-web:
 
 migrate:
 	cd apps/api && $(UV) run alembic upgrade head
+
+migration-check:
+	cd apps/api && $(UV) run alembic check
 
 docker-build:
 	docker compose build api

@@ -2,8 +2,8 @@
 
 This directory contains the mobile-first Next.js frontend.
 
-Milestone 2 provides Supabase Auth registration, login, logout, session
-handling, and a protected profile screen that calls FastAPI.
+Milestone 3 adds a mobile-first protected tasks workflow with create, edit,
+priority, due date, completion filtering, and deletion behavior.
 
 The planned deployment target is a static export hosted on AWS S3 behind
 CloudFront. Avoid introducing Next.js server-only runtime requirements without

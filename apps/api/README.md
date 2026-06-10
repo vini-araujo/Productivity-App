@@ -2,8 +2,8 @@
 
 This directory contains the FastAPI modular monolith.
 
-Milestone 2 validates Supabase JWTs, persists application profiles with
-SQLAlchemy, and manages schema changes with Alembic.
+Milestone 3 adds protected user-owned task CRUD to the authenticated profile
+and persistence foundation.
 
 Future feature modules follow:
 
@@ -23,8 +23,9 @@ uv run ruff check .
 uv run ruff format --check .
 uv run pytest
 uv run alembic upgrade head
+uv run alembic check
 ```
 
 The API runs at `http://localhost:8000`. Its liveness and readiness endpoints
 are `/health` and `/ready`. Authenticated profiles are available at
-`/api/v1/me`.
+`/api/v1/me`, and authenticated task CRUD is available at `/api/v1/tasks`.

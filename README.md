@@ -10,12 +10,11 @@ improvement.
 
 ## Current Status
 
-**Milestone 2: Authentication and Protected Profiles**
+**Milestone 3: User-Owned Tasks CRUD**
 
-The repository now contains Supabase email/password authentication, FastAPI
-JWT validation through Supabase JWKS, a protected profile API, and the first
-Alembic-managed PostgreSQL table. Product features such as tasks remain
-intentionally deferred.
+The repository now contains the first complete product workflow: authenticated
+users can create, edit, prioritize, schedule, complete, filter, and delete
+their own tasks through the protected FastAPI API.
 
 ## Architecture
 
@@ -93,7 +92,7 @@ The local endpoints are:
 See [docs/local-development.md](docs/local-development.md) for the current setup
 contract and planned commands.
 
-## Milestone 2 Boundary
+## Milestone 3 Boundary
 
 Implemented now:
 
@@ -102,6 +101,9 @@ Implemented now:
 - Protected `GET /api/v1/me` and `PATCH /api/v1/me`
 - SQLAlchemy profile persistence and Alembic migration
 - English and Brazilian Portuguese profile-language preference
+- Protected task CRUD with pagination and completion filtering
+- Mobile-first task creation, editing, completion, and deletion
 
-Tasks, translated UI copy, real cloud resources, deployment automation, and
-secrets remain intentionally unimplemented.
+Recurring tasks, reminders, labels, subtasks, translated UI copy, real cloud
+resources, deployment automation, and secrets remain intentionally
+unimplemented.

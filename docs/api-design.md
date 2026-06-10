@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestone 2 implements system probes and the protected current-profile
-endpoints. Product feature endpoints remain planned.
+Milestone 3 implements system probes, protected profiles, and protected task
+CRUD. Other product feature endpoints remain planned.
 
 ## Conventions
 
@@ -24,7 +24,7 @@ and repositories perform persistence operations.
 | --- | --- |
 | System | `GET /health`, `GET /ready` (implemented) |
 | Profile | `GET /api/v1/me`, `PATCH /api/v1/me` (implemented) |
-| Tasks | CRUD at `/api/v1/tasks` |
+| Tasks | CRUD at `/api/v1/tasks` (implemented) |
 | Journal | CRUD at `/api/v1/journal-entries` |
 | Workouts | Exercises, sessions, sets, and progress under `/api/v1` |
 | Notes | CRUD at `/api/v1/notes` |
@@ -40,9 +40,25 @@ bodies containing a stable error code, a human-readable message, and optional
 validation details. HTTP status codes remain the primary transport-level error
 signal.
 
-List endpoints should introduce pagination when the first list feature is
-implemented. The specific contract will be documented at that milestone rather
-than invented during Milestone 0.
+The first list endpoint uses limit-and-offset pagination. Future list endpoints
+should follow the same response shape unless their access pattern requires a
+documented alternative.
+
+## Tasks
+
+All task routes require a valid bearer token. Ownership comes exclusively from
+the validated JWT subject.
+
+| Method | Route | Behavior |
+| --- | --- | --- |
+| `POST` | `/api/v1/tasks` | Create an owned task |
+| `GET` | `/api/v1/tasks` | List owned tasks with pagination and completion filter |
+| `GET` | `/api/v1/tasks/{task_id}` | Read one owned task |
+| `PATCH` | `/api/v1/tasks/{task_id}` | Update or complete/reopen one owned task |
+| `DELETE` | `/api/v1/tasks/{task_id}` | Delete one owned task |
+
+The list route accepts `limit`, `offset`, and optional `completed` query
+parameters. It returns `items`, `total`, `limit`, and `offset`.
 
 ## Authentication
 

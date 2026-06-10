@@ -15,9 +15,8 @@ repository.
 - Application name: **Discipline App**
 - Existing local workspace directory name: **Productivity App**
 - Do not rename the local workspace directory unless explicitly asked.
-- The current milestone is **Milestone 2: Authentication and Protected
-  Profiles**.
-- Milestone 2 establishes the first identity and persistence boundary.
+- The current milestone is **Milestone 3: Tasks CRUD**.
+- Milestone 3 establishes the first user-owned product workflow.
 
 The planned product includes tasks, journaling, notes, gym and running workout
 tracking, a dashboard, and future calendar, Strava, and possible AI
@@ -72,22 +71,21 @@ S3 can host the static frontend only. S3 cannot host the FastAPI backend.
 
 ## 4. Current Milestone Rules
 
-Milestone 2 may create:
+Milestone 3 may create:
 
-- Supabase email/password signup, login, logout, and browser sessions
-- FastAPI JWT validation through Supabase JWKS
-- Protected `GET /api/v1/me` and `PATCH /api/v1/me`
-- The users module router, service, repository, schemas, and profile model
-- SQLAlchemy database infrastructure and the first Alembic migration
-- Focused auth, ownership, profile, and migration tests
+- The user-owned `tasks` table and second Alembic migration
+- Protected task create, list, get, update, complete, reopen, and delete APIs
+- The tasks module router, service, repository, schemas, and model
+- A mobile-first tasks page with open, all, and completed filters
+- Focused validation, pagination, ownership, API, and migration tests
 
-Milestone 2 must not create:
+Milestone 3 must not create:
 
-- Tasks, workouts, journal, dashboard, notes, or running behavior
+- Recurring tasks, reminders, labels, subtasks, sharing, or calendar behavior
+- Workouts, journal, dashboard aggregation, notes, or running behavior
 - Direct frontend database access through the Supabase Data API
 - Supabase service-role key dependencies
-- Full UI translation, real deployment resources, AWS configuration, secrets,
-  tokens, or populated environment values
+- Real deployment resources, secrets, tokens, or populated environment values
 
 ## 5. Repository Structure Contract
 
@@ -211,7 +209,7 @@ Supabase Auth login
 
 - Use PostgreSQL with Supabase as the production provider.
 - Use Alembic for all application schema migrations.
-- The first migration creates only the Milestone 2 `profiles` table.
+- Milestone 3 adds only the `tasks` table after `profiles`.
 - Every user-owned table must include `user_id`.
 - Planned tables include profiles, tasks, journal entries, notes, exercises,
   workout sessions and sets, run sessions, and integration accounts.
@@ -290,16 +288,16 @@ format, build, migrations, and backend Docker builds should work.
 
 ## 15. Verification Requirements
 
-For Milestone 2:
+For Milestone 3:
 
 1. Run frontend lint, typecheck, formatting check, and static production build.
 2. Run backend Ruff checks, formatting check, pytest, and migration checks.
 3. Confirm protected endpoints reject missing or invalid bearer tokens.
-4. Confirm profile ownership is derived only from the validated JWT subject.
+4. Confirm every task operation scopes ownership by validated JWT subject.
 5. Search repository files for accidental credentials or populated secrets.
 6. Build and health-check the backend container when Docker is available.
-7. Verify the real Supabase signup, login, migration, and profile flow locally
-   only after ignored environment files are configured.
+7. Verify the real Supabase task migration and task CRUD flow locally only
+   after ignored environment files are configured.
 
 ## 16. Incremental Development Rule
 
@@ -351,14 +349,13 @@ After editing:
 - Mention anything that could not be verified.
 - Recommend the next small milestone.
 
-## 19. Definition of Done for Milestone 2
+## 19. Definition of Done for Milestone 3
 
-Milestone 2 is complete when Supabase Auth works in the frontend, FastAPI
-validates access tokens through JWKS, protected profile reads and updates are
-scoped to the authenticated user, the first Alembic migration applies to
-Supabase PostgreSQL, tests and CI checks pass, and documentation matches the
-implemented workflow.
+Milestone 3 is complete when authenticated users can create, list, read,
+update, complete, reopen, and delete only their own tasks, the tasks migration
+applies to Supabase PostgreSQL, tests and CI checks pass, and documentation
+matches the implemented workflow.
 
-Milestone 2 is not complete if ownership can be supplied by the frontend,
-secrets are committed, a service-role key is required, or future product
+Milestone 3 is not complete if task ownership can be supplied by the frontend,
+cross-user access is possible, secrets are committed, or future product
 features are added.

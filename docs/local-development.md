@@ -2,7 +2,8 @@
 
 ## Current Status
 
-Milestone 2 contains runnable authentication and protected profile behavior.
+Milestone 3 contains runnable authentication, protected profiles, and
+user-owned task CRUD.
 
 ## Prerequisites
 
@@ -36,7 +37,7 @@ files when configuration overrides are needed:
 
 Never commit secrets. The Supabase publishable key is intentionally public and
 may be used by the frontend. The Supabase service-role key is optional,
-server-side only, and is not required by Milestone 2.
+server-side only, and is not required by Milestone 3.
 
 For `apps/web/.env.local`, configure:
 
@@ -81,6 +82,7 @@ cd apps/api && uv sync --locked
 
 ```bash
 make migrate
+make migration-check
 make dev
 make test
 make lint
@@ -92,5 +94,6 @@ Run one application directly with `make dev-web` or `make dev-api`. Run the API
 container with `make docker-up`; stop it with `make docker-down`.
 
 Run `make migrate` after configuring `apps/api/.env` to create or update the
-Supabase schema. Tests and CI use fakes and an in-memory database, so they do
-not require Supabase credentials.
+Supabase schema. Run `make migration-check` to confirm that the configured live
+database matches Alembic metadata. Tests and CI use fakes and an in-memory
+database, so they do not require Supabase credentials.

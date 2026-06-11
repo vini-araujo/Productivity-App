@@ -2,8 +2,8 @@
 
 ## Current Status
 
-Milestone 3 contains runnable authentication, protected profiles, and
-user-owned task CRUD.
+Milestone 4 builds gym workout tracking on the runnable authentication,
+protected profile, and user-owned task foundations.
 
 ## Prerequisites
 
@@ -37,7 +37,7 @@ files when configuration overrides are needed:
 
 Never commit secrets. The Supabase publishable key is intentionally public and
 may be used by the frontend. The Supabase service-role key is optional,
-server-side only, and is not required by Milestone 3.
+server-side only, and is not required by Milestone 4.
 
 For `apps/web/.env.local`, configure:
 

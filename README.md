@@ -10,11 +10,12 @@ improvement.
 
 ## Current Status
 
-**Milestone 3: User-Owned Tasks CRUD**
+**Milestone 4: Gym Workout Tracking**
 
-The repository now contains the first complete product workflow: authenticated
-users can create, edit, prioritize, schedule, complete, filter, and delete
-their own tasks through the protected FastAPI API.
+Milestone 3 completed the first product workflow: authenticated users can
+manage their own tasks through the protected FastAPI API. Milestone 4 adds
+plan-first gym logging with a shared U/L/Rest starter split, custom plans,
+generated working sets, and user-owned workout history.
 
 ## Architecture
 
@@ -92,7 +93,7 @@ The local endpoints are:
 See [docs/local-development.md](docs/local-development.md) for the current setup
 contract and planned commands.
 
-## Milestone 3 Boundary
+## Milestone 4 Boundary
 
 Implemented now:
 
@@ -103,7 +104,9 @@ Implemented now:
 - English and Brazilian Portuguese profile-language preference
 - Protected task CRUD with pagination and completion filtering
 - Mobile-first task creation, editing, completion, and deletion
+- Shared U/L/Rest starter split and user-owned workout plans
+- Generated workout sessions with weight, repetitions, and failure tracking
 
-Recurring tasks, reminders, labels, subtasks, translated UI copy, real cloud
-resources, deployment automation, and secrets remain intentionally
-unimplemented.
+Advanced workout analytics, coaching, timers, recurring tasks, reminders,
+translated UI copy, real cloud resources, deployment automation, and secrets
+remain intentionally unimplemented.

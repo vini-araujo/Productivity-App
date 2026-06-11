@@ -2,8 +2,9 @@
 
 ## Status
 
-Milestone 3 implements system probes, protected profiles, and protected task
-CRUD. Other product feature endpoints remain planned.
+Milestone 4 implements system probes, protected profiles, protected task CRUD,
+and plan-first gym workout logging. Other product feature endpoints remain
+planned.
 
 ## Conventions
 
@@ -26,7 +27,7 @@ and repositories perform persistence operations.
 | Profile | `GET /api/v1/me`, `PATCH /api/v1/me` (implemented) |
 | Tasks | CRUD at `/api/v1/tasks` (implemented) |
 | Journal | CRUD at `/api/v1/journal-entries` |
-| Workouts | Exercises, sessions, sets, and progress under `/api/v1` |
+| Workouts | Plans, exercises, sessions, and sets under `/api/v1/workouts` (implemented) |
 | Notes | CRUD at `/api/v1/notes` |
 | Running | Sessions and progress under `/api/v1` |
 
@@ -59,6 +60,23 @@ the validated JWT subject.
 
 The list route accepts `limit`, `offset`, and optional `completed` query
 parameters. It returns `items`, `total`, `limit`, and `offset`.
+
+## Workouts
+
+All workout routes require a valid bearer token. The API exposes the shared
+exercise catalog and starter plan alongside user-owned custom plans. Starting a
+training day snapshots its ordered exercises into a user-owned workout session
+and generates the target sets for fast logging.
+
+- `GET/POST /api/v1/workouts/exercises`
+- `GET/POST /api/v1/workouts/plans`
+- `PUT /api/v1/workouts/plans/{plan_id}`
+- `POST /api/v1/workouts/plans/{plan_id}/clone`
+- `POST /api/v1/workouts/plans/{plan_id}/days/{day_id}/start`
+- `GET /api/v1/workouts/sessions`
+- `GET/PATCH /api/v1/workouts/sessions/{session_id}`
+- `DELETE /api/v1/workouts/sessions/{session_id}`
+- `PATCH /api/v1/workouts/sets/{set_id}`
 
 ## Authentication
 

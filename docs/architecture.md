@@ -2,8 +2,8 @@
 
 ## Current State
 
-Milestone 3 adds the first complete product module: user-owned task CRUD
-through the existing authenticated modular-monolith boundary.
+Milestone 4 adds plan-first gym workout logging through the existing
+authenticated modular-monolith boundary.
 
 ## System Context
 

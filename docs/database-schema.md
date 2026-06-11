@@ -3,7 +3,7 @@
 ## Status
 
 The production database is Supabase PostgreSQL. Alembic is the schema source
-of truth. Milestone 3 adds the first product table after profiles.
+of truth. Milestone 4 adds plan-first gym workout persistence after tasks.
 
 Alembic will be the source of truth for schema changes beginning when the first
 persisted feature is implemented.
@@ -23,9 +23,12 @@ authenticated user identifier, including reads, updates, and deletes.
 | --- | --- | --- |
 | `profiles` | Application profile linked to Supabase Auth (implemented) | 2 |
 | `tasks` | User task management (implemented) | 3 |
-| `exercises` | Shared and user-created exercise catalog | 4 |
-| `workout_sessions` | Gym workout sessions | 4 |
-| `workout_sets` | Sets recorded within sessions | 4 |
+| `exercises` | Shared and user-created exercise catalog (implemented) | 4 |
+| `workout_plans` | Shared and user-created workout rotations (implemented) | 4 |
+| `workout_plan_days` | Ordered training and rest days (implemented) | 4 |
+| `workout_plan_exercises` | Ordered exercise prescriptions (implemented) | 4 |
+| `workout_sessions` | Generated gym workout sessions (implemented) | 4 |
+| `workout_sets` | Sets recorded within sessions (implemented) | 4 |
 | `journal_entries` | Dated journal entries | 5 |
 | `notes` | General notes and tags | 9 |
 | `run_sessions` | Running activity records | 9 |
@@ -80,3 +83,15 @@ are added because application data is accessed through FastAPI.
 
 Indexes support user-scoped creation-order and completion-state queries. RLS is
 enabled as defense in depth; FastAPI remains the application data boundary.
+
+## Gym Workouts
+
+The exercise catalog mixes shared built-ins (`user_id` is null) with user-owned
+custom exercises. Workout plans follow the same ownership pattern. The seeded
+shared U/L/Rest starter split is read-only and clonable.
+
+Starting a training day creates a user-owned `workout_sessions` row and
+pre-generates ordered `workout_sets`. Exercise names are copied into sets so
+historical sessions remain understandable if a custom plan changes later.
+Failure prescriptions are also snapshotted separately from the user's recorded
+result. A partial unique index permits only one active session per user.

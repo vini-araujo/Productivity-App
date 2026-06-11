@@ -2,8 +2,8 @@
 
 This directory contains the FastAPI modular monolith.
 
-Milestone 3 adds protected user-owned task CRUD to the authenticated profile
-and persistence foundation.
+Milestone 4 adds plan-first gym workout logging to the authenticated task and
+profile foundation.
 
 Future feature modules follow:
 
@@ -29,3 +29,4 @@ uv run alembic check
 The API runs at `http://localhost:8000`. Its liveness and readiness endpoints
 are `/health` and `/ready`. Authenticated profiles are available at
 `/api/v1/me`, and authenticated task CRUD is available at `/api/v1/tasks`.
+Workout plans, sessions, and sets are available under `/api/v1/workouts`.

@@ -15,8 +15,9 @@ repository.
 - Application name: **Discipline App**
 - Existing local workspace directory name: **Productivity App**
 - Do not rename the local workspace directory unless explicitly asked.
-- The current milestone is **Milestone 3: Tasks CRUD**.
-- Milestone 3 establishes the first user-owned product workflow.
+- The current milestone is **Milestone 4: Gym Workout Tracking**.
+- Milestone 4 establishes structured exercise, workout-session, and set
+  tracking.
 
 The planned product includes tasks, journaling, notes, gym and running workout
 tracking, a dashboard, and future calendar, Strava, and possible AI
@@ -71,18 +72,26 @@ S3 can host the static frontend only. S3 cannot host the FastAPI backend.
 
 ## 4. Current Milestone Rules
 
-Milestone 3 may create:
+Milestone 4 may create:
 
-- The user-owned `tasks` table and second Alembic migration
-- Protected task create, list, get, update, complete, reopen, and delete APIs
-- The tasks module router, service, repository, schemas, and model
-- A mobile-first tasks page with open, all, and completed filters
-- Focused validation, pagination, ownership, API, and migration tests
+- Incremental `exercises`, `workout_sessions`, and `workout_sets` tables and
+  Alembic migrations
+- Protected exercise-catalog and workout-session APIs
+- User-owned workout plans and a shared read-only U/L/Rest starter plan
+- A mixed exercise catalog: built-in exercises are shared and read-only;
+  authenticated users may create, update, and delete only their own custom
+  exercises
+- Workout set recording for repetitions, weight, and optional notes
+- The workouts module router, service, repository, schemas, models, and tests
+- A mobile-first gym workflow for starting, recording, completing, and viewing
+  workouts
+- Focused validation, ownership, API, and migration tests
 
-Milestone 3 must not create:
+Milestone 4 must not create:
 
-- Recurring tasks, reminders, labels, subtasks, sharing, or calendar behavior
-- Workouts, journal, dashboard aggregation, notes, or running behavior
+- Coaching, social features, body measurements, personal records automation,
+  advanced analytics, rest timers, or exercise media uploads
+- Journal, dashboard aggregation, notes, running, or integrations behavior
 - Direct frontend database access through the Supabase Data API
 - Supabase service-role key dependencies
 - Real deployment resources, secrets, tokens, or populated environment values
@@ -209,8 +218,14 @@ Supabase Auth login
 
 - Use PostgreSQL with Supabase as the production provider.
 - Use Alembic for all application schema migrations.
-- Milestone 3 adds only the `tasks` table after `profiles`.
+- Milestone 4 adds exercise and gym-workout persistence incrementally after
+  `tasks`.
 - Every user-owned table must include `user_id`.
+- Exercise catalog rows use nullable `user_id`: null identifies a shared
+  built-in exercise, while a populated value identifies a user-owned custom
+  exercise.
+- Built-in exercises must never be mutated through user-facing APIs. Custom
+  exercise queries and mutations must be scoped by authenticated `user_id`.
 - Planned tables include profiles, tasks, journal entries, notes, exercises,
   workout sessions and sets, run sessions, and integration accounts.
 - Implement tables incrementally rather than all at once.
@@ -288,15 +303,16 @@ format, build, migrations, and backend Docker builds should work.
 
 ## 15. Verification Requirements
 
-For Milestone 3:
+For Milestone 4:
 
 1. Run frontend lint, typecheck, formatting check, and static production build.
 2. Run backend Ruff checks, formatting check, pytest, and migration checks.
 3. Confirm protected endpoints reject missing or invalid bearer tokens.
-4. Confirm every task operation scopes ownership by validated JWT subject.
+4. Confirm every user-owned workout operation scopes ownership by validated
+   JWT subject.
 5. Search repository files for accidental credentials or populated secrets.
 6. Build and health-check the backend container when Docker is available.
-7. Verify the real Supabase task migration and task CRUD flow locally only
+7. Verify the real Supabase workout migrations and gym workflow locally only
    after ignored environment files are configured.
 
 ## 16. Incremental Development Rule
@@ -349,13 +365,13 @@ After editing:
 - Mention anything that could not be verified.
 - Recommend the next small milestone.
 
-## 19. Definition of Done for Milestone 3
+## 19. Definition of Done for Milestone 4
 
-Milestone 3 is complete when authenticated users can create, list, read,
-update, complete, reopen, and delete only their own tasks, the tasks migration
-applies to Supabase PostgreSQL, tests and CI checks pass, and documentation
-matches the implemented workflow.
+Milestone 4 is complete when authenticated users can use an exercise catalog,
+record workout sessions and sets, complete and review only their own workouts,
+the incremental migrations apply to Supabase PostgreSQL, tests and CI checks
+pass, and documentation matches the implemented workflow.
 
-Milestone 3 is not complete if task ownership can be supplied by the frontend,
-cross-user access is possible, secrets are committed, or future product
-features are added.
+Milestone 4 is not complete if workout ownership can be supplied by the
+frontend, cross-user access is possible, secrets are committed, or future
+product features are added.

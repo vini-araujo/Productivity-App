@@ -84,6 +84,12 @@ export default function ProfilePage() {
         <div className="flex items-center gap-3">
           <Link
             className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
+            href="/gym"
+          >
+            Gym
+          </Link>
+          <Link
+            className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
             href="/tasks"
           >
             Tasks

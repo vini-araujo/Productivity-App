@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 const foundations = [
-  "User-owned task creation and editing",
-  "Priority, due date, and completion tracking",
-  "Protected FastAPI task endpoints",
+  "Plan-first gym workout logging",
+  "Shared U/L/Rest starter split",
+  "Generated weight and repetition sets",
   "Ownership enforced from validated JWTs",
 ];
 
@@ -15,15 +15,15 @@ export default function Home() {
       <section className="grid items-end gap-12 lg:grid-cols-[1.35fr_0.65fr]">
         <div>
           <p className="mb-5 text-sm font-semibold uppercase tracking-[0.24em] text-emerald-300">
-            Milestone 3
+            Milestone 4
           </p>
           <h1 className="max-w-3xl text-5xl font-semibold tracking-tight text-white sm:text-7xl">
             Build the systems that make progress repeatable.
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300">
             Discipline App will bring tasks, training, journaling, and personal
-            progress into one focused workspace. The first product workflow now
-            turns intentions into owned, trackable tasks.
+            progress into one focused workspace. Gym plans now turn each
+            training day into a fast, structured logging session.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
@@ -31,6 +31,12 @@ export default function Home() {
               href="/tasks"
             >
               Open tasks
+            </Link>
+            <Link
+              className="rounded-full border border-emerald-800 px-6 py-3 font-semibold text-emerald-200 transition hover:bg-emerald-950"
+              href="/gym"
+            >
+              Open gym
             </Link>
             <Link
               className="rounded-full border border-slate-700 px-6 py-3 font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
@@ -49,7 +55,7 @@ export default function Home() {
 
         <aside className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 shadow-2xl shadow-emerald-950/30">
           <div className="flex items-center justify-between">
-            <p className="font-semibold text-white">Task foundation</p>
+            <p className="font-semibold text-white">Gym foundation</p>
             <span className="rounded-full bg-emerald-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-300">
               Running
             </span>

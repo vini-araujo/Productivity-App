@@ -1,7 +1,40 @@
 @import "tailwindcss";
 
+@theme {
+  --color-white: #3b2418;
+  --color-black: #fffdf9;
+
+  --color-slate-950: #fffdf9;
+  --color-slate-900: #fffdf9;
+  --color-slate-800: #dbc19d;
+  --color-slate-700: #c29c70;
+  --color-slate-600: #a77e54;
+  --color-slate-500: #896342;
+  --color-slate-400: #745137;
+  --color-slate-300: #60412c;
+  --color-slate-200: #4b3020;
+
+  --color-emerald-950: #f4e4cf;
+  --color-emerald-900: #e0c39e;
+  --color-emerald-800: #bb8e5d;
+  --color-emerald-700: #986a40;
+  --color-emerald-300: #6b4228;
+  --color-emerald-200: #4d2d1d;
+
+  --color-rose-950: #fff2ed;
+  --color-rose-900: #e8b9aa;
+  --color-rose-400: #a65442;
+  --color-rose-300: #8f4133;
+  --color-rose-200: #743126;
+
+  --color-amber-400: #9a672f;
+  --color-amber-300: #805222;
+  --color-sky-400: #896b50;
+  --color-sky-300: #6e533c;
+}
+
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   font-family:
     Inter,
     ui-sans-serif,
@@ -10,17 +43,21 @@
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  background: #020617;
+  background: #fffdf9;
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  background:
-    radial-gradient(circle at top right, rgb(6 78 59 / 35%), transparent 32rem),
-    #020617;
+  background: #fffdf9;
+  color: #3b2418;
 }
 
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background: #dbc19d;
+  color: #3b2418;
 }

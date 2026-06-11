@@ -2,9 +2,9 @@
 
 ## Status
 
-Milestone 4 implements system probes, protected profiles, protected task CRUD,
-and plan-first gym workout logging. Other product feature endpoints remain
-planned.
+Milestone 5 implements system probes, protected profiles, task CRUD, plan-first
+gym workout logging, and private daily journaling. Other product feature
+endpoints remain planned.
 
 ## Conventions
 
@@ -26,13 +26,28 @@ and repositories perform persistence operations.
 | System | `GET /health`, `GET /ready` (implemented) |
 | Profile | `GET /api/v1/me`, `PATCH /api/v1/me` (implemented) |
 | Tasks | CRUD at `/api/v1/tasks` (implemented) |
-| Journal | CRUD at `/api/v1/journal-entries` |
+| Journal | Daily entries and history at `/api/v1/journal/entries` (implemented) |
 | Workouts | Plans, exercises, sessions, and sets under `/api/v1/workouts` (implemented) |
 | Notes | CRUD at `/api/v1/notes` |
 | Running | Sessions and progress under `/api/v1` |
 
 Tasks, profile, workouts, and journal will be implemented before notes, running,
 and integrations.
+
+## Journal
+
+All journal routes require a valid bearer token. Ownership comes exclusively
+from the validated JWT subject. The browser supplies its local calendar date
+for the Today workflow; it never supplies ownership.
+
+| Method | Route | Behavior |
+| --- | --- | --- |
+| `GET` | `/api/v1/journal/entries` | Search and paginate owned history |
+| `GET` | `/api/v1/journal/entries/today` | Read the entry for a supplied local date |
+| `PUT` | `/api/v1/journal/entries/today` | Idempotently save the entry for a supplied local date |
+| `GET` | `/api/v1/journal/entries/{entry_id}` | Read one owned entry |
+| `PATCH` | `/api/v1/journal/entries/{entry_id}` | Edit one owned entry |
+| `DELETE` | `/api/v1/journal/entries/{entry_id}` | Delete one owned entry |
 
 ## Responses and Errors
 

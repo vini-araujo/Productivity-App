@@ -2,8 +2,8 @@
 
 This directory contains the FastAPI modular monolith.
 
-Milestone 4 adds plan-first gym workout logging to the authenticated task and
-profile foundation.
+Milestone 5 adds private daily journal entries to the authenticated task,
+profile, and gym foundation.
 
 Future feature modules follow:
 
@@ -30,3 +30,4 @@ The API runs at `http://localhost:8000`. Its liveness and readiness endpoints
 are `/health` and `/ready`. Authenticated profiles are available at
 `/api/v1/me`, and authenticated task CRUD is available at `/api/v1/tasks`.
 Workout plans, sessions, and sets are available under `/api/v1/workouts`.
+Daily journal entries are available under `/api/v1/journal/entries`.

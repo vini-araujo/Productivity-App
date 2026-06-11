@@ -10,12 +10,12 @@ improvement.
 
 ## Current Status
 
-**Milestone 4: Gym Workout Tracking**
+**Milestone 5: Journal**
 
 Milestone 3 completed the first product workflow: authenticated users can
-manage their own tasks through the protected FastAPI API. Milestone 4 adds
-plan-first gym logging with a shared U/L/Rest starter split, custom plans,
-generated working sets, and user-owned workout history.
+manage their own tasks through the protected FastAPI API. Milestone 4 added
+plan-first gym logging. Milestone 5 adds a private daily journal with autosave,
+searchable history, and one entry per local calendar date.
 
 ## Architecture
 
@@ -93,7 +93,7 @@ The local endpoints are:
 See [docs/local-development.md](docs/local-development.md) for the current setup
 contract and planned commands.
 
-## Milestone 4 Boundary
+## Milestone 5 Boundary
 
 Implemented now:
 
@@ -106,7 +106,10 @@ Implemented now:
 - Mobile-first task creation, editing, completion, and deletion
 - Shared U/L/Rest starter split and user-owned workout plans
 - Generated workout sessions with weight, repetitions, and failure tracking
+- Private daily journal entries with optional titles
+- Autosaving Today editor and searchable, editable journal history
 
 Advanced workout analytics, coaching, timers, recurring tasks, reminders,
-translated UI copy, real cloud resources, deployment automation, and secrets
-remain intentionally unimplemented.
+mood tracking, journal tags, rich text, translated UI copy, real cloud
+resources, deployment automation, and secrets remain intentionally
+unimplemented.

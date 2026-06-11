@@ -2,12 +2,9 @@
 
 This directory contains the mobile-first Next.js frontend.
 
-Milestone 4 adds a focused mobile-first gym workflow for selecting a starter
-workout, entering weight and repetitions, and completing the session alongside
-the protected task experience. Completed sessions can be reviewed from the Gym
-history view, and users can cancel active sessions or delete completed ones.
-Users can also create a personalized split from the focused Gym screen using
-the shared exercise catalog.
+Milestone 5 adds a focused daily journal with an autosaving Today editor and
+searchable History. Previous entries can be reopened, edited, and deleted.
+The existing task and gym workflows remain available alongside it.
 
 The planned deployment target is a static export hosted on AWS S3 behind
 CloudFront. Avoid introducing Next.js server-only runtime requirements without

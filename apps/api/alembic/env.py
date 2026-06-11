@@ -16,6 +16,7 @@ from sqlalchemy import (
 from alembic import context
 from app.core.config import settings
 from app.core.database import Base, normalize_database_url
+from app.modules.journal import models as journal_models  # noqa: F401
 from app.modules.tasks import models as tasks_models  # noqa: F401
 from app.modules.users import models as users_models  # noqa: F401
 from app.modules.workouts import models as workouts_models  # noqa: F401
@@ -34,6 +35,7 @@ Table("users", target_metadata, Column("id", Uuid, primary_key=True), schema="au
 for table_name, constraint_name in (
     ("profiles", "fk_profiles_user_id_auth_users"),
     ("tasks", "fk_tasks_user_id_auth_users"),
+    ("journal_entries", "fk_journal_entries_user_id_auth_users"),
     ("exercises", "fk_exercises_user_id_auth_users"),
     ("workout_plans", "fk_workout_plans_user_id_auth_users"),
     ("workout_sessions", "fk_workout_sessions_user_id_auth_users"),

@@ -3,7 +3,7 @@
 ## Status
 
 The production database is Supabase PostgreSQL. Alembic is the schema source
-of truth. Milestone 4 adds plan-first gym workout persistence after tasks.
+of truth. Milestone 5 adds daily journal persistence after gym workouts.
 
 Alembic will be the source of truth for schema changes beginning when the first
 persisted feature is implemented.
@@ -29,7 +29,7 @@ authenticated user identifier, including reads, updates, and deletes.
 | `workout_plan_exercises` | Ordered exercise prescriptions (implemented) | 4 |
 | `workout_sessions` | Generated gym workout sessions (implemented) | 4 |
 | `workout_sets` | Sets recorded within sessions (implemented) | 4 |
-| `journal_entries` | Dated journal entries | 5 |
+| `journal_entries` | Dated journal entries (implemented) | 5 |
 | `notes` | General notes and tags | 9 |
 | `run_sessions` | Running activity records | 9 |
 | `integration_accounts` | Future provider connections | 10 |
@@ -95,3 +95,19 @@ pre-generates ordered `workout_sets`. Exercise names are copied into sets so
 historical sessions remain understandable if a custom plan changes later.
 Failure prescriptions are also snapshotted separately from the user's recorded
 result. A partial unique index permits only one active session per user.
+
+## Journal Entries
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | UUID | Primary key |
+| `user_id` | UUID | Foreign key to `auth.users.id`; ownership boundary |
+| `entry_date` | date | User's local calendar date |
+| `title` | varchar(200) | Optional |
+| `content` | text | Required, maximum 50,000 characters at the API boundary |
+| `created_at` | timestamptz | Creation timestamp |
+| `updated_at` | timestamptz | Last application update timestamp |
+
+A unique constraint on `(user_id, entry_date)` guarantees one entry per user
+per local calendar date. RLS is enabled as defense in depth; FastAPI remains
+the application data boundary.

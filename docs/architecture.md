@@ -2,8 +2,8 @@
 
 ## Current State
 
-Milestone 4 adds plan-first gym workout logging through the existing
-authenticated modular-monolith boundary.
+Milestone 5 adds private daily journaling through the existing authenticated
+modular-monolith boundary.
 
 ## System Context
 

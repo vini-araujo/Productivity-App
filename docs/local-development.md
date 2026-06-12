@@ -2,8 +2,8 @@
 
 ## Current Status
 
-Milestone 5 builds daily journaling on the runnable authentication, protected
-profile, task, and gym foundations.
+Milestone 6 builds a protected daily dashboard on the runnable authentication,
+profile, task, gym, and journal foundations.
 
 ## Prerequisites
 
@@ -37,7 +37,7 @@ files when configuration overrides are needed:
 
 Never commit secrets. The Supabase publishable key is intentionally public and
 may be used by the frontend. The Supabase service-role key is optional,
-server-side only, and is not required by Milestone 5.
+server-side only, and is not required by Milestone 6.
 
 For `apps/web/.env.local`, configure:
 

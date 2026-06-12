@@ -2,9 +2,9 @@
 
 This directory contains the mobile-first Next.js frontend.
 
-Milestone 5 adds a focused daily journal with an autosaving Today editor and
-searchable History. Previous entries can be reopened, edited, and deleted.
-The existing task and gym workflows remain available alongside it.
+Milestone 6 adds a focused daily dashboard that summarizes next tasks, current
+training status, and today's journal state. The dashboard links into the
+existing task, gym, and journal workflows without duplicating their behavior.
 
 The planned deployment target is a static export hosted on AWS S3 behind
 CloudFront. Avoid introducing Next.js server-only runtime requirements without

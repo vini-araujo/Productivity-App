@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
+import { FeatureTabs } from "@/components/navigation/feature-tabs";
 import {
   createPlan,
   deleteWorkout,
@@ -338,6 +339,8 @@ export default function GymPage() {
           Profile
         </Link>
       </header>
+
+      <FeatureTabs current="gym" />
 
       <section className="mt-7 rounded-2xl border border-slate-800 px-5 py-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">

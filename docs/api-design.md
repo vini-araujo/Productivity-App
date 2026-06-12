@@ -2,9 +2,9 @@
 
 ## Status
 
-Milestone 5 implements system probes, protected profiles, task CRUD, plan-first
-gym workout logging, and private daily journaling. Other product feature
-endpoints remain planned.
+Milestone 6 implements system probes, protected profiles, task CRUD, plan-first
+gym workout logging, private daily journaling, and a protected daily dashboard.
+Other product feature endpoints remain planned.
 
 ## Conventions
 
@@ -28,11 +28,20 @@ and repositories perform persistence operations.
 | Tasks | CRUD at `/api/v1/tasks` (implemented) |
 | Journal | Daily entries and history at `/api/v1/journal/entries` (implemented) |
 | Workouts | Plans, exercises, sessions, and sets under `/api/v1/workouts` (implemented) |
+| Dashboard | `GET /api/v1/dashboard` daily snapshot (implemented) |
 | Notes | CRUD at `/api/v1/notes` |
 | Running | Sessions and progress under `/api/v1` |
 
 Tasks, profile, workouts, and journal will be implemented before notes, running,
 and integrations.
+
+## Dashboard
+
+`GET /api/v1/dashboard?local_date=YYYY-MM-DD` returns a read-only snapshot of
+the authenticated user's open-task count and next tasks, active and latest
+completed workouts, and journal status for the browser's local calendar date.
+Ownership always comes from the validated JWT subject. The dashboard adds no
+new persistence and performs no cross-feature mutations.
 
 ## Journal
 

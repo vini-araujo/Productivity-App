@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
+import { FeatureTabs } from "@/components/navigation/feature-tabs";
 import {
   createTask,
   deleteTask,
@@ -217,6 +218,8 @@ export default function TasksPage() {
           Profile
         </Link>
       </header>
+
+      <FeatureTabs current="tasks" />
 
       <section className="mt-8 rounded-3xl border border-slate-800 bg-slate-900/80 p-5 sm:p-7">
         <h2 className="text-xl font-semibold text-white">

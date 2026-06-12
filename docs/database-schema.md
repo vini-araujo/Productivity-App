@@ -3,7 +3,8 @@
 ## Status
 
 The production database is Supabase PostgreSQL. Alembic is the schema source
-of truth. Milestone 5 adds daily journal persistence after gym workouts.
+of truth. Milestone 6 adds no database tables; the dashboard reads existing
+user-owned task, workout, and journal data.
 
 Alembic will be the source of truth for schema changes beginning when the first
 persisted feature is implemented.

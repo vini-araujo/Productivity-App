@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MouseEvent } from "react";
 
+import { FeatureTabs } from "@/components/navigation/feature-tabs";
 import {
   deleteJournalEntry,
   getTodayEntry,
@@ -385,6 +386,8 @@ export default function JournalPage() {
           Profile
         </Link>
       </header>
+
+      <FeatureTabs current="journal" onNavigate={leaveJournal} />
 
       <section className="mt-7 rounded-2xl border border-slate-800 px-5 py-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">

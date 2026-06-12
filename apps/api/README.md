@@ -2,8 +2,8 @@
 
 This directory contains the FastAPI modular monolith.
 
-Milestone 5 adds private daily journal entries to the authenticated task,
-profile, and gym foundation.
+Milestone 6 adds a protected read-only dashboard snapshot across the existing
+authenticated task, profile, gym, and journal foundation.
 
 Future feature modules follow:
 
@@ -31,3 +31,4 @@ are `/health` and `/ready`. Authenticated profiles are available at
 `/api/v1/me`, and authenticated task CRUD is available at `/api/v1/tasks`.
 Workout plans, sessions, and sets are available under `/api/v1/workouts`.
 Daily journal entries are available under `/api/v1/journal/entries`.
+The daily dashboard snapshot is available at `/api/v1/dashboard`.

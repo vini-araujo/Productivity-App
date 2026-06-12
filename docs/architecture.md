@@ -2,8 +2,8 @@
 
 ## Current State
 
-Milestone 5 adds private daily journaling through the existing authenticated
-modular-monolith boundary.
+Milestone 6 adds a read-only dashboard aggregation module through the existing
+authenticated modular-monolith boundary.
 
 ## System Context
 
@@ -43,6 +43,10 @@ HTTP request
 Modules may share narrowly scoped infrastructure from `app/core` and reusable
 application utilities from `app/shared`. Modules should not bypass service
 boundaries to manipulate another module's persistence directly.
+
+The dashboard is the intentional read-only aggregation boundary. Its repository
+queries existing user-owned feature tables, while mutations remain inside
+their owning task, workout, and journal modules.
 
 ## Frontend Organization
 

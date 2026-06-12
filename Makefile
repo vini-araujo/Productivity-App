@@ -8,7 +8,7 @@ UV ?= uv
 	docker-up docker-down
 
 help:
-	@echo "Discipline App - Milestone 5 commands"
+	@echo "Discipline App - Milestone 6 commands"
 	@echo ""
 	@echo "  make setup        Install locked frontend and backend dependencies"
 	@echo "  make dev          Run frontend and backend"

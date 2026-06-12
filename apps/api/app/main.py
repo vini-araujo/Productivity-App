@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.system import router as system_router
+from app.modules.dashboard.router import router as dashboard_router
 from app.modules.journal.router import router as journal_router
 from app.modules.tasks.router import router as tasks_router
 from app.modules.users.router import router as users_router
@@ -30,6 +31,7 @@ def create_app() -> FastAPI:
     application.include_router(tasks_router)
     application.include_router(workouts_router)
     application.include_router(journal_router)
+    application.include_router(dashboard_router)
     return application
 
 

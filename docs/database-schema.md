@@ -3,8 +3,7 @@
 ## Status
 
 The production database is Supabase PostgreSQL. Alembic is the schema source
-of truth. Milestone 6 adds no database tables; the dashboard reads existing
-user-owned task, workout, and journal data.
+of truth. Milestone 7 adds user-owned run sessions after journal entries.
 
 Alembic will be the source of truth for schema changes beginning when the first
 persisted feature is implemented.
@@ -32,7 +31,7 @@ authenticated user identifier, including reads, updates, and deletes.
 | `workout_sets` | Sets recorded within sessions (implemented) | 4 |
 | `journal_entries` | Dated journal entries (implemented) | 5 |
 | `notes` | General notes and tags | 9 |
-| `run_sessions` | Running activity records | 9 |
+| `run_sessions` | Running activity records (implemented) | 7 |
 | `integration_accounts` | Future provider connections | 10 |
 
 ## Planned Relationships
@@ -112,3 +111,19 @@ result. A partial unique index permits only one active session per user.
 A unique constraint on `(user_id, entry_date)` guarantees one entry per user
 per local calendar date. RLS is enabled as defense in depth; FastAPI remains
 the application data boundary.
+
+## Run Sessions
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | UUID | Primary key |
+| `user_id` | UUID | Foreign key to `auth.users.id`; ownership boundary |
+| `started_at` | timestamptz | Date and time of the run |
+| `distance_km` | numeric(7,2) | Positive distance in kilometers |
+| `duration_seconds` | integer | Positive elapsed duration |
+| `notes` | text | Optional |
+| `created_at` | timestamptz | Creation timestamp |
+| `updated_at` | timestamptz | Last application update timestamp |
+
+Pace is calculated from distance and duration rather than persisted. RLS is
+enabled as defense in depth; FastAPI remains the application data boundary.

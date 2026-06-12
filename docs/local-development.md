@@ -2,8 +2,8 @@
 
 ## Current Status
 
-Milestone 6 builds a protected daily dashboard on the runnable authentication,
-profile, task, gym, and journal foundations.
+Milestone 7 builds private manual run logging on the runnable authentication,
+profile, task, gym, journal, and dashboard foundations.
 
 ## Prerequisites
 
@@ -37,7 +37,7 @@ files when configuration overrides are needed:
 
 Never commit secrets. The Supabase publishable key is intentionally public and
 may be used by the frontend. The Supabase service-role key is optional,
-server-side only, and is not required by Milestone 6.
+server-side only, and is not required by Milestone 7.
 
 For `apps/web/.env.local`, configure:
 

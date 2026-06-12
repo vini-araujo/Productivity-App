@@ -10,13 +10,13 @@ improvement.
 
 ## Current Status
 
-**Milestone 6: Dashboard Aggregation**
+**Milestone 7: Running**
 
 Milestone 3 completed the first product workflow: authenticated users can
 manage their own tasks through the protected FastAPI API. Milestone 4 added
 plan-first gym logging, and Milestone 5 added a private daily journal.
-Milestone 6 adds one protected daily overview across tasks, training, and
-journaling.
+Milestone 6 added one protected daily overview across tasks, training, and
+journaling. Milestone 7 adds private manual run logging and history.
 
 ## Architecture
 
@@ -94,7 +94,7 @@ The local endpoints are:
 See [docs/local-development.md](docs/local-development.md) for the current setup
 contract and planned commands.
 
-## Milestone 6 Boundary
+## Milestone 7 Boundary
 
 Implemented now:
 
@@ -111,8 +111,10 @@ Implemented now:
 - Autosaving Today editor and searchable, editable journal history
 - Protected dashboard snapshot across existing user-owned features
 - Mobile-first overview of next tasks, workout status, and today's journal
+- Private manual run logging with editable and deletable history
+- Automatically calculated running pace and latest-run dashboard status
 
 Advanced workout analytics, coaching, timers, recurring tasks, reminders,
-streaks, scoring, charts, mood tracking, journal tags, rich text, translated UI
-copy, real cloud resources, deployment automation, and secrets remain
-intentionally unimplemented.
+streaks, scoring, charts, GPS routes, Strava integration, running plans, mood
+tracking, journal tags, rich text, translated UI copy, real cloud resources,
+deployment automation, and secrets remain intentionally unimplemented.

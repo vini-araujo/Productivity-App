@@ -7,6 +7,7 @@ from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
 from app.modules.journal.models import JournalEntry
+from app.modules.running.models import RunSession
 from app.modules.tasks.models import Task
 from app.modules.workouts.models import WorkoutSession
 
@@ -82,4 +83,13 @@ class DashboardRepository:
                 JournalEntry.user_id == user_id,
                 JournalEntry.entry_date == entry_date,
             )
+        )
+
+    def get_latest_run(self, user_id: UUID) -> RunSession | None:
+        """Return the user's most recent run."""
+        return self.session.scalar(
+            select(RunSession)
+            .where(RunSession.user_id == user_id)
+            .order_by(RunSession.started_at.desc(), RunSession.id.desc())
+            .limit(1)
         )

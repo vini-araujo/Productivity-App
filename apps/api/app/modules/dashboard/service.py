@@ -9,11 +9,13 @@ from app.modules.dashboard.repository import DashboardRepository
 from app.modules.dashboard.schemas import (
     DashboardJournal,
     DashboardResponse,
+    DashboardRun,
     DashboardTask,
     DashboardTasks,
     DashboardWorkout,
     DashboardWorkouts,
 )
+from app.modules.running.models import RunSession
 from app.modules.workouts.models import WorkoutSession
 
 
@@ -53,6 +55,7 @@ class DashboardService:
                 title=journal_entry.title if journal_entry else None,
                 updated_at=journal_entry.updated_at if journal_entry else None,
             ),
+            latest_run=self._run_response(self.repository.get_latest_run(user.user_id)),
         )
 
     @staticmethod
@@ -64,4 +67,15 @@ class DashboardService:
             name=session.name,
             started_at=session.started_at,
             completed_at=session.completed_at,
+        )
+
+    @staticmethod
+    def _run_response(session: RunSession | None) -> DashboardRun | None:
+        if session is None:
+            return None
+        return DashboardRun(
+            id=session.id,
+            started_at=session.started_at,
+            distance_km=session.distance_km,
+            duration_seconds=session.duration_seconds,
         )

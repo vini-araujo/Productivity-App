@@ -16,6 +16,7 @@ from app.modules.dashboard.router import get_dashboard_service
 from app.modules.dashboard.schemas import DashboardResponse
 from app.modules.dashboard.service import DashboardService
 from app.modules.journal.models import JournalEntry
+from app.modules.running.models import RunSession
 from app.modules.tasks.models import Task
 from app.modules.workouts.models import WorkoutSession
 
@@ -39,6 +40,7 @@ def test_dashboard_service_returns_empty_snapshot(session: Session) -> None:
     assert snapshot.workouts.active is None
     assert snapshot.workouts.latest_completed is None
     assert snapshot.journal.entry_id is None
+    assert snapshot.latest_run is None
 
 
 def test_dashboard_service_aggregates_only_owned_data(session: Session) -> None:
@@ -84,6 +86,18 @@ def test_dashboard_service_aggregates_only_owned_data(session: Session) -> None:
                 title="Owned reflection",
                 content="Private.",
             ),
+            RunSession(
+                user_id=user.user_id,
+                started_at=now - timedelta(days=1),
+                distance_km=5,
+                duration_seconds=1500,
+            ),
+            RunSession(
+                user_id=stranger_id,
+                started_at=now,
+                distance_km=10,
+                duration_seconds=3000,
+            ),
             JournalEntry(
                 user_id=stranger_id,
                 entry_date=date(2026, 6, 12),
@@ -104,6 +118,8 @@ def test_dashboard_service_aggregates_only_owned_data(session: Session) -> None:
     assert snapshot.workouts.latest_completed is not None
     assert snapshot.workouts.latest_completed.name == "Lower"
     assert snapshot.journal.title == "Owned reflection"
+    assert snapshot.latest_run is not None
+    assert snapshot.latest_run.distance_km == 5
 
 
 class FakeDashboardService:

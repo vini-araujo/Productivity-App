@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { MouseEvent } from "react";
 
-export type FeatureTab = "dashboard" | "tasks" | "gym" | "journal";
+export type FeatureTab = "dashboard" | "tasks" | "gym" | "running" | "journal";
 
 type FeatureTabsProps = {
   current: FeatureTab;
@@ -12,6 +12,7 @@ const tabs: { href: string; label: string; value: FeatureTab }[] = [
   { href: "/dashboard", label: "Dashboard", value: "dashboard" },
   { href: "/tasks", label: "Tasks", value: "tasks" },
   { href: "/gym", label: "Gym", value: "gym" },
+  { href: "/running", label: "Running", value: "running" },
   { href: "/journal", label: "Journal", value: "journal" },
 ];
 
@@ -19,7 +20,7 @@ export function FeatureTabs({ current, onNavigate }: FeatureTabsProps) {
   return (
     <nav
       aria-label="Primary features"
-      className="mt-6 grid grid-cols-4 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 p-1"
+      className="mt-6 grid grid-cols-5 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 p-1"
     >
       {tabs.map((tab) => (
         <Link

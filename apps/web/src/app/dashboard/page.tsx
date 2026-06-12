@@ -337,23 +337,23 @@ export default function DashboardPage() {
 
               <article className="rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
-                  Daily reflection
+                  Latest run
                 </p>
                 <h2 className="mt-3 text-2xl font-semibold text-white">
-                  {snapshot.journal.entry_id
-                    ? snapshot.journal.title || "Today is captured"
-                    : "Make space to reflect"}
+                  {snapshot.latest_run
+                    ? `${Number(snapshot.latest_run.distance_km).toFixed(2)} km`
+                    : "No runs logged"}
                 </h2>
                 <p className="mt-2 text-sm text-slate-400">
-                  {snapshot.journal.entry_id
-                    ? "Reopen today's entry whenever something else matters."
-                    : "Your journal is ready for today's thoughts."}
+                  {snapshot.latest_run
+                    ? `Completed ${relativeWorkoutDate(snapshot.latest_run.started_at)} in ${Math.round(snapshot.latest_run.duration_seconds / 60)} minutes.`
+                    : "Log your first run when you are ready."}
                 </p>
                 <Link
                   className="mt-5 inline-flex rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
-                  href="/journal"
+                  href="/running"
                 >
-                  {snapshot.journal.entry_id ? "Open journal" : "Write today"}
+                  {snapshot.latest_run ? "Open running history" : "Log a run"}
                 </Link>
               </article>
             </div>

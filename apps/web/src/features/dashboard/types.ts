@@ -27,4 +27,10 @@ export type DashboardSnapshot = {
     title: string | null;
     updated_at: string | null;
   };
+  latest_run: {
+    id: string;
+    started_at: string;
+    distance_km: string;
+    duration_seconds: number;
+  } | null;
 };

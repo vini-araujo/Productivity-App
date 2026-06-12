@@ -15,9 +15,9 @@ repository.
 - Application name: **Discipline App**
 - Existing local workspace directory name: **Productivity App**
 - Do not rename the local workspace directory unless explicitly asked.
-- The current milestone is **Milestone 6: Dashboard Aggregation**.
-- Milestone 6 establishes a protected, read-only daily overview across tasks,
-  workouts, and journal entries.
+- The current milestone is **Milestone 7: Running**.
+- Milestone 7 establishes private manual run logging, history, and dashboard
+  status.
 
 The planned product includes tasks, journaling, notes, gym and running workout
 tracking, a dashboard, and future calendar, Strava, and possible AI
@@ -72,19 +72,20 @@ S3 can host the static frontend only. S3 cannot host the FastAPI backend.
 
 ## 4. Current Milestone Rules
 
-Milestone 6 may create:
+Milestone 7 may create:
 
-- A protected read-only dashboard aggregation endpoint
-- The dashboard module router, service, repository, schemas, and tests
-- A mobile-first daily overview linking into tasks, gym, and journal
-- Focused aggregation, ownership, API, and empty-state tests
+- An incremental `run_sessions` table and Alembic migration
+- Protected run CRUD and paginated history APIs
+- The running module router, service, repository, schemas, models, and tests
+- A mobile-first manual run log with calculated pace
+- Latest-run dashboard aggregation
+- Focused validation, ownership, API, and migration tests
 
-Milestone 6 must not create:
+Milestone 7 must not create:
 
-- New dashboard persistence tables, analytics pipelines, streaks, charts, or
-  scoring systems
-- Task, workout, or journal mutations outside their existing feature modules
-- Notes, running, deployment, or integrations behavior
+- GPS tracking, route maps, Strava integration, training plans, coaching,
+  advanced analytics, or personal-record automation
+- Notes, deployment, or integrations behavior
 - Direct frontend database access through the Supabase Data API
 - Supabase service-role key dependencies
 - Real deployment resources, secrets, tokens, or populated environment values
@@ -211,7 +212,7 @@ Supabase Auth login
 
 - Use PostgreSQL with Supabase as the production provider.
 - Use Alembic for all application schema migrations.
-- Milestone 6 adds no persistence tables; it reads existing user-owned data.
+- Milestone 7 adds user-owned run sessions incrementally after journal entries.
 - Every user-owned table must include `user_id`.
 - Exercise catalog rows use nullable `user_id`: null identifies a shared
   built-in exercise, while a populated value identifies a user-owned custom
@@ -295,16 +296,17 @@ format, build, migrations, and backend Docker builds should work.
 
 ## 15. Verification Requirements
 
-For Milestone 6:
+For Milestone 7:
 
 1. Run frontend lint, typecheck, formatting check, and static production build.
 2. Run backend Ruff checks, formatting check, pytest, and migration checks.
 3. Confirm protected endpoints reject missing or invalid bearer tokens.
-4. Confirm every dashboard aggregate scopes ownership by validated JWT subject.
+4. Confirm every run operation and dashboard aggregate scopes ownership by
+   validated JWT subject.
 5. Search repository files for accidental credentials or populated secrets.
 6. Build and health-check the backend container when Docker is available.
-7. Verify the dashboard against real Supabase data locally only after ignored
-   environment files are configured.
+7. Verify the run migration and workflow against real Supabase data locally
+   only after ignored environment files are configured.
 
 ## 16. Incremental Development Rule
 
@@ -330,10 +332,11 @@ Do not jump ahead or implement future features unless explicitly asked.
 - Milestone 4: gym workout tracking
 - Milestone 5: journal
 - Milestone 6: dashboard aggregation
-- Milestone 7: frontend deployment to S3, CloudFront, and Cloudflare
-- Milestone 8: backend container deployment
-- Milestone 9: notes and running
-- Milestone 10: future integrations
+- Milestone 7: running
+- Milestone 8: frontend deployment to S3, CloudFront, and Cloudflare
+- Milestone 9: backend container deployment
+- Milestone 10: notes
+- Milestone 11: future integrations
 
 ## 18. Agent Behavior Rules
 
@@ -356,14 +359,14 @@ After editing:
 - Mention anything that could not be verified.
 - Recommend the next small milestone.
 
-## 19. Definition of Done for Milestone 6
+## 19. Definition of Done for Milestone 7
 
-Milestone 6 is complete when authenticated users can open one mobile-first
-daily overview showing their open tasks, next tasks, workout status, and local
-date journal status. Every aggregate must be scoped by the validated JWT
-subject, tests and CI checks must pass, and documentation must match the
+Milestone 7 is complete when authenticated users can manually log, edit,
+review, and delete only their own runs, see calculated pace, and view their
+latest run on the dashboard. The incremental migration must apply to Supabase
+PostgreSQL, tests and CI checks must pass, and documentation must match the
 implemented workflow.
 
-Milestone 6 is not complete if the dashboard creates duplicate persistence,
-accepts ownership from the frontend, exposes cross-user data, commits secrets,
-or adds future analytics features.
+Milestone 7 is not complete if run ownership can be supplied by the frontend,
+cross-user access is possible, secrets are committed, or advanced running and
+integration features are added.

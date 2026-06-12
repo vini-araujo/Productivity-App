@@ -1,6 +1,7 @@
 """API schemas for the dashboard snapshot."""
 
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Literal
 from uuid import UUID
 
@@ -50,9 +51,19 @@ class DashboardJournal(BaseModel):
     updated_at: datetime | None
 
 
+class DashboardRun(BaseModel):
+    """The authenticated user's latest run."""
+
+    id: UUID
+    started_at: datetime
+    distance_km: Decimal
+    duration_seconds: int
+
+
 class DashboardResponse(BaseModel):
     """Aggregated dashboard snapshot for one authenticated user."""
 
     tasks: DashboardTasks
     workouts: DashboardWorkouts
     journal: DashboardJournal
+    latest_run: DashboardRun | None

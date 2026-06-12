@@ -2,8 +2,8 @@
 
 ## Current State
 
-Milestone 6 adds a read-only dashboard aggregation module through the existing
-authenticated modular-monolith boundary.
+Milestone 7 adds user-owned running activity through the existing authenticated
+modular-monolith boundary and extends the dashboard's read-only aggregation.
 
 ## System Context
 
@@ -46,7 +46,7 @@ boundaries to manipulate another module's persistence directly.
 
 The dashboard is the intentional read-only aggregation boundary. Its repository
 queries existing user-owned feature tables, while mutations remain inside
-their owning task, workout, and journal modules.
+their owning task, workout, journal, and running modules.
 
 ## Frontend Organization
 

@@ -2,9 +2,9 @@
 
 This directory contains the mobile-first Next.js frontend.
 
-Milestone 6 adds a focused daily dashboard that summarizes next tasks, current
-training status, and today's journal state. The dashboard links into the
-existing task, gym, and journal workflows without duplicating their behavior.
+Milestone 7 adds a focused manual running log with calculated pace and editable
+history. The dashboard shows the latest run alongside task, gym, and journal
+status without duplicating the journal experience.
 
 The planned deployment target is a static export hosted on AWS S3 behind
 CloudFront. Avoid introducing Next.js server-only runtime requirements without

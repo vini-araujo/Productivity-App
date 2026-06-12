@@ -2,9 +2,9 @@
 
 ## Status
 
-Milestone 6 implements system probes, protected profiles, task CRUD, plan-first
-gym workout logging, private daily journaling, and a protected daily dashboard.
-Other product feature endpoints remain planned.
+Milestone 7 implements system probes, protected profiles, task CRUD, plan-first
+gym workout logging, private daily journaling, a protected daily dashboard, and
+private running history. Other product feature endpoints remain planned.
 
 ## Conventions
 
@@ -30,18 +30,31 @@ and repositories perform persistence operations.
 | Workouts | Plans, exercises, sessions, and sets under `/api/v1/workouts` (implemented) |
 | Dashboard | `GET /api/v1/dashboard` daily snapshot (implemented) |
 | Notes | CRUD at `/api/v1/notes` |
-| Running | Sessions and progress under `/api/v1` |
+| Running | CRUD at `/api/v1/runs` (implemented) |
 
-Tasks, profile, workouts, and journal will be implemented before notes, running,
-and integrations.
+Tasks, profile, workouts, journal, dashboard, and running are implemented before
+notes and integrations.
 
 ## Dashboard
 
 `GET /api/v1/dashboard?local_date=YYYY-MM-DD` returns a read-only snapshot of
 the authenticated user's open-task count and next tasks, active and latest
-completed workouts, and journal status for the browser's local calendar date.
-Ownership always comes from the validated JWT subject. The dashboard adds no
-new persistence and performs no cross-feature mutations.
+completed workouts, journal status for the browser's local calendar date, and
+latest run. Ownership always comes from the validated JWT subject. The
+dashboard adds no new persistence and performs no cross-feature mutations.
+
+## Running
+
+All running routes require a valid bearer token. Ownership comes exclusively
+from the validated JWT subject. Distance is stored in kilometers and duration
+in seconds; pace is calculated by clients.
+
+| Method | Route | Behavior |
+| --- | --- | --- |
+| `POST` | `/api/v1/runs` | Log an owned run |
+| `GET` | `/api/v1/runs` | Paginate owned running history |
+| `PATCH` | `/api/v1/runs/{run_id}` | Edit one owned run |
+| `DELETE` | `/api/v1/runs/{run_id}` | Delete one owned run |
 
 ## Journal
 

@@ -55,7 +55,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           className="text-sm font-semibold text-emerald-300 hover:text-emerald-200"
           href="/"
         >
-          Discipline App
+          Ordyn Life
         </Link>
         <h1 className="mt-6 text-3xl font-semibold tracking-tight text-white">
           {isLogin ? "Welcome back" : "Create your account"}
@@ -116,7 +116,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-400">
-          {isLogin ? "New to Discipline App?" : "Already have an account?"}{" "}
+          {isLogin ? "New to Ordyn Life?" : "Already have an account?"}{" "}
           <Link
             className="font-semibold text-emerald-300 hover:text-emerald-200"
             href={isLogin ? "/register" : "/login"}

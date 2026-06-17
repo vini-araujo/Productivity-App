@@ -319,14 +319,14 @@ export default function GymPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-3xl px-4 py-6 sm:px-8 sm:py-10">
+    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">
       <header className="flex items-center justify-between gap-4">
         <div>
           <Link
             className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300"
             href="/"
           >
-            Discipline App
+            Ordyn Life
           </Link>
           <h1 className="mt-2 text-4xl font-semibold tracking-[-0.04em] text-white">
             Gym

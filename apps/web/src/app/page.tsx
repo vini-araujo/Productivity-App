@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const foundations = [
-  "Calendar across existing workflows",
-  "Tasks, training, runs, and journal stay source-owned",
-  "Read-only aggregation before backend deployment",
-  "Ownership enforced from validated JWTs",
+  "Order today's work across every date",
+  "Track training, running, and reflection in one rhythm",
+  "See progress clearly in the calendar and dashboard",
+  "Keep every record private and user-owned",
 ];
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -18,12 +18,12 @@ export default function Home() {
             Milestone 8
           </p>
           <h1 className="max-w-3xl text-5xl font-semibold tracking-tight text-white sm:text-7xl">
-            Build the systems that make progress repeatable.
+            Bring order to the life you are building.
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300">
-            Discipline App will bring tasks, training, journaling, and personal
-            progress into one focused workspace. Calendar is the next layer,
-            bringing existing progress into one date-based view.
+            Ordyn Life turns tasks, training, running, and reflection into a
+            clear daily rhythm. Calendar now brings that progress into one
+            date-based view.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
@@ -67,7 +67,7 @@ export default function Home() {
 
         <aside className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 shadow-2xl shadow-emerald-950/30">
           <div className="flex items-center justify-between">
-            <p className="font-semibold text-white">Calendar foundation</p>
+            <p className="font-semibold text-white">Ordyn rhythm</p>
             <span className="rounded-full bg-emerald-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-300">
               Calendar
             </span>

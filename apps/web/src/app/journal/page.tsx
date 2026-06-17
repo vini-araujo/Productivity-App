@@ -364,7 +364,7 @@ export default function JournalPage() {
   const editorLabel = view === "entry" ? "Past entry" : "Today";
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-4xl px-4 py-6 sm:px-8 sm:py-10">
+    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">
       <header className="flex items-center justify-between gap-4">
         <div>
           <Link
@@ -372,7 +372,7 @@ export default function JournalPage() {
             href="/"
             onClick={(event) => void leaveJournal(event, "/")}
           >
-            Discipline App
+            Ordyn Life
           </Link>
           <h1 className="mt-2 text-4xl font-semibold tracking-[-0.04em] text-white">
             Journal

@@ -1,6 +1,6 @@
-# Discipline App - Agent Instructions
+# Ordyn Life - Agent Instructions
 
-This repository contains **Discipline App**, a production-style productivity,
+This repository contains **Ordyn Life**, a production-style productivity,
 routine, fitness, and self-improvement web application.
 
 The app is being built incrementally as a portfolio-quality full-stack project.
@@ -12,7 +12,7 @@ repository.
 
 ## 1. Project Identity
 
-- Application name: **Discipline App**
+- Application name: **Ordyn Life**
 - Existing local workspace directory name: **Productivity App**
 - Do not rename the local workspace directory unless explicitly asked.
 - The current milestone is **Milestone 8: Calendar**.
@@ -144,9 +144,9 @@ Productivity App/
 `-- README.md
 ```
 
-Do not create a nested `discipline-app/` directory. Initialize Git at the
-current workspace root if needed. Do not create a commit unless explicitly
-asked.
+Do not create a nested `ordyn-life/` or other application directory. Initialize
+Git at the current workspace root if needed. Do not create a commit unless
+explicitly asked.
 
 ## 6. Documentation Standards
 

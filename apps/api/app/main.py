@@ -15,10 +15,10 @@ from app.modules.workouts.router import router as workouts_router
 
 
 def create_app() -> FastAPI:
-    """Create and configure the Discipline App API."""
+    """Create and configure the Ordyn Life API."""
     application = FastAPI(
-        title="Discipline App API",
-        description="API for the Discipline App modular monolith.",
+        title="Ordyn Life API",
+        description="API for the Ordyn Life modular monolith.",
         version="0.1.0",
     )
     application.add_middleware(

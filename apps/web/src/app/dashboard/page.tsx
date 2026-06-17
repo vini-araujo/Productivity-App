@@ -145,7 +145,7 @@ export default function DashboardPage() {
             className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300"
             href="/"
           >
-            Discipline App
+            Ordyn Life
           </Link>
           <h1 className="mt-2 text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
             Today

@@ -1,4 +1,4 @@
-# Discipline App Web
+# Ordyn Life Web
 
 This directory contains the mobile-first Next.js frontend.
 

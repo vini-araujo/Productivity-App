@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-Discipline App contains several product areas but is developed and operated by
+Ordyn Life contains several product areas but is developed and operated by
 one developer. Independent services would add deployment, networking, and data
 consistency overhead before those costs solve a real problem.
 

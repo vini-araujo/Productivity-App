@@ -73,13 +73,13 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-3xl px-6 py-12 sm:px-10">
+    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">
       <header className="flex items-center justify-between gap-4">
         <Link
           className="font-semibold text-emerald-300 hover:text-emerald-200"
           href="/"
         >
-          Discipline App
+          Ordyn Life
         </Link>
         <div className="flex items-center gap-3">
           <Link
@@ -104,7 +104,7 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <section className="mt-12 rounded-3xl border border-slate-800 bg-slate-900/80 p-7 shadow-2xl shadow-emerald-950/30 sm:p-9">
+      <section className="mx-auto mt-12 w-full max-w-3xl rounded-3xl border border-slate-800 bg-slate-900/80 p-7 shadow-2xl shadow-emerald-950/30 sm:p-9">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
           Protected profile
         </p>
@@ -132,7 +132,7 @@ export default function ProfilePage() {
               className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               maxLength={80}
               onChange={(event) => setDisplayName(event.target.value)}
-              placeholder="How should Discipline App address you?"
+              placeholder="How should Ordyn Life address you?"
               type="text"
               value={displayName}
             />

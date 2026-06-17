@@ -1,12 +1,14 @@
-# Productivity App
+# Ordyn Life
 
-Productivity App is a planned productivity, routine, fitness, and
-self-improvement platform. It will bring tasks, journaling, gym tracking, and
-personal progress into one mobile-first application.
+Ordyn Life is a planned productivity, routine, fitness, and self-improvement
+platform. It will bring tasks, journaling, gym tracking, running, and personal
+progress into one mobile-first application.
 
 This repository is a portfolio-quality full-stack project built incrementally.
 Each milestone should produce a small, tested, documented, and reviewable
 improvement.
+
+The local workspace directory remains `Productivity App/`.
 
 ## Current Status
 
@@ -22,7 +24,7 @@ tasks, workouts, runs, and journal entries before backend deployment.
 
 ## Architecture
 
-Productivity App uses a modular monolith:
+Ordyn Life uses a modular monolith:
 
 - One Next.js frontend organized by feature.
 - One FastAPI backend divided into internal feature modules.

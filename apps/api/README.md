@@ -1,4 +1,4 @@
-# Discipline App API
+# Ordyn Life API
 
 This directory contains the FastAPI modular monolith.
 

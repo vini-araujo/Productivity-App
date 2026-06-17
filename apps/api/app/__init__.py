@@ -1,1 +1,1 @@
-"""Discipline App API package."""
+"""Ordyn Life API package."""

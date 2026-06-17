@@ -95,6 +95,9 @@ The local endpoints are:
 See [docs/local-development.md](docs/local-development.md) for the current setup
 contract and planned commands.
 
+For possible next product and engineering slices, see
+[docs/implementation-options.md](docs/implementation-options.md).
+
 ## Milestone 7 Boundary
 
 Implemented now:

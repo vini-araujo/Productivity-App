@@ -2,8 +2,10 @@
 
 This directory contains the FastAPI modular monolith.
 
-Milestone 7 adds private manual run logging and latest-run dashboard status to
+Milestone 7 added private manual run logging and latest-run dashboard status to
 the authenticated task, profile, gym, journal, and dashboard foundation.
+Milestone 8 adds a protected read-only calendar aggregation API before backend
+deployment.
 
 Future feature modules follow:
 
@@ -33,3 +35,4 @@ Workout plans, sessions, and sets are available under `/api/v1/workouts`.
 Daily journal entries are available under `/api/v1/journal/entries`.
 The daily dashboard snapshot is available at `/api/v1/dashboard`.
 Running history is available under `/api/v1/runs`.
+Calendar aggregation is available at `/api/v1/calendar`.

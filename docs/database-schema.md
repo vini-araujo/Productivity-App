@@ -3,7 +3,9 @@
 ## Status
 
 The production database is Supabase PostgreSQL. Alembic is the schema source
-of truth. Milestone 7 adds user-owned run sessions after journal entries.
+of truth. Milestone 7 added user-owned run sessions after journal entries.
+Milestone 8 Calendar is a read-only aggregation feature and does not add a new
+persistence table.
 
 Alembic will be the source of truth for schema changes beginning when the first
 persisted feature is implemented.
@@ -30,9 +32,9 @@ authenticated user identifier, including reads, updates, and deletes.
 | `workout_sessions` | Generated gym workout sessions (implemented) | 4 |
 | `workout_sets` | Sets recorded within sessions (implemented) | 4 |
 | `journal_entries` | Dated journal entries (implemented) | 5 |
-| `notes` | General notes and tags | 9 |
+| `notes` | General notes and tags | 10 |
 | `run_sessions` | Running activity records (implemented) | 7 |
-| `integration_accounts` | Future provider connections | 10 |
+| `integration_accounts` | Future provider connections | 11 |
 
 ## Planned Relationships
 
@@ -127,3 +129,11 @@ the application data boundary.
 
 Pace is calculated from distance and duration rather than persisted. RLS is
 enabled as defense in depth; FastAPI remains the application data boundary.
+
+## Calendar
+
+Calendar is intentionally not represented by its own table in Milestone 8. It
+reads existing user-owned task due dates, workout session timestamps, run
+session timestamps, and journal entry dates through FastAPI-scoped queries.
+Standalone events, recurrence rules, reminders, and external calendar sync
+remain future behavior.

@@ -2,8 +2,10 @@
 
 ## Current Status
 
-Milestone 7 builds private manual run logging on the runnable authentication,
-profile, task, gym, journal, and dashboard foundations.
+Milestone 7 completed private manual run logging on the runnable
+authentication, profile, task, gym, journal, and dashboard foundations.
+Milestone 8 adds a protected calendar view over those existing workflows before
+backend deployment.
 
 ## Prerequisites
 
@@ -37,7 +39,7 @@ files when configuration overrides are needed:
 
 Never commit secrets. The Supabase publishable key is intentionally public and
 may be used by the frontend. The Supabase service-role key is optional,
-server-side only, and is not required by Milestone 7.
+server-side only, and is not required by Milestone 8.
 
 For `apps/web/.env.local`, configure:
 

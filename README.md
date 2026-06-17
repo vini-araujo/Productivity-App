@@ -10,13 +10,15 @@ improvement.
 
 ## Current Status
 
-**Milestone 7: Running**
+**Milestone 8: Calendar**
 
 Milestone 3 completed the first product workflow: authenticated users can
 manage their own tasks through the protected FastAPI API. Milestone 4 added
 plan-first gym logging, and Milestone 5 added a private daily journal.
 Milestone 6 added one protected daily overview across tasks, training, and
-journaling. Milestone 7 adds private manual run logging and history.
+journaling. Milestone 7 added private manual run logging and history.
+Milestone 8 adds a protected, read-only calendar view across existing
+tasks, workouts, runs, and journal entries before backend deployment.
 
 ## Architecture
 
@@ -70,7 +72,7 @@ infra/             Future infrastructure documentation
 | 5 | Journal |
 | 6 | Dashboard aggregation |
 | 7 | Running |
-| 8 | Static frontend deployment |
+| 8 | Calendar aggregation |
 | 9 | Containerized backend deployment |
 | 10 | Notes |
 | 11 | Future integrations |
@@ -98,7 +100,7 @@ contract and planned commands.
 For possible next product and engineering slices, see
 [docs/implementation-options.md](docs/implementation-options.md).
 
-## Milestone 7 Boundary
+## Current Product Boundary
 
 Implemented now:
 
@@ -117,8 +119,12 @@ Implemented now:
 - Mobile-first overview of next tasks, workout status, and today's journal
 - Private manual run logging with editable and deletable history
 - Automatically calculated running pace and latest-run dashboard status
+- Static frontend deployment to AWS S3 and CloudFront with Cloudflare DNS
+- A protected calendar page and API that aggregate existing user-owned tasks,
+  workouts, runs, and journal entries
+- Links from calendar items back to the owning feature pages
 
 Advanced workout analytics, coaching, timers, recurring tasks, reminders,
 streaks, scoring, charts, GPS routes, Strava integration, running plans, mood
-tracking, journal tags, rich text, translated UI copy, real cloud resources,
+tracking, journal tags, rich text, translated UI copy, backend deployment,
 deployment automation, and secrets remain intentionally unimplemented.

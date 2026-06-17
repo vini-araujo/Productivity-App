@@ -15,12 +15,12 @@ repository.
 - Application name: **Discipline App**
 - Existing local workspace directory name: **Productivity App**
 - Do not rename the local workspace directory unless explicitly asked.
-- The current milestone is **Milestone 7: Running**.
-- Milestone 7 establishes private manual run logging, history, and dashboard
-  status.
+- The current milestone is **Milestone 8: Calendar**.
+- Milestone 8 establishes a protected, read-only calendar view over existing
+  tasks, gym workouts, runs, and journal entries before backend deployment.
 
 The planned product includes tasks, journaling, notes, gym and running workout
-tracking, a dashboard, and future calendar, Strava, and possible AI
+tracking, a dashboard, calendar, and future Strava and possible AI
 integrations.
 
 ## 2. Architecture Decision
@@ -72,20 +72,23 @@ S3 can host the static frontend only. S3 cannot host the FastAPI backend.
 
 ## 4. Current Milestone Rules
 
-Milestone 7 may create:
+Milestone 8 may create:
 
-- An incremental `run_sessions` table and Alembic migration
-- Protected run CRUD and paginated history APIs
-- The running module router, service, repository, schemas, models, and tests
-- A mobile-first manual run log with calculated pace
-- Latest-run dashboard aggregation
-- Focused validation, ownership, API, and migration tests
+- A protected read-only calendar aggregation endpoint
+- A calendar module router, service, repository, schemas, and tests
+- A mobile-first calendar page with month/list navigation
+- Normalized calendar item responses for tasks, workouts, runs, and journal
+  entries
+- Links from calendar items back to their owning feature workflows
+- Date-range validation and ownership tests
 
-Milestone 7 must not create:
+Milestone 8 must not create:
 
-- GPS tracking, route maps, Strava integration, training plans, coaching,
-  advanced analytics, or personal-record automation
-- Notes, deployment, or integrations behavior
+- Google Calendar integration, external OAuth, calendar sync, recurring events,
+  reminders, notifications, drag-and-drop scheduling, or event invitations
+- A separate persisted calendar events table or independent calendar CRUD
+- Mutations that bypass the owning task, workout, running, or journal modules
+- Notes, backend deployment, or integrations behavior
 - Direct frontend database access through the Supabase Data API
 - Supabase service-role key dependencies
 - Real deployment resources, secrets, tokens, or populated environment values
@@ -102,7 +105,7 @@ Productivity App/
 |   |   |-- src/
 |   |   |   |-- app/
 |   |   |   |-- components/{ui,layout,forms,charts,navigation}/
-|   |   |   |-- features/{dashboard,tasks,workouts,journal,notes,running}/
+|   |   |   |-- features/{calendar,dashboard,tasks,workouts,journal,notes,running}/
 |   |   |   |-- hooks/
 |   |   |   |-- lib/
 |   |   |   |-- types/
@@ -115,7 +118,7 @@ Productivity App/
 |       |   |-- main.py
 |       |   |-- core/
 |       |   |-- shared/
-|       |   `-- modules/{users,tasks,workouts,journal,notes,running,integrations}/
+|       |   `-- modules/{users,tasks,workouts,journal,notes,running,calendar,integrations}/
 |       |-- alembic/
 |       |-- .env.example
 |       `-- README.md
@@ -212,7 +215,8 @@ Supabase Auth login
 
 - Use PostgreSQL with Supabase as the production provider.
 - Use Alembic for all application schema migrations.
-- Milestone 7 adds user-owned run sessions incrementally after journal entries.
+- Milestone 8 adds no new persistence tables; it reads existing user-owned
+  task, workout, run, and journal data through backend-scoped queries.
 - Every user-owned table must include `user_id`.
 - Exercise catalog rows use nullable `user_id`: null identifies a shared
   built-in exercise, while a populated value identifies a user-owned custom
@@ -221,6 +225,8 @@ Supabase Auth login
   exercise queries and mutations must be scoped by authenticated `user_id`.
 - Planned tables include profiles, tasks, journal entries, notes, exercises,
   workout sessions and sets, run sessions, and integration accounts.
+- Calendar views should aggregate existing tables unless a future milestone
+  explicitly introduces standalone event behavior.
 - Implement tables incrementally rather than all at once.
 
 ## 10. Frontend Guardrails
@@ -232,7 +238,7 @@ The UI should be mobile-first:
 
 - Desktop: sidebar navigation and main content
 - Mobile: bottom navigation and full-width pages
-- Suggested mobile navigation: Dashboard, Tasks, Gym, Journal, More
+- Suggested mobile navigation: Dashboard, Tasks, Calendar, Gym, More
 
 Avoid placing business logic directly inside page components.
 
@@ -296,17 +302,17 @@ format, build, migrations, and backend Docker builds should work.
 
 ## 15. Verification Requirements
 
-For Milestone 7:
+For Milestone 8:
 
 1. Run frontend lint, typecheck, formatting check, and static production build.
 2. Run backend Ruff checks, formatting check, pytest, and migration checks.
 3. Confirm protected endpoints reject missing or invalid bearer tokens.
-4. Confirm every run operation and dashboard aggregate scopes ownership by
-   validated JWT subject.
+4. Confirm every calendar aggregate scopes ownership by validated JWT subject
+   and never accepts frontend-supplied ownership.
 5. Search repository files for accidental credentials or populated secrets.
 6. Build and health-check the backend container when Docker is available.
-7. Verify the run migration and workflow against real Supabase data locally
-   only after ignored environment files are configured.
+7. Verify the local calendar workflow against real Supabase data only after
+   ignored environment files are configured.
 
 ## 16. Incremental Development Rule
 
@@ -333,7 +339,7 @@ Do not jump ahead or implement future features unless explicitly asked.
 - Milestone 5: journal
 - Milestone 6: dashboard aggregation
 - Milestone 7: running
-- Milestone 8: frontend deployment to S3, CloudFront, and Cloudflare
+- Milestone 8: calendar aggregation
 - Milestone 9: backend container deployment
 - Milestone 10: notes
 - Milestone 11: future integrations
@@ -359,14 +365,15 @@ After editing:
 - Mention anything that could not be verified.
 - Recommend the next small milestone.
 
-## 19. Definition of Done for Milestone 7
+## 19. Definition of Done for Milestone 8
 
-Milestone 7 is complete when authenticated users can manually log, edit,
-review, and delete only their own runs, see calculated pace, and view their
-latest run on the dashboard. The incremental migration must apply to Supabase
-PostgreSQL, tests and CI checks must pass, and documentation must match the
-implemented workflow.
+Milestone 8 is complete when authenticated users can view a calendar range that
+combines only their own task due dates, workout sessions, run sessions, and
+journal entries, with clear links back to each source workflow. The feature
+must use backend JWT ownership, tests and CI checks must pass, and documentation
+must match the implemented workflow.
 
-Milestone 7 is not complete if run ownership can be supplied by the frontend,
-cross-user access is possible, secrets are committed, or advanced running and
-integration features are added.
+Milestone 8 is not complete if ownership can be supplied by the frontend,
+cross-user access is possible, secrets are committed, standalone event CRUD is
+added, or external calendar integrations, reminders, recurrence, or scheduling
+automation are introduced.

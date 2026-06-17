@@ -5,7 +5,8 @@
 Planned. The FastAPI backend is Dockerized and CI builds the image, but
 `api.ordynlife.com` is not deployed yet. This plan defines the backend
 deployment milestone without creating cloud resources, credentials, or
-deployment automation.
+deployment automation. Milestone 8 Calendar is completed before this backend
+deployment milestone begins.
 
 ## Current Backend Shape
 
@@ -14,7 +15,8 @@ deployment automation.
 - Local container runner: root `docker-compose.yml`
 - Health probes: `GET /health` and `GET /ready`
 - Protected routes: `/api/v1/me`, `/api/v1/tasks`, `/api/v1/workouts`,
-  `/api/v1/journal/entries`, `/api/v1/runs`, and `/api/v1/dashboard`
+  `/api/v1/journal/entries`, `/api/v1/runs`, `/api/v1/dashboard`, and
+  `/api/v1/calendar`
 - Database migrations: Alembic in `apps/api/alembic`
 - Auth: Supabase JWT validation through JWKS
 
@@ -33,7 +35,7 @@ upgrade path if the app needs more infrastructure control.
 
 ```mermaid
 flowchart LR
-    Browser[ordynlife.com static frontend]
+    Browser[app.ordynlife.com static frontend]
     Browser --> Cloudflare[Cloudflare DNS]
     Cloudflare --> APIHost[api.ordynlife.com]
     APIHost --> AppRunner[AWS App Runner: FastAPI container]
@@ -105,7 +107,7 @@ Backend production runtime:
 
 ```text
 ENVIRONMENT=production
-CORS_ALLOWED_ORIGINS=["https://ordynlife.com","https://www.ordynlife.com"]
+CORS_ALLOWED_ORIGINS=["https://app.ordynlife.com"]
 DATABASE_URL=<supabase-postgres-or-session-pooler-url>
 SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_JWKS_URL=
@@ -153,8 +155,7 @@ use `*`.
 Minimum production origins:
 
 ```text
-https://ordynlife.com
-https://www.ordynlife.com
+https://app.ordynlife.com
 ```
 
 Keep `http://localhost:3000` only in local and staging configuration. Add any
@@ -162,9 +163,9 @@ preview domain explicitly if a hosted preview environment is introduced.
 
 Supabase Auth settings must also include the deployed frontend URLs:
 
-- Site URL: `https://ordynlife.com`
-- Redirect URLs: `https://ordynlife.com/login`,
-  `https://www.ordynlife.com/login`, and local development redirects as needed.
+- Site URL: `https://app.ordynlife.com`
+- Redirect URLs: `https://app.ordynlife.com/login` and local development
+  redirects as needed.
 
 ## Migration Strategy
 
@@ -218,7 +219,7 @@ curl -i https://api.ordynlife.com/ready
 curl -i https://api.ordynlife.com/api/v1/me
 curl -i -H "Authorization: Bearer invalid" https://api.ordynlife.com/api/v1/me
 curl -i -X OPTIONS https://api.ordynlife.com/api/v1/me \
-  -H "Origin: https://ordynlife.com" \
+  -H "Origin: https://app.ordynlife.com" \
   -H "Access-Control-Request-Method: GET" \
   -H "Access-Control-Request-Headers: authorization"
 ```
@@ -229,17 +230,17 @@ Expected results:
 - `/ready` returns `200` only when required runtime config is present and the
   database responds.
 - Missing and invalid bearer tokens return `401`.
-- CORS preflight from `https://ordynlife.com` returns an
+- CORS preflight from `https://app.ordynlife.com` returns an
   `access-control-allow-origin` value for that exact origin.
 - A valid Supabase access token can read `/api/v1/me`.
-- Authenticated task, workout, journal, running, and dashboard requests remain
-  scoped to the JWT subject and cannot read another user's data.
+- Authenticated task, workout, journal, running, dashboard, and calendar
+  requests remain scoped to the JWT subject and cannot read another user's data.
 
 Post-deployment:
 
 - Frontend production build uses `NEXT_PUBLIC_API_URL=https://api.ordynlife.com`.
 - Browser login works through Supabase Auth from the deployed frontend.
-- Dashboard and running workflows work from the deployed frontend.
+- Dashboard, running, and calendar workflows work from the deployed frontend.
 - CloudWatch alarms or manual checks cover App Runner service health, custom
   domain health, and 5xx responses.
 - AWS Budgets alert is configured for the expected monthly ceiling.

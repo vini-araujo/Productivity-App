@@ -8,7 +8,7 @@ UV ?= uv
 	docker-up docker-down
 
 help:
-	@echo "Discipline App - Milestone 7 commands"
+	@echo "Discipline App - Milestone 8 commands"
 	@echo ""
 	@echo "  make setup        Install locked frontend and backend dependencies"
 	@echo "  make dev          Run frontend and backend"
@@ -66,10 +66,10 @@ build-web:
 	cd apps/web && $(NPM) run build
 
 migrate:
-	cd apps/api && $(UV) run alembic upgrade head
+	cd apps/api && $(UV) run python -m alembic upgrade head
 
 migration-check:
-	cd apps/api && $(UV) run alembic check
+	cd apps/api && $(UV) run python -m alembic check
 
 docker-build:
 	docker compose build api

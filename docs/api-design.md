@@ -2,9 +2,11 @@
 
 ## Status
 
-Milestone 7 implements system probes, protected profiles, task CRUD, plan-first
+Milestone 7 implemented system probes, protected profiles, task CRUD, plan-first
 gym workout logging, private daily journaling, a protected daily dashboard, and
-private running history. Other product feature endpoints remain planned.
+private running history. Milestone 8 adds a protected read-only calendar
+aggregation endpoint before backend deployment. Other product feature endpoints
+remain planned.
 
 ## Conventions
 
@@ -29,11 +31,12 @@ and repositories perform persistence operations.
 | Journal | Daily entries and history at `/api/v1/journal/entries` (implemented) |
 | Workouts | Plans, exercises, sessions, and sets under `/api/v1/workouts` (implemented) |
 | Dashboard | `GET /api/v1/dashboard` daily snapshot (implemented) |
+| Calendar | `GET /api/v1/calendar` range snapshot (implemented) |
 | Notes | CRUD at `/api/v1/notes` |
 | Running | CRUD at `/api/v1/runs` (implemented) |
 
-Tasks, profile, workouts, journal, dashboard, and running are implemented before
-notes and integrations.
+Tasks, profile, workouts, journal, dashboard, and running are implemented.
+Calendar is implemented before backend deployment, notes, and integrations.
 
 ## Dashboard
 
@@ -42,6 +45,23 @@ the authenticated user's open-task count and next tasks, active and latest
 completed workouts, journal status for the browser's local calendar date, and
 latest run. Ownership always comes from the validated JWT subject. The
 dashboard adds no new persistence and performs no cross-feature mutations.
+
+## Calendar
+
+`GET /api/v1/calendar?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` returns a
+read-only range of normalized calendar items for the authenticated user. The
+calendar aggregates existing user-owned records:
+
+- Open and completed tasks by `due_at`
+- Workout sessions by `started_at` or `completed_at`
+- Run sessions by `started_at`
+- Journal entries by `entry_date`
+
+Calendar responses include the source type, source identifier, title, date,
+optional timestamp, status, detail, and a frontend route back to the owning
+workflow. The endpoint does not create a separate event table, mutate source
+records, accept frontend-supplied ownership, or integrate with external
+calendar providers. Date ranges are inclusive and capped at 62 days.
 
 ## Running
 

@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.system import router as system_router
+from app.modules.calendar.router import router as calendar_router
 from app.modules.dashboard.router import router as dashboard_router
 from app.modules.journal.router import router as journal_router
 from app.modules.running.router import router as running_router
@@ -34,6 +35,7 @@ def create_app() -> FastAPI:
     application.include_router(journal_router)
     application.include_router(running_router)
     application.include_router(dashboard_router)
+    application.include_router(calendar_router)
     return application
 
 

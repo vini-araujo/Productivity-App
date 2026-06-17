@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  milestone-zero-placeholder:
+  deployment-placeholder:
     runs-on: ubuntu-latest
     steps:
       - name: Explain future workflow
-        run: echo "Static frontend deployment will be activated in Milestone 8."
+        run: echo "Automated static frontend deployment remains a future hardening task."

@@ -2,8 +2,9 @@
 
 ## Current State
 
-Milestone 7 adds user-owned running activity through the existing authenticated
-modular-monolith boundary and extends the dashboard's read-only aggregation.
+Milestone 7 added user-owned running activity through the existing
+authenticated modular-monolith boundary. Milestone 8 adds Calendar as a second
+read-only aggregation boundary before backend deployment.
 
 ## System Context
 
@@ -20,9 +21,9 @@ flowchart LR
 ## Modular Monolith
 
 The backend is one deployable FastAPI application with modules for users,
-tasks, workouts, journal, notes, running, and integrations. A modular monolith
-keeps deployment and operations simple while providing clear ownership
-boundaries inside the codebase.
+tasks, workouts, journal, running, calendar, notes, and integrations. A modular
+monolith keeps deployment and operations simple while providing clear
+ownership boundaries inside the codebase.
 
 Each active module will use:
 
@@ -44,9 +45,9 @@ Modules may share narrowly scoped infrastructure from `app/core` and reusable
 application utilities from `app/shared`. Modules should not bypass service
 boundaries to manipulate another module's persistence directly.
 
-The dashboard is the intentional read-only aggregation boundary. Its repository
-queries existing user-owned feature tables, while mutations remain inside
-their owning task, workout, journal, and running modules.
+The dashboard and calendar are intentional read-only aggregation boundaries.
+Their repositories query existing user-owned feature tables, while mutations
+remain inside their owning task, workout, journal, and running modules.
 
 ## Frontend Organization
 
@@ -71,7 +72,7 @@ a Supabase service-role key.
 
 ## Deployment Shape
 
-The frontend is planned as a static Next.js export hosted in S3 behind
-CloudFront and Cloudflare. The backend is a Dockerized FastAPI service planned
-for AWS App Runner to keep the first production deployment low-cost and
-low-ops. Supabase provides hosted PostgreSQL and authentication.
+The frontend is a static Next.js export hosted in S3 behind CloudFront and
+Cloudflare. The backend is a Dockerized FastAPI service planned for AWS App
+Runner to keep the first production deployment low-cost and low-ops. Supabase
+provides hosted PostgreSQL and authentication.

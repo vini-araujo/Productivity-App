@@ -2,9 +2,12 @@
 
 ## Status
 
-Cloud deployment is planned but not active. Milestone 2 includes a backend
+Cloud deployment is planned but not active. The repository includes a backend
 Dockerfile, a local Compose service, Alembic migrations, and CI image-build
 validation. No cloud resources, credentials, or automated deployments exist.
+
+The concrete backend deployment plan for `api.ordynlife.com` is documented in
+[backend-deployment-plan.md](backend-deployment-plan.md).
 
 ## Option A
 
@@ -29,9 +32,11 @@ static hosting decision.
 
 ### Backend
 
-FastAPI runs in a Docker container locally. A later milestone will choose
-between ECS/Fargate and Elastic Beanstalk based on cost, learning value, and
-operational complexity.
+FastAPI runs in a Docker container locally. The planned production target for
+`api.ordynlife.com` is AWS App Runner, chosen as the first backend host because
+it avoids running a separate Application Load Balancer and keeps operations
+small for low portfolio traffic. ECS/Fargate remains a future upgrade path if
+the app needs more infrastructure control.
 
 S3 cannot execute the backend.
 

@@ -42,7 +42,7 @@ preserving clear module boundaries. See [docs/architecture.md](docs/architecture
 | Local infrastructure | Docker Compose |
 | CI/CD | GitHub Actions |
 | Frontend deployment | AWS S3, CloudFront, Cloudflare |
-| Backend deployment | Docker on AWS ECS/Fargate or Elastic Beanstalk |
+| Backend deployment | Docker on AWS App Runner |
 
 S3 will host only the statically exported frontend. The FastAPI backend must run
 in a container-capable service.
@@ -69,10 +69,11 @@ infra/             Future infrastructure documentation
 | 4 | Gym workout tracking |
 | 5 | Journal |
 | 6 | Dashboard aggregation |
-| 7 | Static frontend deployment |
-| 8 | Containerized backend deployment |
-| 9 | Notes and running |
-| 10 | Future integrations |
+| 7 | Running |
+| 8 | Static frontend deployment |
+| 9 | Containerized backend deployment |
+| 10 | Notes |
+| 11 | Future integrations |
 
 ## Local Development
 

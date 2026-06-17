@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Explain future workflow
-        run: echo "Containerized backend deployment will be activated in Milestone 8."
+        run: echo "Containerized backend deployment will be activated in Milestone 9."

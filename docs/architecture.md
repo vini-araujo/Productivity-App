@@ -72,6 +72,6 @@ a Supabase service-role key.
 ## Deployment Shape
 
 The frontend is planned as a static Next.js export hosted in S3 behind
-CloudFront and Cloudflare. The backend is a Dockerized FastAPI service deployed
-later to ECS/Fargate or Elastic Beanstalk. Supabase provides hosted PostgreSQL
-and authentication.
+CloudFront and Cloudflare. The backend is a Dockerized FastAPI service planned
+for AWS App Runner to keep the first production deployment low-cost and
+low-ops. Supabase provides hosted PostgreSQL and authentication.

@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Explain future workflow
-        run: echo "Static frontend deployment will be activated in Milestone 7."
+        run: echo "Static frontend deployment will be activated in Milestone 8."

@@ -41,7 +41,7 @@ dev-api:
 test: test-api
 
 test-api:
-	cd apps/api && $(UV) run pytest
+	cd apps/api && $(UV) run python -m pytest
 
 lint: lint-web lint-api
 

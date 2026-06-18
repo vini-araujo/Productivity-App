@@ -169,11 +169,11 @@ export default function CalendarPage() {
   const selectedDays = Object.entries(groupedItems);
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-5 py-8 sm:px-10 sm:py-12">
+    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">
       <header className="flex items-center justify-between gap-4">
         <div>
           <Link className="text-sm font-semibold text-emerald-300" href="/">
-            Discipline App
+            Ordyn Life
           </Link>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight text-white">
             Calendar

@@ -9,6 +9,7 @@ import type {
   DashboardSnapshot,
   DashboardTask,
 } from "@/features/dashboard/types";
+import { customerError } from "@/lib/errors";
 
 function localDateValue(): string {
   const now = new Date();
@@ -121,11 +122,7 @@ export default function DashboardPage() {
           window.location.assign("/login");
           return;
         }
-        setError(
-          caughtError instanceof Error
-            ? caughtError.message
-            : "Could not load dashboard.",
-        );
+        setError(customerError(caughtError, "Could not load your dashboard."));
       })
       .finally(() => {
         if (active) {
@@ -147,7 +144,7 @@ export default function DashboardPage() {
           >
             Ordyn Life
           </Link>
-          <h1 className="mt-2 text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
+          <h1 className="mt-2 text-4xl font-semibold text-white sm:text-5xl">
             Today
           </h1>
           <p className="mt-2 text-sm text-slate-400">
@@ -155,7 +152,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <Link
-          className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
           href="/profile"
         >
           Profile
@@ -164,7 +161,7 @@ export default function DashboardPage() {
 
       <FeatureTabs current="dashboard" />
 
-      <section className="mt-7 rounded-2xl border border-slate-800 px-5 py-5">
+      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 px-5 py-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
           Your daily overview
         </p>
@@ -175,20 +172,25 @@ export default function DashboardPage() {
       </section>
 
       {error ? (
-        <p className="mt-5 rounded-xl border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
+        <p className="mt-5 rounded-md border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
           {error}
         </p>
       ) : null}
 
       {isLoading ? (
-        <p className="mt-8 rounded-2xl border border-dashed border-slate-700 px-5 py-12 text-center text-sm text-slate-400">
-          Gathering your day...
-        </p>
+        <div className="mt-8 rounded-lg border border-dashed border-slate-700 px-5 py-12 text-center">
+          <p className="text-sm font-semibold text-white">
+            Gathering your day...
+          </p>
+          <p className="mt-2 text-sm text-slate-400">
+            Loading tasks, training, runs, and journal status.
+          </p>
+        </div>
       ) : snapshot ? (
         <>
           <section className="mt-7 grid gap-4 sm:grid-cols-3">
             <Link
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-0.5 hover:border-emerald-300"
+              className="rounded-lg border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-0.5 hover:border-emerald-300"
               href="/tasks"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
@@ -204,7 +206,7 @@ export default function DashboardPage() {
               </p>
             </Link>
             <Link
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-0.5 hover:border-emerald-300"
+              className="rounded-lg border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-0.5 hover:border-emerald-300"
               href="/gym"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
@@ -224,7 +226,7 @@ export default function DashboardPage() {
               </p>
             </Link>
             <Link
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-0.5 hover:border-emerald-300"
+              className="rounded-lg border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-0.5 hover:border-emerald-300"
               href="/journal"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
@@ -244,7 +246,7 @@ export default function DashboardPage() {
           </section>
 
           <section className="mt-7 grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
-            <article className="rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
+            <article className="rounded-lg border border-slate-800 bg-slate-900 p-5 sm:p-6">
               <div className="flex items-end justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
@@ -264,13 +266,13 @@ export default function DashboardPage() {
 
               <div className="mt-5 space-y-3">
                 {snapshot.tasks.next_tasks.length === 0 ? (
-                  <p className="rounded-2xl border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
+                  <p className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
                     No open tasks. Your list is clear.
                   </p>
                 ) : (
                   snapshot.tasks.next_tasks.map((task) => (
                     <Link
-                      className="flex items-start justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-950 px-4 py-4 transition hover:border-slate-700"
+                      className="flex items-start justify-between gap-4 rounded-lg border border-slate-800 bg-slate-950 px-4 py-4 transition hover:border-slate-700"
                       href="/tasks"
                       key={task.id}
                     >
@@ -294,7 +296,7 @@ export default function DashboardPage() {
             </article>
 
             <div className="space-y-6">
-              <article className="rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
+              <article className="rounded-lg border border-slate-800 bg-slate-900 p-5 sm:p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
                   Training status
                 </p>
@@ -309,7 +311,7 @@ export default function DashboardPage() {
                       .
                     </p>
                     <Link
-                      className="mt-5 inline-flex rounded-xl bg-emerald-300 px-4 py-2 text-sm font-semibold text-slate-950"
+                      className="mt-5 inline-flex rounded-md bg-emerald-300 px-4 py-2 text-sm font-semibold text-slate-950"
                       href="/gym"
                     >
                       Continue workout
@@ -326,7 +328,7 @@ export default function DashboardPage() {
                         : "Choose a workout when you are ready."}
                     </p>
                     <Link
-                      className="mt-5 inline-flex rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+                      className="mt-5 inline-flex rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
                       href="/gym"
                     >
                       Open gym
@@ -335,7 +337,7 @@ export default function DashboardPage() {
                 )}
               </article>
 
-              <article className="rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
+              <article className="rounded-lg border border-slate-800 bg-slate-900 p-5 sm:p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
                   Latest run
                 </p>
@@ -350,7 +352,7 @@ export default function DashboardPage() {
                     : "Log your first run when you are ready."}
                 </p>
                 <Link
-                  className="mt-5 inline-flex rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+                  className="mt-5 inline-flex rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
                   href="/running"
                 >
                   {snapshot.latest_run ? "Open running history" : "Log a run"}

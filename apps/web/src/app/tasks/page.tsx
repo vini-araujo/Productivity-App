@@ -11,6 +11,7 @@ import {
   updateTask,
 } from "@/features/tasks/api";
 import type { Task, TaskFilter, TaskPriority } from "@/features/tasks/types";
+import { customerError } from "@/lib/errors";
 
 const emptyForm = {
   title: "",
@@ -60,11 +61,7 @@ export default function TasksPage() {
         window.location.assign("/login");
         return;
       }
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Could not load tasks.",
-      );
+      setError(customerError(caughtError, "Could not load your tasks."));
     } finally {
       if (generation === loadGeneration.current) {
         setIsLoading(false);
@@ -93,11 +90,7 @@ export default function TasksPage() {
           window.location.assign("/login");
           return;
         }
-        setError(
-          caughtError instanceof Error
-            ? caughtError.message
-            : "Could not load tasks.",
-        );
+        setError(customerError(caughtError, "Could not load your tasks."));
       })
       .finally(() => {
         if (active && generation === loadGeneration.current) {
@@ -137,11 +130,7 @@ export default function TasksPage() {
         await loadTasks();
       }
     } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Could not save task.",
-      );
+      setError(customerError(caughtError, "Could not save this task."));
     } finally {
       setIsSaving(false);
     }
@@ -168,11 +157,7 @@ export default function TasksPage() {
         await loadTasks();
       }
     } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Could not update task.",
-      );
+      setError(customerError(caughtError, "Could not update this task."));
     }
   }
 
@@ -189,11 +174,7 @@ export default function TasksPage() {
         await loadTasks();
       }
     } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Could not delete task.",
-      );
+      setError(customerError(caughtError, "Could not delete this task."));
     }
   }
 
@@ -207,12 +188,10 @@ export default function TasksPage() {
           >
             Ordyn Life
           </Link>
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight text-white">
-            Tasks
-          </h1>
+          <h1 className="mt-2 text-4xl font-semibold text-white">Tasks</h1>
         </div>
         <Link
-          className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
+          className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
           href="/profile"
         >
           Profile
@@ -221,7 +200,7 @@ export default function TasksPage() {
 
       <FeatureTabs current="tasks" />
 
-      <section className="mt-8 rounded-3xl border border-slate-800 bg-slate-900/80 p-5 sm:p-7">
+      <section className="mt-8 rounded-lg border border-slate-800 bg-slate-900 p-5 sm:p-7">
         <h2 className="text-xl font-semibold text-white">
           {editingId ? "Edit task" : "Add a task"}
         </h2>
@@ -232,7 +211,7 @@ export default function TasksPage() {
           <label className="block text-sm font-medium text-slate-200 md:col-span-2">
             Title
             <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               maxLength={200}
               onChange={(event) =>
                 setForm({ ...form, title: event.target.value })
@@ -244,7 +223,7 @@ export default function TasksPage() {
           <label className="block text-sm font-medium text-slate-200 md:col-span-2">
             Description
             <textarea
-              className="mt-2 min-h-24 w-full resize-y rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 min-h-24 w-full resize-y rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               maxLength={4000}
               onChange={(event) =>
                 setForm({ ...form, description: event.target.value })
@@ -255,7 +234,7 @@ export default function TasksPage() {
           <label className="block text-sm font-medium text-slate-200">
             Due date
             <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               onChange={(event) =>
                 setForm({ ...form, dueAt: event.target.value })
               }
@@ -266,7 +245,7 @@ export default function TasksPage() {
           <label className="block text-sm font-medium text-slate-200">
             Priority
             <select
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               onChange={(event) =>
                 setForm({
                   ...form,
@@ -282,7 +261,7 @@ export default function TasksPage() {
           </label>
           <div className="flex flex-wrap gap-3 md:col-span-2">
             <button
-              className="rounded-xl bg-emerald-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:opacity-60"
+              className="rounded-md bg-emerald-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:opacity-60"
               disabled={isSaving}
               type="submit"
             >
@@ -290,7 +269,7 @@ export default function TasksPage() {
             </button>
             {editingId ? (
               <button
-                className="rounded-xl border border-slate-700 px-5 py-3 font-semibold text-white"
+                className="rounded-md border border-slate-700 px-5 py-3 font-semibold text-white"
                 onClick={() => {
                   setEditingId(null);
                   setForm(emptyForm);
@@ -307,10 +286,10 @@ export default function TasksPage() {
       <section className="mt-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h2 className="text-xl font-semibold text-white">Your tasks</h2>
-          <div className="flex rounded-full border border-slate-800 bg-slate-900 p-1">
+          <div className="flex rounded-lg border border-slate-800 bg-slate-900 p-1">
             {(["open", "all", "completed"] as TaskFilter[]).map((option) => (
               <button
-                className={`rounded-full px-4 py-2 text-sm font-semibold capitalize transition ${
+                className={`rounded-md px-4 py-2 text-sm font-semibold capitalize transition ${
                   filter === option
                     ? "bg-emerald-300 text-slate-950"
                     : "text-slate-300 hover:text-white"
@@ -332,22 +311,29 @@ export default function TasksPage() {
         </div>
 
         {error ? (
-          <p className="mt-5 rounded-xl border border-rose-900 bg-rose-950/50 px-4 py-3 text-sm text-rose-200">
+          <p className="mt-5 rounded-md border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
             {error}
           </p>
         ) : null}
 
         <div className="mt-5 space-y-3">
           {isLoading ? (
-            <p className="text-slate-400">Loading tasks...</p>
+            <div className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center">
+              <p className="text-sm font-semibold text-white">
+                Loading tasks...
+              </p>
+              <p className="mt-2 text-sm text-slate-400">
+                Pulling your current task list.
+              </p>
+            </div>
           ) : tasks.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-slate-700 px-5 py-10 text-center text-slate-400">
+            <p className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center text-slate-400">
               No tasks in this view.
             </p>
           ) : (
             tasks.map((task) => (
               <article
-                className="rounded-2xl border border-slate-800 bg-slate-900/75 p-5"
+                className="rounded-lg border border-slate-800 bg-slate-900 p-5"
                 key={task.id}
               >
                 <div className="flex items-start gap-4">
@@ -426,7 +412,7 @@ export default function TasksPage() {
             </p>
             <div className="flex gap-3">
               <button
-                className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
                 disabled={offset === 0 || isLoading}
                 onClick={() => {
                   setIsLoading(true);
@@ -437,7 +423,7 @@ export default function TasksPage() {
                 Previous
               </button>
               <button
-                className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
                 disabled={offset + pageSize >= total || isLoading}
                 onClick={() => {
                   setIsLoading(true);

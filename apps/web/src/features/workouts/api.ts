@@ -1,3 +1,4 @@
+import { getApiBaseUrl } from "@/lib/api";
 import { getSupabaseClient } from "@/lib/supabase";
 
 import type {
@@ -8,14 +9,14 @@ import type {
   WorkoutSet,
 } from "./types";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const apiUrl = getApiBaseUrl();
 
 function errorDetail(detail: unknown): string {
   if (typeof detail === "string") {
     return detail;
   }
   if (!Array.isArray(detail)) {
-    return "Workout request failed";
+    return "Could not update your workouts";
   }
 
   const messages = detail.flatMap((item) => {
@@ -37,7 +38,9 @@ function errorDetail(detail: unknown): string {
     ];
   });
 
-  return messages.length > 0 ? messages.join("; ") : "Workout request failed";
+  return messages.length > 0
+    ? messages.join("; ")
+    : "Could not update your workouts";
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {

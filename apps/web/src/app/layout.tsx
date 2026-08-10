@@ -6,8 +6,26 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ordyn Life",
-  description: "A focused workspace for better daily systems.",
+  metadataBase: new URL("https://app.ordynlife.com"),
+  applicationName: "Ordyn Life",
+  title: {
+    default: "Ordyn Life",
+    template: "%s | Ordyn Life",
+  },
+  description:
+    "A private productivity workspace for tasks, training, running, journaling, and calendar planning.",
+  openGraph: {
+    title: "Ordyn Life",
+    description:
+      "A private productivity workspace for tasks, training, running, journaling, and calendar planning.",
+    siteName: "Ordyn Life",
+    type: "website",
+    url: "https://app.ordynlife.com",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 type RootLayoutProps = Readonly<{

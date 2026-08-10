@@ -11,6 +11,7 @@ import {
   updateRun,
 } from "@/features/running/api";
 import type { Run } from "@/features/running/types";
+import { customerError } from "@/lib/errors";
 
 const pageSize = 20;
 
@@ -76,11 +77,7 @@ export default function RunningPage() {
         window.location.assign("/login");
         return;
       }
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Could not load runs.",
-      );
+      setError(customerError(caughtError, "Could not load your runs."));
     } finally {
       if (generation === loadGeneration.current) {
         setIsLoading(false);
@@ -109,11 +106,7 @@ export default function RunningPage() {
           window.location.assign("/login");
           return;
         }
-        setError(
-          caughtError instanceof Error
-            ? caughtError.message
-            : "Could not load runs.",
-        );
+        setError(customerError(caughtError, "Could not load your runs."));
       })
       .finally(() => {
         if (active && generation === loadGeneration.current) {
@@ -149,11 +142,7 @@ export default function RunningPage() {
         await loadRuns();
       }
     } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Could not save run.",
-      );
+      setError(customerError(caughtError, "Could not save this run."));
     } finally {
       setIsSaving(false);
     }
@@ -182,11 +171,7 @@ export default function RunningPage() {
         await loadRuns();
       }
     } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Could not delete run.",
-      );
+      setError(customerError(caughtError, "Could not delete this run."));
     }
   }
 
@@ -197,12 +182,10 @@ export default function RunningPage() {
           <Link className="text-sm font-semibold text-emerald-300" href="/">
             Ordyn Life
           </Link>
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight text-white">
-            Running
-          </h1>
+          <h1 className="mt-2 text-4xl font-semibold text-white">Running</h1>
         </div>
         <Link
-          className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
           href="/profile"
         >
           Profile
@@ -211,7 +194,7 @@ export default function RunningPage() {
 
       <FeatureTabs current="running" />
 
-      <section className="mt-7 rounded-2xl border border-slate-800 px-5 py-5">
+      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 px-5 py-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
           Simple running log
         </p>
@@ -221,7 +204,7 @@ export default function RunningPage() {
         </p>
       </section>
 
-      <section className="mt-7 rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-7">
+      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 p-5 sm:p-7">
         <h2 className="text-xl font-semibold text-white">
           {editingId ? "Edit run" : "Log a run"}
         </h2>
@@ -232,7 +215,7 @@ export default function RunningPage() {
           <label className="text-sm font-medium text-slate-200 sm:col-span-2">
             Date and time
             <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white"
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               onChange={(event) =>
                 setForm({ ...form, startedAt: event.target.value })
               }
@@ -244,7 +227,7 @@ export default function RunningPage() {
           <label className="text-sm font-medium text-slate-200">
             Distance (km)
             <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white"
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               min="0.01"
               onChange={(event) =>
                 setForm({ ...form, distanceKm: event.target.value })
@@ -258,7 +241,7 @@ export default function RunningPage() {
           <label className="text-sm font-medium text-slate-200">
             Duration (minutes)
             <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white"
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               min="0.1"
               onChange={(event) =>
                 setForm({ ...form, durationMinutes: event.target.value })
@@ -272,7 +255,7 @@ export default function RunningPage() {
           <label className="text-sm font-medium text-slate-200 sm:col-span-2">
             Notes
             <textarea
-              className="mt-2 min-h-24 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white"
+              className="mt-2 min-h-24 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               maxLength={4000}
               onChange={(event) =>
                 setForm({ ...form, notes: event.target.value })
@@ -282,7 +265,7 @@ export default function RunningPage() {
           </label>
           <div className="flex gap-3 sm:col-span-2">
             <button
-              className="rounded-xl bg-emerald-300 px-5 py-3 font-semibold text-slate-950 disabled:opacity-60"
+              className="rounded-md bg-emerald-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:opacity-60"
               disabled={isSaving}
               type="submit"
             >
@@ -290,7 +273,7 @@ export default function RunningPage() {
             </button>
             {editingId ? (
               <button
-                className="rounded-xl border border-slate-700 px-5 py-3 font-semibold text-white"
+                className="rounded-md border border-slate-700 px-5 py-3 font-semibold text-white"
                 onClick={() => {
                   setEditingId(null);
                   setForm(emptyForm());
@@ -307,21 +290,28 @@ export default function RunningPage() {
       <section className="mt-8">
         <h2 className="text-xl font-semibold text-white">Running history</h2>
         {error ? (
-          <p className="mt-5 rounded-xl border border-rose-900 bg-rose-950/50 px-4 py-3 text-sm text-rose-200">
+          <p className="mt-5 rounded-md border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
             {error}
           </p>
         ) : null}
         <div className="mt-5 space-y-3">
           {isLoading ? (
-            <p className="text-slate-400">Loading runs...</p>
+            <div className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center">
+              <p className="text-sm font-semibold text-white">
+                Loading runs...
+              </p>
+              <p className="mt-2 text-sm text-slate-400">
+                Pulling your running history.
+              </p>
+            </div>
           ) : runs.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-slate-700 px-5 py-10 text-center text-slate-400">
+            <p className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center text-slate-400">
               No runs logged yet.
             </p>
           ) : (
             runs.map((run) => (
               <article
-                className="rounded-2xl border border-slate-800 bg-slate-900 p-5"
+                className="rounded-lg border border-slate-800 bg-slate-900 p-5"
                 key={run.id}
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -375,7 +365,7 @@ export default function RunningPage() {
             </p>
             <div className="flex gap-3">
               <button
-                className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                 disabled={offset === 0 || isLoading}
                 onClick={() => {
                   setIsLoading(true);
@@ -386,7 +376,7 @@ export default function RunningPage() {
                 Previous
               </button>
               <button
-                className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                 disabled={offset + pageSize >= total || isLoading}
                 onClick={() => {
                   setIsLoading(true);

@@ -6,6 +6,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { signOut } from "@/features/auth/api";
 import { getProfile, updateProfile } from "@/features/profile/api";
 import type { Profile, SupportedLocale } from "@/features/profile/types";
+import { customerError } from "@/lib/errors";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -34,11 +35,7 @@ export default function ProfilePage() {
           window.location.assign("/login");
           return;
         }
-        setError(
-          caughtError instanceof Error
-            ? caughtError.message
-            : "Could not load your profile.",
-        );
+        setError(customerError(caughtError, "Could not load your profile."));
       });
   }, []);
 
@@ -57,11 +54,7 @@ export default function ProfilePage() {
       setProfile(updatedProfile);
       setMessage("Profile updated.");
     } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Could not update your profile.",
-      );
+      setError(customerError(caughtError, "Could not update your profile."));
     } finally {
       setIsSaving(false);
     }
@@ -81,21 +74,21 @@ export default function ProfilePage() {
         >
           Ordyn Life
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           <Link
-            className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
-            href="/gym"
+            className="rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
+            href="/dashboard"
           >
-            Gym
+            Dashboard
           </Link>
           <Link
-            className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
-            href="/tasks"
+            className="rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
+            href="/calendar"
           >
-            Tasks
+            Calendar
           </Link>
           <button
-            className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
+            className="rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
             onClick={handleSignOut}
             type="button"
           >
@@ -104,23 +97,21 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <section className="mx-auto mt-12 w-full max-w-3xl rounded-3xl border border-slate-800 bg-slate-900/80 p-7 shadow-2xl shadow-emerald-950/30 sm:p-9">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
-          Protected profile
+      <section className="mx-auto mt-10 w-full max-w-3xl rounded-lg border border-slate-800 bg-slate-900 p-6 shadow-xl shadow-black/10 sm:p-8">
+        <p className="text-sm font-semibold uppercase text-emerald-300">
+          Account settings
         </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white">
-          Your foundation
-        </h1>
+        <h1 className="mt-3 text-4xl font-semibold text-white">Your account</h1>
         <p className="mt-3 text-slate-400">
-          This profile is loaded from FastAPI after it validates your Supabase
-          access token.
+          Keep your daily workspace matched to your name, timezone, and
+          language.
         </p>
 
         {profile ? (
-          <p className="mt-6 rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-sm text-slate-300">
+          <p className="mt-6 rounded-md border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-300">
             Signed in as{" "}
             <span className="font-semibold text-white">
-              {profile.email ?? profile.user_id}
+              {profile.email ?? "your account"}
             </span>
           </p>
         ) : null}
@@ -129,7 +120,7 @@ export default function ProfilePage() {
           <label className="block text-sm font-medium text-slate-200">
             Display name
             <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               maxLength={80}
               onChange={(event) => setDisplayName(event.target.value)}
               placeholder="How should Ordyn Life address you?"
@@ -140,7 +131,7 @@ export default function ProfilePage() {
           <label className="block text-sm font-medium text-slate-200">
             Timezone
             <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               maxLength={64}
               onChange={(event) => setTimezone(event.target.value)}
               required
@@ -151,30 +142,30 @@ export default function ProfilePage() {
           <label className="block text-sm font-medium text-slate-200">
             Preferred language
             <select
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
               onChange={(event) =>
                 setLocale(event.target.value as SupportedLocale)
               }
               value={locale}
             >
               <option value="en-US">English</option>
-              <option value="pt-BR">Português (Brasil)</option>
+              <option value="pt-BR">Portuguese (Brazil)</option>
             </select>
           </label>
 
           {error ? (
-            <p className="rounded-xl border border-rose-900 bg-rose-950/50 px-4 py-3 text-sm text-rose-200">
+            <p className="rounded-md border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
               {error}
             </p>
           ) : null}
           {message ? (
-            <p className="rounded-xl border border-emerald-900 bg-emerald-950/50 px-4 py-3 text-sm text-emerald-200">
+            <p className="rounded-md border border-emerald-900 bg-emerald-950 px-4 py-3 text-sm text-emerald-200">
               {message}
             </p>
           ) : null}
 
           <button
-            className="rounded-xl bg-emerald-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-md bg-emerald-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isSaving || !profile}
             type="submit"
           >

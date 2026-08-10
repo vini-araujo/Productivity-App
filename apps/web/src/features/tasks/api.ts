@@ -1,3 +1,4 @@
+import { getApiBaseUrl } from "@/lib/api";
 import { getSupabaseClient } from "@/lib/supabase";
 
 import type {
@@ -8,7 +9,7 @@ import type {
   TaskUpdate,
 } from "./types";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const apiUrl = getApiBaseUrl();
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const {
@@ -32,7 +33,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const body = (await response.json().catch(() => null)) as {
       detail?: string;
     } | null;
-    throw new Error(body?.detail ?? "Task request failed");
+    throw new Error(body?.detail ?? "Could not update your tasks");
   }
 
   if (response.status === 204) {

@@ -1,15 +1,16 @@
+import { getApiBaseUrl } from "@/lib/api";
 import { getSupabaseClient } from "@/lib/supabase";
 
 import type { Run, RunList, RunUpdate, RunWrite } from "./types";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const apiUrl = getApiBaseUrl();
 
 function errorDetail(detail: unknown): string {
   if (typeof detail === "string") {
     return detail;
   }
   if (!Array.isArray(detail)) {
-    return "Running request failed";
+    return "Could not update your runs";
   }
   const messages = detail.flatMap((item) => {
     if (!item || typeof item !== "object") {
@@ -29,7 +30,9 @@ function errorDetail(detail: unknown): string {
       location ? `${location}: ${validationError.msg}` : validationError.msg,
     ];
   });
-  return messages.length > 0 ? messages.join("; ") : "Running request failed";
+  return messages.length > 0
+    ? messages.join("; ")
+    : "Could not update your runs";
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {

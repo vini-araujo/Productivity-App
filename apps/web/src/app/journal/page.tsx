@@ -13,6 +13,7 @@ import {
   updateJournalEntry,
 } from "@/features/journal/api";
 import type { JournalEntry } from "@/features/journal/types";
+import { customerError } from "@/lib/errors";
 
 type JournalView = "today" | "history" | "entry";
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -41,7 +42,7 @@ function preview(content: string): string {
 }
 
 function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Journal request failed.";
+  return customerError(error, "Could not update your journal.");
 }
 
 function serializeDraft(draft: Pick<Draft, "title" | "content">): string {
@@ -374,12 +375,10 @@ export default function JournalPage() {
           >
             Ordyn Life
           </Link>
-          <h1 className="mt-2 text-4xl font-semibold tracking-[-0.04em] text-white">
-            Journal
-          </h1>
+          <h1 className="mt-2 text-4xl font-semibold text-white">Journal</h1>
         </div>
         <Link
-          className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
           href="/profile"
           onClick={(event) => void leaveJournal(event, "/profile")}
         >
@@ -389,7 +388,7 @@ export default function JournalPage() {
 
       <FeatureTabs current="journal" onNavigate={leaveJournal} />
 
-      <section className="mt-7 rounded-2xl border border-slate-800 px-5 py-5">
+      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 px-5 py-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
           A quiet daily record
         </p>
@@ -401,11 +400,11 @@ export default function JournalPage() {
 
       <nav
         aria-label="Journal sections"
-        className="mt-5 grid grid-cols-2 rounded-2xl border border-slate-800 p-1"
+        className="mt-5 grid grid-cols-2 rounded-lg border border-slate-800 bg-slate-900 p-1"
       >
         <button
           aria-current={view === "today" ? "page" : undefined}
-          className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+          className={`rounded-md px-4 py-2.5 text-sm font-semibold transition ${
             view === "today"
               ? "bg-emerald-300 text-slate-950"
               : "text-slate-400 hover:text-white"
@@ -418,7 +417,7 @@ export default function JournalPage() {
         </button>
         <button
           aria-current={view === "history" ? "page" : undefined}
-          className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+          className={`rounded-md px-4 py-2.5 text-sm font-semibold transition ${
             view === "history"
               ? "bg-emerald-300 text-slate-950"
               : "text-slate-400 hover:text-white"
@@ -432,7 +431,7 @@ export default function JournalPage() {
       </nav>
 
       {error ? (
-        <p className="mt-5 rounded-xl border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
+        <p className="mt-5 rounded-md border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
           {error}
         </p>
       ) : null}
@@ -451,7 +450,7 @@ export default function JournalPage() {
             <label className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
               Search journal
               <input
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm font-normal normal-case tracking-normal text-white outline-none focus:border-emerald-300 sm:w-72"
+                className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-sm font-normal normal-case text-white outline-none focus:border-emerald-300 sm:w-72"
                 onChange={(event) => {
                   setSearch(event.target.value);
                   setOffset(0);
@@ -465,11 +464,11 @@ export default function JournalPage() {
 
           <div className="mt-6 space-y-3">
             {isHistoryLoading ? (
-              <p className="rounded-2xl border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
+              <p className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
                 Loading journal history...
               </p>
             ) : history.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
+              <p className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
                 {search
                   ? "No entries match your search."
                   : "Your saved entries will appear here."}
@@ -477,7 +476,7 @@ export default function JournalPage() {
             ) : (
               history.map((item) => (
                 <article
-                  className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:border-slate-700"
+                  className="rounded-lg border border-slate-800 bg-slate-900 p-5 transition hover:border-slate-700"
                   key={item.id}
                 >
                   <button
@@ -512,7 +511,7 @@ export default function JournalPage() {
           {total > pageSize ? (
             <div className="mt-6 flex items-center justify-between gap-4">
               <button
-                className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                 disabled={offset === 0}
                 onClick={() => {
                   setIsHistoryLoading(true);
@@ -526,7 +525,7 @@ export default function JournalPage() {
                 {offset + 1}-{Math.min(offset + pageSize, total)} of {total}
               </p>
               <button
-                className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                 disabled={offset + pageSize >= total}
                 onClick={() => {
                   setIsHistoryLoading(true);
@@ -540,7 +539,7 @@ export default function JournalPage() {
           ) : null}
         </section>
       ) : (
-        <section className="mt-7 rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-8">
+        <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 p-5 sm:p-8">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
@@ -552,7 +551,7 @@ export default function JournalPage() {
             </div>
             <div className="flex flex-col items-end gap-2">
               <span
-                className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${
+                className={`rounded-md border px-3 py-1.5 text-xs font-semibold ${
                   saveStatus === "error"
                     ? "border-rose-900 text-rose-300"
                     : "border-slate-700 text-slate-400"
@@ -580,7 +579,14 @@ export default function JournalPage() {
           </div>
 
           {isLoading ? (
-            <p className="mt-8 text-sm text-slate-400">Opening today...</p>
+            <div className="mt-8 rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center">
+              <p className="text-sm font-semibold text-white">
+                Opening today...
+              </p>
+              <p className="mt-2 text-sm text-slate-400">
+                Loading your private journal entry.
+              </p>
+            </div>
           ) : (
             <>
               <label className="mt-8 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
@@ -607,7 +613,7 @@ export default function JournalPage() {
               <label className="mt-6 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
                 How was your day?
                 <textarea
-                  className="mt-3 min-h-[24rem] w-full resize-y rounded-2xl border border-slate-800 bg-slate-950 px-4 py-4 text-base leading-7 text-white outline-none placeholder:text-slate-500 focus:border-emerald-300"
+                  className="mt-3 min-h-[24rem] w-full resize-y rounded-lg border border-slate-800 bg-slate-950 px-4 py-4 text-base leading-7 text-white outline-none placeholder:text-slate-500 focus:border-emerald-300"
                   maxLength={50_000}
                   onChange={(event) => {
                     const nextContent = event.target.value;

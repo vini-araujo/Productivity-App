@@ -21,6 +21,7 @@ import type {
   WorkoutSession,
   WorkoutSet,
 } from "@/features/workouts/types";
+import { customerError } from "@/lib/errors";
 
 type GymView = "workout" | "history";
 
@@ -40,7 +41,7 @@ function groupSets(sets: WorkoutSet[]): [string, WorkoutSet[]][] {
 }
 
 function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Workout request failed.";
+  return customerError(error, "Could not update your workouts.");
 }
 
 function formatDuration(session: WorkoutSession): string {
@@ -328,12 +329,10 @@ export default function GymPage() {
           >
             Ordyn Life
           </Link>
-          <h1 className="mt-2 text-4xl font-semibold tracking-[-0.04em] text-white">
-            Gym
-          </h1>
+          <h1 className="mt-2 text-4xl font-semibold text-white">Gym</h1>
         </div>
         <Link
-          className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
           href="/profile"
         >
           Profile
@@ -342,7 +341,7 @@ export default function GymPage() {
 
       <FeatureTabs current="gym" />
 
-      <section className="mt-7 rounded-2xl border border-slate-800 px-5 py-5">
+      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 px-5 py-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
           How it works
         </p>
@@ -368,12 +367,12 @@ export default function GymPage() {
 
       <nav
         aria-label="Gym sections"
-        className="mt-5 grid grid-cols-2 rounded-2xl border border-slate-800 p-1"
+        className="mt-5 grid grid-cols-2 rounded-lg border border-slate-800 bg-slate-900 p-1"
       >
         {(["workout", "history"] as GymView[]).map((option) => (
           <button
             aria-current={view === option ? "page" : undefined}
-            className={`rounded-xl px-4 py-2.5 text-sm font-semibold capitalize transition ${
+            className={`rounded-md px-4 py-2.5 text-sm font-semibold capitalize transition ${
               view === option
                 ? "bg-emerald-300 text-slate-950"
                 : "text-slate-400 hover:text-white"
@@ -388,26 +387,26 @@ export default function GymPage() {
       </nav>
 
       {error ? (
-        <p className="mt-5 rounded-xl border border-rose-900 bg-rose-950/50 px-4 py-3 text-sm text-rose-200">
+        <p className="mt-5 rounded-md border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
           {error}
         </p>
       ) : null}
       {message ? (
-        <p className="mt-5 rounded-xl border border-emerald-900 bg-emerald-950/50 px-4 py-3 text-sm text-emerald-200">
+        <p className="mt-5 rounded-md border border-emerald-900 bg-emerald-950 px-4 py-3 text-sm text-emerald-200">
           {message}
         </p>
       ) : null}
 
       {view === "workout" ? (
         <>
-          <section className="mt-7 rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-2xl shadow-black/20 sm:p-6">
+          <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 p-5 shadow-xl shadow-black/10 sm:p-6">
             <div className="flex items-center justify-between gap-4">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
                 Choose your workout
               </p>
               {!activeSession ? (
                 <button
-                  className="rounded-full border border-slate-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:border-emerald-300"
+                  className="rounded-md border border-slate-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:border-emerald-300"
                   onClick={() => setShowSplitBuilder((current) => !current)}
                   type="button"
                 >
@@ -429,13 +428,13 @@ export default function GymPage() {
 
                 {showSplitBuilder && !activeSession ? (
                   <form
-                    className="mt-5 rounded-2xl border border-slate-800 p-4"
+                    className="mt-5 rounded-lg border border-slate-800 p-4"
                     onSubmit={savePersonalizedSplit}
                   >
                     <label className="text-sm font-semibold text-white">
                       Split name
                       <input
-                        className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white outline-none focus:border-emerald-300"
+                        className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-3 text-white outline-none focus:border-emerald-300"
                         onChange={(event) => setSplitName(event.target.value)}
                         placeholder="Push / Pull / Legs"
                         required
@@ -446,13 +445,13 @@ export default function GymPage() {
                     <div className="mt-4 space-y-4">
                       {splitDays.map((day, dayIndex) => (
                         <div
-                          className="rounded-xl border border-slate-800 p-3"
+                          className="rounded-lg border border-slate-800 p-3"
                           key={dayIndex}
                         >
                           <div className="flex items-center gap-3">
                             <input
                               aria-label={`Day ${dayIndex + 1} name`}
-                              className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 font-semibold text-white outline-none focus:border-emerald-300"
+                              className="min-w-0 flex-1 rounded-md border border-slate-700 bg-slate-950 px-3 py-2 font-semibold text-white outline-none focus:border-emerald-300"
                               onChange={(event) =>
                                 updateSplitDay(dayIndex, {
                                   name: event.target.value,
@@ -486,7 +485,7 @@ export default function GymPage() {
                               >
                                 <select
                                   aria-label={`${day.name} exercise ${exerciseIndex + 1}`}
-                                  className="min-w-0 rounded-lg border border-slate-700 bg-slate-950 px-2 py-2 text-sm text-white"
+                                  className="min-w-0 rounded-md border border-slate-700 bg-slate-950 px-2 py-2 text-sm text-white"
                                   onChange={(event) =>
                                     updateSplitExercise(
                                       dayIndex,
@@ -504,7 +503,7 @@ export default function GymPage() {
                                 </select>
                                 <input
                                   aria-label={`${day.name} exercise ${exerciseIndex + 1} sets`}
-                                  className="rounded-lg border border-slate-700 bg-slate-950 px-2 py-2 text-center text-sm text-white"
+                                  className="rounded-md border border-slate-700 bg-slate-950 px-2 py-2 text-center text-sm text-white"
                                   min={1}
                                   onChange={(event) =>
                                     updateSplitExercise(
@@ -548,7 +547,7 @@ export default function GymPage() {
 
                     <div className="mt-4 flex flex-wrap gap-3">
                       <button
-                        className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+                        className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
                         onClick={() =>
                           setSplitDays((current) => [
                             ...current,
@@ -563,7 +562,7 @@ export default function GymPage() {
                         Add day
                       </button>
                       <button
-                        className="rounded-xl bg-emerald-300 px-4 py-2 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="rounded-md bg-emerald-300 px-4 py-2 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-40"
                         disabled={!canSaveSplit}
                         type="submit"
                       >
@@ -578,7 +577,7 @@ export default function GymPage() {
                     ) : null}
                   </form>
                 ) : activeSession ? (
-                  <div className="mt-5 flex items-center justify-between gap-4 rounded-2xl border border-emerald-800 bg-emerald-950/30 px-4 py-4">
+                  <div className="mt-5 flex items-center justify-between gap-4 rounded-lg border border-emerald-800 bg-emerald-950 px-4 py-4">
                     <div>
                       <p className="text-sm text-slate-400">
                         Currently training
@@ -590,7 +589,7 @@ export default function GymPage() {
                         Continue entering your sets below.
                       </p>
                     </div>
-                    <span className="rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-slate-950">
+                    <span className="rounded-md bg-emerald-300 px-3 py-1.5 text-xs font-bold uppercase text-slate-950">
                       Active
                     </span>
                   </div>
@@ -600,7 +599,7 @@ export default function GymPage() {
                       <label className="mt-4 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
                         Workout plan
                         <select
-                          className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-base font-semibold text-white outline-none focus:border-emerald-300"
+                          className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-3 text-base font-semibold text-white outline-none focus:border-emerald-300"
                           onChange={(event) =>
                             setSelectedPlanId(event.target.value)
                           }
@@ -619,7 +618,7 @@ export default function GymPage() {
                         .filter((day) => !day.is_rest_day)
                         .map((day) => (
                           <button
-                            className="group rounded-2xl border-2 border-slate-700 bg-slate-950 px-5 py-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md disabled:opacity-50"
+                            className="group rounded-lg border-2 border-slate-700 bg-slate-950 px-5 py-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md disabled:opacity-50"
                             disabled={isStarting}
                             key={day.id}
                             onClick={() =>
@@ -635,13 +634,13 @@ export default function GymPage() {
                                 aria-hidden="true"
                                 className="text-xl font-semibold text-emerald-300 transition group-hover:translate-x-1"
                               >
-                                →
+                                -&gt;
                               </span>
                             </span>
                             <span className="mt-1 block text-sm text-slate-400">
                               {day.exercises.length} exercises
                             </span>
-                            <span className="mt-5 inline-flex rounded-full bg-emerald-300 px-4 py-2 text-sm font-semibold text-slate-950">
+                            <span className="mt-5 inline-flex rounded-md bg-emerald-300 px-4 py-2 text-sm font-semibold text-slate-950">
                               Choose {day.name}
                             </span>
                           </button>
@@ -668,7 +667,7 @@ export default function GymPage() {
                   </p>
                 </div>
                 <button
-                  className="rounded-xl border border-slate-800 px-3 py-2 text-sm font-semibold text-rose-300"
+                  className="rounded-md border border-slate-800 px-3 py-2 text-sm font-semibold text-rose-300"
                   onClick={() => void removeWorkout(activeSession, true)}
                   type="button"
                 >
@@ -688,7 +687,7 @@ export default function GymPage() {
               <div className="mt-5 space-y-4">
                 {groupSets(activeSession.sets).map(([exerciseName, sets]) => (
                   <article
-                    className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70"
+                    className="overflow-hidden rounded-lg border border-slate-800 bg-slate-900"
                     key={exerciseName}
                   >
                     <h3 className="border-b border-slate-800 px-4 py-4 text-lg font-semibold text-white">
@@ -700,13 +699,13 @@ export default function GymPage() {
                           className="grid grid-cols-[2.5rem_1fr_1fr] items-end gap-3 px-3 py-4 sm:px-4"
                           key={set.id}
                         >
-                          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-800 text-sm font-bold text-slate-300">
+                          <span className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-800 text-sm font-bold text-slate-300">
                             {set.position + 1}
                           </span>
                           <label className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
                             Weight
                             <input
-                              className="mt-1.5 h-12 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 text-center text-lg font-semibold text-white outline-none focus:border-emerald-300"
+                              className="mt-1.5 h-12 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-center text-lg font-semibold text-white outline-none focus:border-emerald-300"
                               inputMode="decimal"
                               disabled={isFinishing}
                               min={0}
@@ -729,7 +728,7 @@ export default function GymPage() {
                           <label className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
                             Reps
                             <input
-                              className="mt-1.5 h-12 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 text-center text-lg font-semibold text-white outline-none focus:border-emerald-300"
+                              className="mt-1.5 h-12 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-center text-lg font-semibold text-white outline-none focus:border-emerald-300"
                               inputMode="numeric"
                               disabled={isFinishing}
                               min={0}
@@ -759,7 +758,7 @@ export default function GymPage() {
               </div>
 
               <button
-                className="mt-6 w-full rounded-2xl bg-emerald-300 px-5 py-4 text-base font-bold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-wait disabled:opacity-60"
+                className="mt-6 w-full rounded-md bg-emerald-300 px-5 py-4 text-base font-bold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-wait disabled:opacity-60"
                 disabled={isFinishing}
                 onClick={() => void finishWorkout(activeSession)}
                 type="button"
@@ -771,7 +770,7 @@ export default function GymPage() {
               </p>
             </section>
           ) : (
-            <p className="mt-8 rounded-2xl border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
+            <p className="mt-8 rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
               Select a workout above to start logging sets.
             </p>
           )}
@@ -782,7 +781,7 @@ export default function GymPage() {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
               History
             </p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-white">
+            <h2 className="mt-2 text-3xl font-semibold text-white">
               Past workouts
             </h2>
             <p className="mt-2 text-sm text-slate-400">
@@ -792,9 +791,16 @@ export default function GymPage() {
 
           <div className="mt-6 space-y-4">
             {isLoading ? (
-              <p className="text-sm text-slate-400">Loading history...</p>
+              <div className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center">
+                <p className="text-sm font-semibold text-white">
+                  Loading history...
+                </p>
+                <p className="mt-2 text-sm text-slate-400">
+                  Pulling completed workout sessions.
+                </p>
+              </div>
             ) : history.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
+              <p className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center text-sm text-slate-400">
                 Complete a workout and it will appear here.
               </p>
             ) : (
@@ -804,7 +810,7 @@ export default function GymPage() {
                 );
                 return (
                   <details
-                    className="group overflow-hidden rounded-2xl border border-slate-800 bg-slate-900"
+                    className="group overflow-hidden rounded-lg border border-slate-800 bg-slate-900"
                     key={session.id}
                   >
                     <summary className="cursor-pointer list-none px-5 py-5">
@@ -830,13 +836,13 @@ export default function GymPage() {
                         </span>
                       </div>
                       <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-500">
-                        <span className="rounded-full border border-slate-800 px-3 py-1.5">
+                        <span className="rounded-md border border-slate-800 px-3 py-1.5">
                           {formatDuration(session)}
                         </span>
-                        <span className="rounded-full border border-slate-800 px-3 py-1.5">
+                        <span className="rounded-md border border-slate-800 px-3 py-1.5">
                           {groupSets(session.sets).length} exercises
                         </span>
-                        <span className="rounded-full border border-slate-800 px-3 py-1.5">
+                        <span className="rounded-md border border-slate-800 px-3 py-1.5">
                           {recordedSets.length} sets recorded
                         </span>
                       </div>
@@ -849,7 +855,7 @@ export default function GymPage() {
                             <h4 className="font-semibold text-white">
                               {exerciseName}
                             </h4>
-                            <div className="mt-2 overflow-hidden rounded-xl border border-slate-800">
+                            <div className="mt-2 overflow-hidden rounded-lg border border-slate-800">
                               <div className="grid grid-cols-[3rem_1fr_1fr] bg-slate-900 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                                 <span>Set</span>
                                 <span>Weight</span>

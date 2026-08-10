@@ -14,7 +14,7 @@ export function getSupabaseClient(): SupabaseClient {
 
   if (!url || !publishableKey) {
     throw new Error(
-      "Supabase Auth is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+      "Sign-in is temporarily unavailable. Please try again later.",
     );
   }
 

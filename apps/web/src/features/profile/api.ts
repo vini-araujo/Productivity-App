@@ -1,8 +1,9 @@
+import { getApiBaseUrl } from "@/lib/api";
 import { getSupabaseClient } from "@/lib/supabase";
 
 import type { Profile, ProfileUpdate } from "./types";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const apiUrl = getApiBaseUrl();
 
 async function requestProfile(
   method: "GET" | "PATCH",
@@ -29,7 +30,7 @@ async function requestProfile(
     const body = (await response.json().catch(() => null)) as {
       detail?: string;
     } | null;
-    throw new Error(body?.detail ?? "Profile request failed");
+    throw new Error(body?.detail ?? "Could not update your profile");
   }
 
   return (await response.json()) as Profile;

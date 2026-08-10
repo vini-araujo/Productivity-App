@@ -27,12 +27,12 @@ export function FeatureTabs({ current, onNavigate }: FeatureTabsProps) {
   return (
     <nav
       aria-label="Primary features"
-      className="mt-6 grid grid-cols-3 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 p-1 sm:grid-cols-6"
+      className="mt-6 grid grid-cols-3 overflow-hidden rounded-lg border border-slate-800 bg-slate-900 p-1 sm:grid-cols-6"
     >
       {tabs.map((tab) => (
         <Link
           aria-current={current === tab.value ? "page" : undefined}
-          className={`rounded-xl px-2 py-2.5 text-center text-xs font-semibold transition sm:px-4 sm:text-sm ${
+          className={`rounded-md px-2 py-2.5 text-center text-xs font-semibold transition sm:px-4 sm:text-sm ${
             current === tab.value
               ? "bg-emerald-300 text-slate-950"
               : "text-slate-400 hover:bg-slate-950 hover:text-white"

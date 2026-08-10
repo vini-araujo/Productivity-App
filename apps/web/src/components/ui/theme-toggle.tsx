@@ -50,13 +50,14 @@ export function ThemeToggle() {
 
   return (
     <div
-      className="fixed bottom-4 right-4 z-50 rounded-full border border-slate-800 bg-slate-900 p-1 shadow-2xl shadow-emerald-950/30"
+      aria-label="Theme"
+      className="fixed bottom-4 right-4 z-50 rounded-lg border border-slate-800 bg-slate-900 p-1 shadow-xl shadow-black/10"
       suppressHydrationWarning
     >
       {(["light", "dark"] as const).map((option) => (
         <button
           aria-pressed={theme === option}
-          className={`rounded-full px-3 py-2 text-xs font-semibold capitalize transition ${
+          className={`rounded-md px-3 py-2 text-xs font-semibold capitalize transition ${
             theme === option
               ? "bg-emerald-300 text-slate-950"
               : "text-slate-400 hover:bg-slate-950 hover:text-white"

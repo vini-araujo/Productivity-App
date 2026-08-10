@@ -91,3 +91,51 @@ async def test_ready_reports_database_connection_failure(
             },
         },
     }
+
+
+@pytest.mark.anyio
+async def test_ready_rejects_wildcard_cors_in_production(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(system.settings, "environment", "production")
+    monkeypatch.setattr(system.settings, "cors_allowed_origins", ["*"])
+    monkeypatch.setattr(system.settings, "database_url", "sqlite:///:memory:")
+    monkeypatch.setattr(system.settings, "supabase_url", "https://example.supabase.co")
+    monkeypatch.setattr(system.settings, "supabase_jwt_audience", "authenticated")
+    database.get_engine.cache_clear()
+
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.get("/ready")
+
+    assert response.status_code == 503
+    assert response.json()["detail"]["checks"]["cors_config"] == "wildcard_not_allowed"
+
+    database.get_engine.cache_clear()
+
+
+@pytest.mark.anyio
+async def test_ready_rejects_local_cors_origin_in_production(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(system.settings, "environment", "production")
+    monkeypatch.setattr(
+        system.settings,
+        "cors_allowed_origins",
+        ["https://app.ordynlife.com", "http://localhost:3000"],
+    )
+    monkeypatch.setattr(system.settings, "database_url", "sqlite:///:memory:")
+    monkeypatch.setattr(system.settings, "supabase_url", "https://example.supabase.co")
+    monkeypatch.setattr(system.settings, "supabase_jwt_audience", "authenticated")
+    database.get_engine.cache_clear()
+
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.get("/ready")
+
+    assert response.status_code == 503
+    assert (
+        response.json()["detail"]["checks"]["cors_config"] == "local_origin_not_allowed"
+    )
+
+    database.get_engine.cache_clear()

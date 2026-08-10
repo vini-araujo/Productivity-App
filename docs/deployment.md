@@ -45,7 +45,9 @@ Current manual deployment notes:
 
 ### Backend
 
-FastAPI runs in a Docker container locally. The planned production target for
+FastAPI runs in a Docker container locally. The image serves Uvicorn on the
+configured `PORT`, exposes a Docker healthcheck against `/health`, and can be
+smoke-tested with `make docker-smoke`. The planned production target for
 `api.ordynlife.com` is AWS App Runner, chosen as the first backend host because
 it avoids running a separate Application Load Balancer and keeps operations
 small for low portfolio traffic. ECS/Fargate remains a future upgrade path if

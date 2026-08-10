@@ -123,11 +123,14 @@ Implemented now:
 - Automatically calculated running pace and latest-run dashboard status
 - Static frontend export configuration for AWS S3 and CloudFront with
   Cloudflare DNS
+- Backend container readiness checks, Docker healthcheck, and smoke-test
+  commands for local and future App Runner verification
 - A protected calendar page and API that aggregate existing user-owned tasks,
   workouts, runs, and journal entries
 - Links from calendar items back to the owning feature pages
 
 Advanced workout analytics, coaching, timers, recurring tasks, reminders,
 streaks, scoring, charts, GPS routes, Strava integration, running plans, mood
-tracking, journal tags, rich text, translated UI copy, backend deployment,
-deployment automation, and secrets remain intentionally unimplemented.
+tracking, journal tags, rich text, translated UI copy, live backend cloud
+deployment, deployment automation, and secrets remain intentionally
+unimplemented.

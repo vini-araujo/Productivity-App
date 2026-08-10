@@ -84,15 +84,22 @@ cd apps/api && uv sync --locked
 ```bash
 make migrate
 make migration-check
+make api-smoke
 make dev
 make test
 make lint
 make format-check
 make build
+make docker-smoke
 ```
 
 Run one application directly with `make dev-web` or `make dev-api`. Run the API
-container with `make docker-up`; stop it with `make docker-down`.
+container with `make docker-up`; stop it with `make docker-down`. Use
+`make docker-smoke` to build and run the API container in the background, then
+verify `/health` and `/ready`. Without database and Supabase values,
+`/ready` may return `503 not_ready`, which is acceptable for the local smoke
+check. Use `make api-smoke-ready` when a configured local or deployed API must
+be fully ready.
 
 Run `make migrate` after configuring `apps/api/.env` to create or update the
 Supabase schema. Run `make migration-check` to confirm that the configured live

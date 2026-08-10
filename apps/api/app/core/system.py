@@ -40,6 +40,10 @@ def ready() -> HealthResponse:
     if not settings.database_url:
         checks["database_config"] = "missing"
 
+    cors_config_failure = _production_cors_config_failure()
+    if cors_config_failure:
+        checks["cors_config"] = cors_config_failure
+
     auth_config_missing = (
         not settings.resolved_supabase_jwks_url
         or not settings.resolved_supabase_jwt_issuer
@@ -63,3 +67,20 @@ def ready() -> HealthResponse:
         )
 
     return HealthResponse(status="ready")
+
+
+def _production_cors_config_failure() -> str:
+    """Return a readiness failure reason for unsafe production CORS config."""
+    if not settings.is_production:
+        return ""
+
+    if "*" in settings.cors_allowed_origins:
+        return "wildcard_not_allowed"
+
+    local_origins = ("http://localhost", "http://127.0.0.1")
+    if any(
+        origin.startswith(local_origins) for origin in settings.cors_allowed_origins
+    ):
+        return "local_origin_not_allowed"
+
+    return ""

@@ -2,13 +2,14 @@
 
 NPM ?= npm
 UV ?= uv
+API_BASE_URL ?= http://localhost:8000
 
 .PHONY: help setup dev dev-web dev-api test test-api lint lint-web lint-api \
-	format format-check build build-web migrate migration-check docker-build \
-	docker-up docker-down
+	format format-check build build-web migrate migration-check api-smoke \
+	api-smoke-ready docker-build docker-up docker-smoke docker-down
 
 help:
-	@echo "Ordyn Life - Milestone 8 commands"
+	@echo "Ordyn Life commands"
 	@echo ""
 	@echo "  make setup        Install locked frontend and backend dependencies"
 	@echo "  make dev          Run frontend and backend"
@@ -21,8 +22,11 @@ help:
 	@echo "  make build        Build the static frontend"
 	@echo "  make migrate      Run Alembic migrations"
 	@echo "  make migration-check Check live database schema against Alembic metadata"
+	@echo "  make api-smoke    Smoke test a running API"
+	@echo "  make api-smoke-ready Smoke test a ready API"
 	@echo "  make docker-build Build the backend image"
 	@echo "  make docker-up    Run the backend container"
+	@echo "  make docker-smoke Build, run, and smoke test the backend container"
 	@echo "  make docker-down  Stop local containers"
 
 setup:
@@ -71,11 +75,21 @@ migrate:
 migration-check:
 	cd apps/api && $(UV) run python -m alembic check
 
+api-smoke:
+	cd apps/api && $(UV) run python scripts/smoke_api.py --base-url $(API_BASE_URL)
+
+api-smoke-ready:
+	cd apps/api && $(UV) run python scripts/smoke_api.py --base-url $(API_BASE_URL) --require-ready
+
 docker-build:
 	docker compose build api
 
 docker-up:
 	docker compose up --build api
+
+docker-smoke:
+	docker compose up --build --detach api
+	cd apps/api && $(UV) run python scripts/smoke_api.py --base-url http://localhost:8000
 
 docker-down:
 	docker compose down

@@ -40,6 +40,11 @@ class Settings(BaseSettings):
             return f"{self.supabase_url.rstrip('/')}/auth/v1"
         return ""
 
+    @property
+    def is_production(self) -> bool:
+        """Return whether the app is running with production settings."""
+        return self.environment.lower() == "production"
+
 
 @lru_cache
 def get_settings() -> Settings:

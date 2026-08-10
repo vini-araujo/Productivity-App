@@ -11,9 +11,11 @@ deployment milestone begins.
 ## Current Backend Shape
 
 - FastAPI app: `apps/api/app/main.py`
-- Container: `apps/api/Dockerfile`, serving Uvicorn on port `8000`
+- Container: `apps/api/Dockerfile`, serving Uvicorn on `PORT` with a default
+  of `8000`
 - Local container runner: root `docker-compose.yml`
 - Health probes: `GET /health` and `GET /ready`
+- Smoke script: `apps/api/scripts/smoke_api.py`
 - Protected routes: `/api/v1/me`, `/api/v1/tasks`, `/api/v1/workouts`,
   `/api/v1/journal/entries`, `/api/v1/runs`, `/api/v1/dashboard`, and
   `/api/v1/calendar`
@@ -21,7 +23,8 @@ deployment milestone begins.
 - Auth: Supabase JWT validation through JWKS
 
 `/health` is a shallow process liveness check. `/ready` verifies required
-runtime configuration and database connectivity before reporting readiness.
+runtime configuration, production CORS safety, and database connectivity before
+reporting readiness.
 
 ## Recommendation
 
@@ -196,6 +199,9 @@ Pre-deployment:
 - `make build`
 - `make docker-build`
 - Local container health check returns `{"status":"ok"}` from `/health`.
+- `make docker-smoke` passes against the local backend container.
+- `make api-smoke-ready API_BASE_URL=https://api.ordynlife.com` passes after a
+  deployed API has production runtime configuration.
 - Repository secret scan finds no committed credentials or populated secrets.
 - Alembic migration check passes against a configured Supabase database.
 
@@ -247,15 +253,13 @@ Post-deployment:
 
 ## Implementation Tasks
 
-1. Add production readiness checks for `DATABASE_URL` and Supabase auth config,
-   plus database connectivity.
-2. Define infrastructure as code or documented console steps for ECR, App
+1. Define infrastructure as code or documented console steps for ECR, App
    Runner, IAM, logs, and DNS handoff notes.
-3. Add manual GitHub Actions deployment using OIDC, ECR push, explicit
+2. Add manual GitHub Actions deployment using OIDC, ECR push, explicit
    migration, App Runner deployment, and smoke tests.
-4. Configure production environment values in AWS and frontend build settings.
-5. Run the first migration against Supabase production.
-6. Deploy the API and complete the verification checklist.
+3. Configure production environment values in AWS and frontend build settings.
+4. Run the first migration against Supabase production.
+5. Deploy the API and complete the verification checklist.
 
 ## Pricing References
 

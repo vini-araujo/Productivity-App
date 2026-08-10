@@ -25,6 +25,7 @@ uv run ruff format --check .
 uv run python -m pytest
 uv run alembic upgrade head
 uv run alembic check
+uv run python scripts/smoke_api.py --base-url http://localhost:8000
 ```
 
 The API runs at `http://localhost:8000`. Its liveness and readiness endpoints
@@ -35,3 +36,8 @@ Daily journal entries are available under `/api/v1/journal/entries`.
 The daily dashboard snapshot is available at `/api/v1/dashboard`.
 Running history is available under `/api/v1/runs`.
 Calendar aggregation is available at `/api/v1/calendar`.
+
+The Docker image defaults to port `8000` and also honors a `PORT` environment
+variable for managed container hosts. The smoke script accepts `/ready` as
+either fully ready or explicitly `not_ready` by default; pass `--require-ready`
+for configured production or staging environments.

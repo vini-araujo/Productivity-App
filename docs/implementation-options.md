@@ -3,8 +3,9 @@
 ## Status
 
 Planning. These options are intentionally scoped as possible next milestones or
-small milestone slices. They do not change the current Milestone 7 behavior and
-do not introduce cloud resources, secrets, AI features, or integrations.
+small milestone slices after Milestone 8. They do not introduce cloud
+resources, secrets, AI features, or integrations unless the selected milestone
+explicitly calls for deployment work.
 
 ## Selection Criteria
 
@@ -20,13 +21,13 @@ Useful near-term work should:
 
 | Rank | Option | Main value | Effort | Risk |
 | ---: | --- | --- | --- | --- |
-| 1 | Notes | Completes a core planned productivity surface | Medium | Low |
-| 2 | Task due dates and dashboard focus | Makes task management more useful day to day | Small | Low |
-| 3 | Journal tags and mood | Adds reflection/search value without rich text complexity | Medium | Low |
-| 4 | Workout history polish | Improves the gym workflow already in place | Medium | Medium |
-| 5 | Running dashboard trends | Adds useful insight without GPS or integrations | Medium | Medium |
-| 6 | Frontend deployment | Makes the project publicly demoable | Medium | Medium |
-| 7 | Backend deployment | Completes production architecture for the API | Medium | Medium |
+| 1 | Backend deployment | Completes production architecture for the API | Medium | Medium |
+| 2 | Notes | Completes a core planned productivity surface | Medium | Low |
+| 3 | Task due dates and dashboard focus | Makes task management more useful day to day | Small | Low |
+| 4 | Journal tags and mood | Adds reflection/search value without rich text complexity | Medium | Low |
+| 5 | Workout history polish | Improves the gym workflow already in place | Medium | Medium |
+| 6 | Running dashboard trends | Adds useful insight without GPS or integrations | Medium | Medium |
+| 7 | Frontend deployment automation | Makes the static frontend deployment repeatable | Medium | Medium |
 
 ## Option 1: Notes
 
@@ -206,7 +207,7 @@ without adding GPS, Strava, maps, or training plans.
 - Calculations are simple, documented, and tested.
 - Dashboard stays read-only and performs no cross-feature mutations.
 
-## Option 6: Frontend Deployment
+## Option 6: Frontend Deployment Automation
 
 ### Why It Is Useful
 
@@ -292,6 +293,6 @@ These ideas may be useful later but are not good next steps:
 
 ## Suggested Next Step
 
-Implement **Notes** next. It is already in the roadmap, exercises the full
-backend module pattern again, improves day-to-day usefulness, and stays safely
-inside the V1 product boundary.
+Start **Backend Deployment** next. It is the next roadmap milestone after
+Calendar, exercises the existing Docker and readiness work, and makes the API
+usable outside local development before the Notes milestone begins.

@@ -2,10 +2,9 @@
 
 This directory contains the FastAPI modular monolith.
 
-Milestone 7 added private manual run logging and latest-run dashboard status to
-the authenticated task, profile, gym, journal, and dashboard foundation.
-Milestone 8 adds a protected read-only calendar aggregation API before backend
-deployment.
+Milestone 8 added a protected read-only calendar aggregation API on top of the
+authenticated task, profile, gym, journal, dashboard, and running foundations
+before backend deployment.
 
 Future feature modules follow:
 
@@ -23,7 +22,7 @@ uv sync --locked
 uv run uvicorn app.main:app --reload --port 8000
 uv run ruff check .
 uv run ruff format --check .
-uv run pytest
+uv run python -m pytest
 uv run alembic upgrade head
 uv run alembic check
 ```

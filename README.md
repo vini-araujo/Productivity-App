@@ -19,7 +19,7 @@ manage their own tasks through the protected FastAPI API. Milestone 4 added
 plan-first gym logging, and Milestone 5 added a private daily journal.
 Milestone 6 added one protected daily overview across tasks, training, and
 journaling. Milestone 7 added private manual run logging and history.
-Milestone 8 adds a protected, read-only calendar view across existing
+Milestone 8 added a protected, read-only calendar view across existing
 tasks, workouts, runs, and journal entries before backend deployment.
 
 ## Architecture
@@ -121,7 +121,8 @@ Implemented now:
 - Mobile-first overview of next tasks, workout status, and today's journal
 - Private manual run logging with editable and deletable history
 - Automatically calculated running pace and latest-run dashboard status
-- Static frontend deployment to AWS S3 and CloudFront with Cloudflare DNS
+- Static frontend export configuration for AWS S3 and CloudFront with
+  Cloudflare DNS
 - A protected calendar page and API that aggregate existing user-owned tasks,
   workouts, runs, and journal entries
 - Links from calendar items back to the owning feature pages

@@ -3,7 +3,7 @@
 ## Current State
 
 Milestone 7 added user-owned running activity through the existing
-authenticated modular-monolith boundary. Milestone 8 adds Calendar as a second
+authenticated modular-monolith boundary. Milestone 8 added Calendar as a second
 read-only aggregation boundary before backend deployment.
 
 ## System Context

@@ -2,10 +2,9 @@
 
 ## Current Status
 
-Milestone 7 completed private manual run logging on the runnable
-authentication, profile, task, gym, journal, and dashboard foundations.
-Milestone 8 adds a protected calendar view over those existing workflows before
-backend deployment.
+Milestone 8 added a protected calendar view over the runnable authentication,
+profile, task, gym, journal, dashboard, and running foundations before backend
+deployment.
 
 ## Prerequisites
 

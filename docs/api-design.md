@@ -4,7 +4,7 @@
 
 Milestone 7 implemented system probes, protected profiles, task CRUD, plan-first
 gym workout logging, private daily journaling, a protected daily dashboard, and
-private running history. Milestone 8 adds a protected read-only calendar
+private running history. Milestone 8 added a protected read-only calendar
 aggregation endpoint before backend deployment. Other product feature endpoints
 remain planned.
 

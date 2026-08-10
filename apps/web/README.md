@@ -2,11 +2,9 @@
 
 This directory contains the mobile-first Next.js frontend.
 
-Milestone 7 added a focused manual running log with calculated pace and
-editable history. The dashboard shows the latest run alongside task, gym, and
-journal status without duplicating the journal experience. Milestone 8 adds a
-calendar page that surfaces existing user-owned tasks, workouts, runs, and
-journal entries before backend deployment.
+Milestone 8 added a calendar page that surfaces existing user-owned tasks,
+workouts, runs, and journal entries on top of the task, gym, journal,
+dashboard, and running foundations before backend deployment.
 
 The deployment target is a static export hosted on AWS S3 behind CloudFront.
 Avoid introducing Next.js server-only runtime requirements without revisiting

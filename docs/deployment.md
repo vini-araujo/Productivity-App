@@ -2,10 +2,10 @@
 
 ## Status
 
-The static frontend is deployed manually to AWS S3 and CloudFront with
-Cloudflare managing DNS for `app.ordynlife.com`. The repository includes a
-backend Dockerfile, a local Compose service, Alembic migrations, and CI
-image-build validation. Backend cloud deployment and automated deployment
+The static frontend is configured for manual deployment to AWS S3 and
+CloudFront with Cloudflare managing DNS for `app.ordynlife.com`. The repository
+includes a backend Dockerfile, a local Compose service, Alembic migrations, and
+CI image-build validation. Backend cloud deployment and automated deployment
 workflows are not active yet.
 
 The concrete backend deployment plan for `api.ordynlife.com` is documented in

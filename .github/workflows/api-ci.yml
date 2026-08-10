@@ -42,7 +42,7 @@ jobs:
 
       - name: Test
         working-directory: apps/api
-        run: uv run pytest
+        run: uv run python -m pytest
 
       - name: Build backend image
         run: docker build --file apps/api/Dockerfile apps/api

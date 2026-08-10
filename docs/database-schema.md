@@ -4,11 +4,10 @@
 
 The production database is Supabase PostgreSQL. Alembic is the schema source
 of truth. Milestone 7 added user-owned run sessions after journal entries.
-Milestone 8 Calendar is a read-only aggregation feature and does not add a new
+Milestone 8 Calendar is a read-only aggregation feature and did not add a new
 persistence table.
 
-Alembic will be the source of truth for schema changes beginning when the first
-persisted feature is implemented.
+Alembic is the source of truth for implemented application schema changes.
 
 Foreign keys to Supabase-managed `auth.users` are defined explicitly in
 migrations. Alembic target metadata includes the expected ownership constraints

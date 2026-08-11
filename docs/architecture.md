@@ -73,6 +73,6 @@ a Supabase service-role key.
 ## Deployment Shape
 
 The frontend is a static Next.js export hosted in S3 behind CloudFront and
-Cloudflare. The backend is a Dockerized FastAPI service planned for AWS App
-Runner to keep the first production deployment low-cost and low-ops. Supabase
-provides hosted PostgreSQL and authentication.
+Cloudflare DNS. The backend is a Dockerized FastAPI service running on AWS
+ECS/Fargate behind an Application Load Balancer at `api.ordynlife.com`.
+Supabase provides hosted PostgreSQL and authentication.

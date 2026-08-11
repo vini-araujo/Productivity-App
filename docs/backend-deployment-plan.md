@@ -2,11 +2,9 @@
 
 ## Status
 
-Planned. The FastAPI backend is Dockerized and CI builds the image, but
-`api.ordynlife.com` is not deployed yet. This plan defines the backend
-deployment milestone without creating cloud resources, credentials, or
-deployment automation. Milestone 8 Calendar is completed before this backend
-deployment milestone begins.
+Implemented manually on AWS ECS/Fargate. The FastAPI backend is deployed at
+`https://api.ordynlife.com` behind an Application Load Balancer with an ACM
+certificate. Deployment automation remains a future hardening task.
 
 ## Current Backend Shape
 
@@ -26,27 +24,37 @@ deployment milestone begins.
 runtime configuration, production CORS safety, and database connectivity before
 reporting readiness.
 
-## Recommendation
-
-Use **AWS App Runner** for the first production deployment of
-`api.ordynlife.com`.
-
-This matches the existing Docker decision, avoids managing an Application Load
-Balancer, ECS service, target groups, and most VPC networking, and should keep
-monthly cost lower for light portfolio traffic. Keep ECS/Fargate as a later
-upgrade path if the app needs more infrastructure control.
+## Implemented Architecture
 
 ```mermaid
 flowchart LR
     Browser[app.ordynlife.com static frontend]
     Browser --> Cloudflare[Cloudflare DNS]
     Cloudflare --> APIHost[api.ordynlife.com]
-    APIHost --> AppRunner[AWS App Runner: FastAPI container]
-    AppRunner --> SupabaseAuth[Supabase Auth JWKS]
-    AppRunner --> SupabaseDB[(Supabase PostgreSQL)]
+    APIHost --> ALB[Application Load Balancer]
+    ALB --> ECS[ECS Fargate service]
+    ECS --> SupabaseAuth[Supabase Auth JWKS]
+    ECS --> SupabaseDB[(Supabase PostgreSQL)]
     GitHub[GitHub Actions OIDC] --> ECR[Amazon ECR]
-    ECR --> AppRunner
+    ECR --> ECS
 ```
+
+Production resources:
+
+| Resource            | Value                                                       |
+| ------------------- | ----------------------------------------------------------- |
+| AWS account         | `575124957640`                                              |
+| Region              | `us-east-1`                                                 |
+| API domain          | `https://api.ordynlife.com`                                 |
+| ECR repository      | `ordyn-life-api`                                            |
+| Current image tag   | `0611135`                                                   |
+| ECS cluster         | `ordyn-life`                                                |
+| ECS service         | `ordyn-life-api`                                            |
+| ECS task definition | `ordyn-life-api:4`                                          |
+| ALB                 | `ordyn-life-api-alb`                                        |
+| ALB DNS             | `ordyn-life-api-alb-2123102133.us-east-1.elb.amazonaws.com` |
+| Target group        | `ordyn-life-api-tg`                                         |
+| Database secret     | `ordyn-life-api/database-url`                               |
 
 ## AWS Options And Costs
 
@@ -55,17 +63,16 @@ environment, light portfolio traffic, 730 hours/month, and public AWS pricing
 checked during planning. Recheck pricing with AWS Pricing Calculator before
 provisioning.
 
-| Option | Fit | Estimated monthly cost | Notes |
-| --- | --- | ---: | --- |
-| AWS App Runner | Recommended lowest-ops path | About `$5-$30+` | Avoids a dedicated ALB and most ECS/VPC setup. Cost depends on instance size, minimum instance count, idle memory charges, and request volume. |
-| ECS Fargate + ALB | Production-style upgrade path | About `$35-$50+` | One `0.25 vCPU / 0.5 GB` task is about `$9/month` on Linux/x86 Fargate before networking. ALB base pricing, low LCU usage, public IPv4 charges, ECR, and CloudWatch logs drive most of the rest. |
-| ECS Fargate + ALB + private subnets/NAT | More isolated network path | About `$70+` | Adds NAT Gateway hourly and per-GB processing charges. Use later if private-subnet egress is worth the extra monthly cost. |
-| Elastic Beanstalk Docker | Simpler AWS-managed EC2 path | About `$15-$45+` | Beanstalk itself has no additional charge, but the app still pays for EC2, EBS, public IPv4, logs, and optionally an ALB. Cheapest single-instance setups have more manual TLS and ops tradeoffs. |
+| Option                                  | Fit                          | Estimated monthly cost | Notes                                                                                                                                                                                             |
+| --------------------------------------- | ---------------------------- | ---------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AWS App Runner                          | Not used                     |        About `$5-$30+` | Previously considered, but new App Runner availability limits and the current deployment path led to ECS/Fargate.                                                                                 |
+| ECS Fargate + ALB                       | Implemented production path  |       About `$35-$50+` | One `0.25 vCPU / 0.5 GB` task is about `$9/month` on Linux/x86 Fargate before networking. ALB base pricing, low LCU usage, public IPv4 charges, ECR, and CloudWatch logs drive most of the rest.  |
+| ECS Fargate + ALB + private subnets/NAT | More isolated network path   |           About `$70+` | Adds NAT Gateway hourly and per-GB processing charges. Use later if private-subnet egress is worth the extra monthly cost.                                                                        |
+| Elastic Beanstalk Docker                | Simpler AWS-managed EC2 path |       About `$15-$45+` | Beanstalk itself has no additional charge, but the app still pays for EC2, EBS, public IPv4, logs, and optionally an ALB. Cheapest single-instance setups have more manual TLS and ops tradeoffs. |
 
 Cost drivers to watch:
 
-- App Runner provisioned compute and request processing.
-- Fargate compute: vCPU-hour and GB-hour, if ECS is chosen later.
+- Fargate compute: vCPU-hour and GB-hour.
 - Application Load Balancer: hourly ALB charge plus LCU usage.
 - Public IPv4: charged hourly for in-use and idle public IPv4 addresses.
 - NAT Gateway: hourly charge and per-GB processing if private subnet egress is
@@ -73,34 +80,35 @@ Cost drivers to watch:
 - ECR: image storage after free-tier limits and image pulls by the deployment
   service.
 - CloudWatch Logs: ingestion and retained storage. Use short retention at first.
-- Custom-domain TLS: App Runner manages HTTPS for the associated custom domain;
-  ALB-attached ACM certificates apply only if ECS/Fargate is chosen later.
+- Custom-domain TLS: ACM certificates are free, but the ALB and CloudFront
+  distributions using them still incur normal service charges.
 
-## Target AWS Architecture
+## AWS Architecture
 
-Provision the minimum production shape:
+The current production shape is:
 
-- One ECR private repository, for example `ordyn-life-api`.
-- One App Runner service using the ECR image and port `8000`.
-- Health check path `/health`, with `/ready` reserved for dependency readiness
-  and smoke verification.
-- One App Runner custom domain association for `api.ordynlife.com`.
-- Cloudflare DNS records required by the App Runner custom domain flow.
-- CloudWatch log group with 7-14 day retention during the portfolio phase.
-- AWS Secrets Manager or SSM Parameter Store for runtime secrets.
-- GitHub Actions OIDC role for future deployment automation.
+- One ECR private repository: `ordyn-life-api`.
+- One ECS cluster: `ordyn-life`.
+- One ECS Fargate service: `ordyn-life-api`.
+- One internet-facing ALB: `ordyn-life-api-alb`.
+- One IP target group on port `8000`: `ordyn-life-api-tg`.
+- One HTTP listener on port `80`.
+- One HTTPS listener on port `443` using the ACM certificate for
+  `api.ordynlife.com`.
+- One CloudWatch log group: `/ecs/ordyn-life-api`.
+- One Secrets Manager secret for `DATABASE_URL`.
+- One ECS task execution role with ECR, CloudWatch Logs, and Secrets Manager
+  read permissions for the database secret.
 
-Avoid a VPC connector for the first deployment unless Supabase connectivity
-requires it. A VPC connector can add networking complexity and may reintroduce
-NAT-style costs depending on the final network design.
+Tasks run in the default VPC public subnets with public IP assignment. The API
+security group allows inbound port `8000` only from the ALB security group.
 
 ## DNS And TLS
 
-- `api.ordynlife.com` should be associated as an App Runner custom domain.
-- Configure the Cloudflare DNS records App Runner provides for domain
-  validation and traffic routing.
-- Start with Cloudflare DNS-only mode for the API until App Runner custom domain
-  validation and HTTPS are confirmed.
+- `api.ordynlife.com` is a CNAME in Cloudflare pointing to the ALB DNS name.
+- The ACM certificate for `api.ordynlife.com` is attached to the ALB HTTPS
+  listener.
+- Start with Cloudflare DNS-only mode for the API until HTTPS is confirmed.
 - If Cloudflare proxying is enabled later, use Full Strict TLS and confirm that
   WebSocket and large request behavior still match app needs.
 
@@ -143,9 +151,11 @@ Future GitHub Actions deployment configuration:
 
 ```text
 AWS_REGION=us-east-1
-AWS_ACCOUNT_ID=<account-id>
+AWS_ACCOUNT_ID=575124957640
 AWS_ECR_REPOSITORY=ordyn-life-api
-AWS_APP_RUNNER_SERVICE_ARN=<service-arn>
+AWS_ECS_CLUSTER=ordyn-life
+AWS_ECS_SERVICE=ordyn-life-api
+AWS_ECS_TASK_FAMILY=ordyn-life-api
 AWS_DEPLOY_ROLE_ARN=<github-oidc-role-arn>
 ```
 
@@ -182,9 +192,11 @@ Release sequence:
 3. Run `uv run alembic upgrade head` as a controlled GitHub Actions step or
    one-off job using the same image and production `DATABASE_URL`.
 4. Run `uv run alembic check` against the production database.
-5. Trigger an App Runner deployment for the new image.
-6. Wait for the App Runner service to become running and healthy.
-7. Run API smoke tests against `https://api.ordynlife.com`.
+5. Register a new ECS task definition revision for the new image.
+6. Update the ECS service to the new task definition revision.
+7. Wait for the ECS service deployment to reach steady state.
+8. Confirm target group health is healthy.
+9. Run API smoke tests against `https://api.ordynlife.com`.
 
 Before the first production migration, confirm Supabase backups/PITR settings
 and take a manual backup if the project tier allows it.
@@ -208,14 +220,13 @@ Pre-deployment:
 AWS infrastructure:
 
 - ECR repository contains the expected immutable image tag.
-- App Runner service references the expected image digest or tag.
+- ECS service references the expected task definition revision.
+- ECS task definition references the expected image digest or tag.
 - Runtime secrets come from Secrets Manager or SSM, not source control.
-- App Runner custom domain is validated and serving HTTPS for
-  `api.ordynlife.com`.
-- App Runner health checks report the service healthy on `/health`.
+- ALB HTTPS listener is serving the ACM certificate for `api.ordynlife.com`.
+- Target group health reports the ECS task healthy on `/health`.
 - CloudWatch logs show startup without tracebacks.
-- Cloudflare DNS resolves `api.ordynlife.com` through the App Runner custom
-  domain records.
+- Cloudflare DNS resolves `api.ordynlife.com` to the ALB DNS name.
 
 API smoke tests:
 
@@ -247,19 +258,32 @@ Post-deployment:
 - Frontend production build uses `NEXT_PUBLIC_API_URL=https://api.ordynlife.com`.
 - Browser login works through Supabase Auth from the deployed frontend.
 - Dashboard, running, and calendar workflows work from the deployed frontend.
-- CloudWatch alarms or manual checks cover App Runner service health, custom
-  domain health, and 5xx responses.
+- CloudWatch alarms or manual checks cover ECS service health, ALB target
+  health, custom domain health, and 5xx responses.
 - AWS Budgets alert is configured for the expected monthly ceiling.
 
 ## Implementation Tasks
 
-1. Define infrastructure as code or documented console steps for ECR, App
-   Runner, IAM, logs, and DNS handoff notes.
-2. Add manual GitHub Actions deployment using OIDC, ECR push, explicit
-   migration, App Runner deployment, and smoke tests.
-3. Configure production environment values in AWS and frontend build settings.
-4. Run the first migration against Supabase production.
-5. Deploy the API and complete the verification checklist.
+Completed manually:
+
+1. Created ECR repository and pushed the backend image.
+2. Created ECS cluster, task execution role, CloudWatch log group, task
+   definition, ALB, target group, listeners, and ECS service.
+3. Stored `DATABASE_URL` in Secrets Manager and injected it into ECS.
+4. Attached the ACM certificate for `api.ordynlife.com` to the ALB HTTPS
+   listener.
+5. Pointed Cloudflare DNS for `api.ordynlife.com` to the ALB.
+6. Verified `/health`, `/ready`, production CORS, and deployed frontend access.
+
+Remaining hardening tasks:
+
+1. Convert the manually created AWS resources to infrastructure as code.
+2. Add GitHub Actions deployment using OIDC, ECR push, explicit migration, ECS
+   task definition registration, service update, and smoke tests.
+3. Add CloudWatch alarms for ECS service health, ALB 5xx responses, and target
+   health.
+4. Replace broad temporary IAM permissions used during manual setup with
+   least-privilege policies.
 
 ## Pricing References
 

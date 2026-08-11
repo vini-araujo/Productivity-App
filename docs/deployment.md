@@ -2,14 +2,12 @@
 
 ## Status
 
-The static frontend is configured for manual deployment to AWS S3 and
-CloudFront with Cloudflare managing DNS for `app.ordynlife.com`. The repository
-includes a backend Dockerfile, a local Compose service, Alembic migrations, and
-CI image-build validation. Backend cloud deployment and automated deployment
-workflows are not active yet.
+Ordyn Life is deployed with a static frontend on AWS S3 and CloudFront, DNS in
+Cloudflare, and a Dockerized FastAPI backend on AWS ECS/Fargate behind an
+Application Load Balancer.
 
-The concrete backend deployment plan for `api.ordynlife.com` is documented in
-[backend-deployment-plan.md](backend-deployment-plan.md).
+Deployment is currently manual. CI validates builds and tests, but the
+repository does not yet contain an automated production deployment workflow.
 
 ## Option A
 
@@ -18,9 +16,11 @@ flowchart LR
     User --> Cloudflare[Cloudflare DNS]
     Cloudflare --> CloudFront[AWS CloudFront]
     CloudFront --> Static[AWS S3 static frontend]
-    Static --> API[FastAPI container]
-    API --> Supabase[(Supabase PostgreSQL and Auth)]
-    API -. future files .-> Files[AWS S3 files bucket]
+    Static --> ALB[api.ordynlife.com ALB]
+    ALB --> ECS[ECS Fargate FastAPI task]
+    ECS --> ECR[Amazon ECR image]
+    ECS --> Supabase[(Supabase PostgreSQL and Auth)]
+    ECS -. future files .-> Files[AWS S3 files bucket]
 ```
 
 ### Frontend
@@ -32,28 +32,127 @@ CloudFront provides CDN delivery and HTTPS at the AWS edge.
 Server-only Next.js features must not be introduced without reconsidering the
 static hosting decision.
 
-Current manual deployment notes:
+Current production values:
 
-- Build from `apps/web` with `npm run build`.
-- Upload the contents of `apps/web/out/` to the S3 bucket root, including the
-  generated `_next/` assets directory.
-- Keep the S3 bucket private and serve it through CloudFront.
-- Use a CloudFront default root object of `index.html`.
-- Rewrite clean static routes such as `/dashboard` to `/dashboard.html` at the
-  CloudFront viewer request layer.
-- Create a CloudFront invalidation for `/*` after replacing deployed files.
+- Domain: `https://app.ordynlife.com`
+- S3 bucket: `ordynlife-web-prod`
+- CloudFront distribution: `ES1QWM89S2DUQ`
+- Production API URL: `https://api.ordynlife.com`
+
+Manual frontend deployment:
+
+```powershell
+cd "C:\Users\Orang\OneDrive\Desktop\Productivity App\apps\web"
+npm.cmd run build
+& "C:\Program Files\Amazon\AWSCLIV2\aws.exe" s3 sync `
+  "C:\Users\Orang\OneDrive\Desktop\Productivity App\apps\web\out" `
+  "s3://ordynlife-web-prod" `
+  --delete
+& "C:\Program Files\Amazon\AWSCLIV2\aws.exe" cloudfront create-invalidation `
+  --distribution-id ES1QWM89S2DUQ `
+  --paths "/*"
+```
+
+Build-time frontend environment must include:
+
+```text
+NEXT_PUBLIC_API_URL=https://api.ordynlife.com
+NEXT_PUBLIC_SUPABASE_URL=<supabase-project-url>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<supabase-public-publishable-key>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
 
 ### Backend
 
-FastAPI runs in a Docker container locally. The image serves Uvicorn on the
-configured `PORT`, exposes a Docker healthcheck against `/health`, and can be
-smoke-tested with `make docker-smoke`. The planned production target for
-`api.ordynlife.com` is AWS App Runner, chosen as the first backend host because
-it avoids running a separate Application Load Balancer and keeps operations
-small for low portfolio traffic. ECS/Fargate remains a future upgrade path if
-the app needs more infrastructure control.
+FastAPI runs as a Docker container on ECS/Fargate. The image serves Uvicorn on
+`PORT=8000`, exposes `/health` for liveness, and exposes `/ready` for
+configuration and database readiness.
 
-S3 cannot execute the backend.
+Current production values:
+
+- Domain: `https://api.ordynlife.com`
+- AWS region: `us-east-1`
+- ECR repository: `ordyn-life-api`
+- Image tag currently deployed: `0611135`
+- ECS cluster: `ordyn-life`
+- ECS service: `ordyn-life-api`
+- ECS task definition family: `ordyn-life-api`
+- Current production task definition: `ordyn-life-api:4`
+- ALB: `ordyn-life-api-alb`
+- ALB DNS name: `ordyn-life-api-alb-2123102133.us-east-1.elb.amazonaws.com`
+- Target group: `ordyn-life-api-tg`
+- HTTPS certificate: ACM certificate for `api.ordynlife.com`
+- Database secret: AWS Secrets Manager secret `ordyn-life-api/database-url`
+
+Runtime environment:
+
+```text
+ENVIRONMENT=production
+PORT=8000
+CORS_ALLOWED_ORIGINS=["https://app.ordynlife.com"]
+SUPABASE_URL=<supabase-project-url>
+SUPABASE_JWKS_URL=<optional-explicit-jwks-url>
+SUPABASE_JWT_AUDIENCE=authenticated
+DATABASE_URL=<injected from Secrets Manager>
+```
+
+Do not commit runtime secrets. `DATABASE_URL` is injected through the ECS
+container `secrets` field from Secrets Manager.
+
+Manual backend image deployment, after code changes:
+
+```powershell
+docker build -t ordyn-life-api -f apps/api/Dockerfile apps/api
+& "C:\Program Files\Amazon\AWSCLIV2\aws.exe" ecr get-login-password `
+  --region us-east-1 |
+  docker login `
+    --username AWS `
+    --password-stdin 575124957640.dkr.ecr.us-east-1.amazonaws.com
+docker tag ordyn-life-api:latest `
+  575124957640.dkr.ecr.us-east-1.amazonaws.com/ordyn-life-api:<git-sha>
+docker push `
+  575124957640.dkr.ecr.us-east-1.amazonaws.com/ordyn-life-api:<git-sha>
+```
+
+After pushing a new image, register a new ECS task definition revision with the
+new immutable image tag and update the ECS service to that revision.
+
+S3 cannot execute the backend; it hosts only the static frontend.
+
+### DNS And TLS
+
+Cloudflare manages DNS:
+
+- `app.ordynlife.com` points to CloudFront.
+- `api.ordynlife.com` is a CNAME to the API ALB DNS name.
+
+ACM manages TLS:
+
+- `app.ordynlife.com` uses the CloudFront certificate.
+- `api.ordynlife.com` uses an ACM certificate attached to the ALB HTTPS
+  listener on port `443`.
+
+Keep the API DNS record in Cloudflare DNS-only mode unless Cloudflare proxying
+is intentionally tested with the ALB certificate and SSL/TLS mode.
+
+### Verification
+
+Production smoke checks:
+
+```powershell
+Invoke-WebRequest -Uri "https://api.ordynlife.com/health" -UseBasicParsing
+Invoke-WebRequest -Uri "https://api.ordynlife.com/ready" -UseBasicParsing
+```
+
+Expected API results:
+
+```text
+/health -> {"status":"ok"}
+/ready -> {"status":"ready"}
+```
+
+CORS should allow `https://app.ordynlife.com` and block local preview origins in
+production mode.
 
 ### CI/CD
 

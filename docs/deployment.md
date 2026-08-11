@@ -2,12 +2,12 @@
 
 ## Status
 
-Ordyn Life is deployed with a static frontend on AWS S3 and CloudFront, DNS in
-Cloudflare, and a Dockerized FastAPI backend on AWS ECS/Fargate behind an
-Application Load Balancer.
+Ordyn Life currently keeps the static frontend deployed on AWS S3 and
+CloudFront, with DNS in Cloudflare.
 
-Frontend and backend deployment are automated with GitHub Actions. CI validates
-builds and tests before deployment workflows publish production artifacts.
+The AWS backend deployment was built and documented, then torn down to avoid
+unnecessary cost for a personal/local-only backend workflow. Frontend deployment
+remains automated with GitHub Actions.
 
 ## Option A
 
@@ -16,11 +16,7 @@ flowchart LR
     User --> Cloudflare[Cloudflare DNS]
     Cloudflare --> CloudFront[AWS CloudFront]
     CloudFront --> Static[AWS S3 static frontend]
-    Static --> ALB[api.ordynlife.com ALB]
-    ALB --> ECS[ECS Fargate FastAPI task]
-    ECS --> ECR[Amazon ECR image]
-    ECS --> Supabase[(Supabase PostgreSQL and Auth)]
-    ECS -. future files .-> Files[AWS S3 files bucket]
+    LocalAPI[Local FastAPI backend] --> Supabase[(Supabase PostgreSQL and Auth)]
 ```
 
 ### Frontend
@@ -124,20 +120,22 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
 ### Backend
 
-FastAPI runs as a Docker container on ECS/Fargate. The image serves Uvicorn on
-`PORT=8000`, exposes `/health` for liveness, and exposes `/ready` for
-configuration and database readiness.
+FastAPI is currently intended to run locally. The previous AWS ECS/Fargate
+backend deployment has been torn down to avoid unnecessary spend.
 
-Current production values:
+Historical AWS backend setup details, commands, IAM notes, and teardown guidance
+are recorded in `docs/backend-aws-infrastructure-runbook.md`.
+
+Historical production values, deleted during backend teardown:
 
 - Domain: `https://api.ordynlife.com`
 - AWS region: `us-east-1`
 - ECR repository: `ordyn-life-api`
-- Image tag currently deployed: `0611135`
+- Image tag currently deployed: deleted
 - ECS cluster: `ordyn-life`
 - ECS service: `ordyn-life-api`
 - ECS task definition family: `ordyn-life-api`
-- Current production task definition: `ordyn-life-api:4`
+- Current production task definition: deleted
 - ALB: `ordyn-life-api-alb`
 - ALB DNS name: `ordyn-life-api-alb-2123102133.us-east-1.elb.amazonaws.com`
 - Target group: `ordyn-life-api-tg`
@@ -159,11 +157,12 @@ DATABASE_URL=<injected from Secrets Manager>
 Do not commit runtime secrets. `DATABASE_URL` is injected through the ECS
 container `secrets` field from Secrets Manager.
 
-Automated backend deployment:
+Backend deployment automation:
 
 - Workflow: `.github/workflows/deploy-api.yml`
-- Triggers: pushes to `main` that touch `apps/api/**` or the workflow file, and
-  manual `workflow_dispatch`
+- Status: disabled after AWS backend teardown
+- Trigger: manual `workflow_dispatch`, but the deploy job is disabled with
+  `if: ${{ false }}`
 - Image target: `575124957640.dkr.ecr.us-east-1.amazonaws.com/ordyn-life-api`
 - Image tag: the full Git commit SHA
 - Migration strategy: one-off ECS Fargate task using the same Secrets Manager
@@ -215,6 +214,35 @@ definition revision with the new immutable image tag, and update the ECS service
 to that revision.
 
 S3 cannot execute the backend; it hosts only the static frontend.
+
+### Low-Cost Backend Mode
+
+For personal testing, the frontend can stay online while the backend ECS task is
+paused. This was used briefly before the AWS backend resources were deleted.
+
+Check backend status:
+
+```powershell
+.\infra\aws\backend-service.ps1 status
+```
+
+Pause the backend service:
+
+```powershell
+.\infra\aws\backend-service.ps1 pause
+```
+
+Resume the backend service:
+
+```powershell
+.\infra\aws\backend-service.ps1 resume
+```
+
+After teardown, `https://api.ordynlife.com` should not be expected to serve the
+API. Rebuild the backend AWS resources before testing a deployed backend.
+
+This pause/resume mode is now historical because the backend AWS resources have
+been removed.
 
 ### DNS And TLS
 

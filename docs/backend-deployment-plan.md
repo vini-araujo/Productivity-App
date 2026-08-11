@@ -2,11 +2,11 @@
 
 ## Status
 
-Implemented on AWS ECS/Fargate. The FastAPI backend is deployed at
-`https://api.ordynlife.com` behind an Application Load Balancer with an ACM
-certificate. GitHub Actions now automates image build, ECR push, explicit
-migration, ECS task definition registration, ECS service update, and smoke
-checks.
+Historical. The AWS ECS/Fargate backend deployment was implemented, verified,
+documented, and then torn down on August 11, 2026 to avoid unnecessary spend for
+a local-only backend workflow. The detailed historical runbook, IAM notes,
+commands, teardown notes, and rebuild checklist live in
+`docs/backend-aws-infrastructure-runbook.md`.
 
 ## Current Backend Shape
 
@@ -26,7 +26,7 @@ checks.
 runtime configuration, production CORS safety, and database connectivity before
 reporting readiness.
 
-## Implemented Architecture
+## Historical Implemented Architecture
 
 ```mermaid
 flowchart LR
@@ -41,7 +41,7 @@ flowchart LR
     ECR --> ECS
 ```
 
-Production resources:
+Historical production resources:
 
 | Resource            | Value                                                       |
 | ------------------- | ----------------------------------------------------------- |
@@ -49,10 +49,10 @@ Production resources:
 | Region              | `us-east-1`                                                 |
 | API domain          | `https://api.ordynlife.com`                                 |
 | ECR repository      | `ordyn-life-api`                                            |
-| Current image tag   | `0611135`                                                   |
+| Current image tag   | deleted                                                     |
 | ECS cluster         | `ordyn-life`                                                |
 | ECS service         | `ordyn-life-api`                                            |
-| ECS task definition | `ordyn-life-api:4`                                          |
+| ECS task definition | deleted                                                     |
 | ALB                 | `ordyn-life-api-alb`                                        |
 | ALB DNS             | `ordyn-life-api-alb-2123102133.us-east-1.elb.amazonaws.com` |
 | Target group        | `ordyn-life-api-tg`                                         |
@@ -85,9 +85,9 @@ Cost drivers to watch:
 - Custom-domain TLS: ACM certificates are free, but the ALB and CloudFront
   distributions using them still incur normal service charges.
 
-## AWS Architecture
+## Historical AWS Architecture
 
-The current production shape is:
+The deleted production shape was:
 
 - One ECR private repository: `ordyn-life-api`.
 - One ECS cluster: `ordyn-life`.
@@ -105,11 +105,11 @@ The current production shape is:
 Tasks run in the default VPC public subnets with public IP assignment. The API
 security group allows inbound port `8000` only from the ALB security group.
 
-## DNS And TLS
+## Historical DNS And TLS
 
-- `api.ordynlife.com` is a CNAME in Cloudflare pointing to the ALB DNS name.
-- The ACM certificate for `api.ordynlife.com` is attached to the ALB HTTPS
-  listener.
+- `api.ordynlife.com` was a CNAME in Cloudflare pointing to the ALB DNS name.
+- The ACM certificate for `api.ordynlife.com` was attached to the ALB HTTPS
+  listener and was deleted during teardown.
 - Start with Cloudflare DNS-only mode for the API until HTTPS is confirmed.
 - If Cloudflare proxying is enabled later, use Full Strict TLS and confirm that
   WebSocket and large request behavior still match app needs.
@@ -149,7 +149,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<public-publishable-key>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Future GitHub Actions deployment configuration:
+Historical GitHub Actions deployment configuration:
 
 ```text
 AWS_REGION=us-east-1
@@ -187,7 +187,7 @@ Supabase Auth settings must also include the deployed frontend URLs:
 Migrations must remain an explicit deployment step. Do not run Alembic
 automatically on API process startup.
 
-Release sequence:
+Historical ECS release sequence:
 
 1. Build and test the backend image in CI.
 2. Push an immutable image tag to ECR.
@@ -219,7 +219,7 @@ Pre-deployment:
 - Repository secret scan finds no committed credentials or populated secrets.
 - Alembic migration check passes against a configured Supabase database.
 
-AWS infrastructure:
+Historical AWS infrastructure:
 
 - ECR repository contains the expected immutable image tag.
 - ECS service references the expected task definition revision.
@@ -264,7 +264,7 @@ Post-deployment:
   health, custom domain health, and 5xx responses.
 - AWS Budgets alert is configured for the expected monthly ceiling.
 
-## Implementation Tasks
+## Implementation And Teardown
 
 Completed manually:
 
@@ -277,13 +277,16 @@ Completed manually:
 5. Pointed Cloudflare DNS for `api.ordynlife.com` to the ALB.
 6. Verified `/health`, `/ready`, production CORS, and deployed frontend access.
 
-Remaining hardening tasks:
+Completed teardown:
 
-1. Convert the manually created AWS resources to infrastructure as code.
-2. Add CloudWatch alarms for ECS service health, ALB 5xx responses, and target
-   health.
-3. Replace broad temporary IAM permissions used during manual setup with
-   least-privilege policies.
+1. Scaled the ECS service to `0`.
+2. Deleted the ECS service and cluster.
+3. Deleted the ALB and target group.
+4. Deleted the ECR repository and backend images.
+5. Deleted the Secrets Manager database secret and CloudWatch log group.
+6. Deleted the backend security groups, backend ACM certificate, ECS execution
+   role, and backend GitHub deploy role.
+7. Disabled the backend deployment workflow.
 
 ## Pricing References
 

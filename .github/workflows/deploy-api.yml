@@ -1,12 +1,6 @@
 name: Deploy API
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "apps/api/**"
-      - ".github/workflows/deploy-api.yml"
   workflow_dispatch:
 
 permissions:
@@ -32,6 +26,7 @@ env:
 jobs:
   deploy:
     name: Build and deploy backend
+    if: ${{ false }}
     runs-on: ubuntu-latest
 
     steps:

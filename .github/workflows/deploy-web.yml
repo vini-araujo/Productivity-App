@@ -1,11 +1,117 @@
-name: Web Deployment Placeholder
+name: Deploy Web
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/**"
+      - ".github/workflows/deploy-web.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-web-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  AWS_S3_FRONTEND_BUCKET: ordynlife-web-prod
+  AWS_CLOUDFRONT_DISTRIBUTION_ID: ES1QWM89S2DUQ
+  FRONTEND_URL: https://app.ordynlife.com
+  NEXT_PUBLIC_API_URL: https://api.ordynlife.com
+  NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
 jobs:
-  deployment-placeholder:
+  deploy:
+    name: Build and deploy static frontend
     runs-on: ubuntu-latest
+
     steps:
-      - name: Explain future workflow
-        run: echo "Automated static frontend deployment remains a future hardening task."
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: apps/web
+        run: npm ci
+
+      - name: Validate production frontend configuration
+        run: |
+          set -euo pipefail
+          : "${NEXT_PUBLIC_API_URL:?NEXT_PUBLIC_API_URL is required}"
+          : "${NEXT_PUBLIC_SUPABASE_URL:?NEXT_PUBLIC_SUPABASE_URL is required}"
+          if [ -z "${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:-}" ] && [ -z "${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}" ]; then
+            echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY is required"
+            exit 1
+          fi
+          : "${AWS_S3_FRONTEND_BUCKET:?AWS_S3_FRONTEND_BUCKET is required}"
+          : "${AWS_CLOUDFRONT_DISTRIBUTION_ID:?AWS_CLOUDFRONT_DISTRIBUTION_ID is required}"
+          : "${AWS_DEPLOY_ROLE_ARN:?Set AWS_DEPLOY_ROLE_ARN as a GitHub repository variable}"
+        env:
+          AWS_DEPLOY_ROLE_ARN: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+
+      - name: Lint
+        working-directory: apps/web
+        run: npm run lint
+
+      - name: Typecheck
+        working-directory: apps/web
+        run: npm run typecheck
+
+      - name: Check formatting
+        working-directory: apps/web
+        run: npm run format:check
+
+      - name: Build static frontend
+        working-directory: apps/web
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          role-session-name: ordyn-life-web-deploy
+
+      - name: Upload static files to S3
+        run: |
+          set -euo pipefail
+          aws s3 sync apps/web/out "s3://${AWS_S3_FRONTEND_BUCKET}" \
+            --delete \
+            --exclude "_next/static/*" \
+            --cache-control "public,max-age=0,must-revalidate"
+          aws s3 sync apps/web/out/_next/static "s3://${AWS_S3_FRONTEND_BUCKET}/_next/static" \
+            --delete \
+            --cache-control "public,max-age=31536000,immutable"
+
+      - name: Invalidate CloudFront
+        id: invalidate
+        run: |
+          set -euo pipefail
+          invalidation_id="$(aws cloudfront create-invalidation \
+            --distribution-id "${AWS_CLOUDFRONT_DISTRIBUTION_ID}" \
+            --paths "/*" \
+            --query "Invalidation.Id" \
+            --output text)"
+          echo "invalidation-id=${invalidation_id}" >> "$GITHUB_OUTPUT"
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "${AWS_CLOUDFRONT_DISTRIBUTION_ID}" \
+            --id "${invalidation_id}"
+
+      - name: Smoke test deployed frontend
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 5 --retry-delay 10 "${FRONTEND_URL}" > /dev/null
+          curl --fail --silent --show-error --retry 5 --retry-delay 10 "${NEXT_PUBLIC_API_URL}/ready" > /dev/null

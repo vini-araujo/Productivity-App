@@ -6,8 +6,9 @@ Ordyn Life is deployed with a static frontend on AWS S3 and CloudFront, DNS in
 Cloudflare, and a Dockerized FastAPI backend on AWS ECS/Fargate behind an
 Application Load Balancer.
 
-Deployment is currently manual. CI validates builds and tests, but the
-repository does not yet contain an automated production deployment workflow.
+Frontend deployment is automated with GitHub Actions. Backend deployment is
+currently manual. CI validates builds and tests, but the repository does not yet
+contain an automated backend production deployment workflow.
 
 ## Option A
 
@@ -39,7 +40,67 @@ Current production values:
 - CloudFront distribution: `ES1QWM89S2DUQ`
 - Production API URL: `https://api.ordynlife.com`
 
-Manual frontend deployment:
+Automated frontend deployment:
+
+- Workflow: `.github/workflows/deploy-web.yml`
+- Triggers: pushes to `main` that touch `apps/web/**` or the workflow file, and
+  manual `workflow_dispatch`
+- Build output: `apps/web/out/`
+- Upload target: `s3://ordynlife-web-prod`
+- Cache invalidation: CloudFront distribution `ES1QWM89S2DUQ`
+
+The workflow runs frontend lint, typecheck, format check, static build, S3 sync,
+CloudFront invalidation, and smoke checks for the deployed frontend and API.
+
+Required GitHub repository variables:
+
+```text
+AWS_DEPLOY_ROLE_ARN=arn:aws:iam::575124957640:role/ordyn-life-github-web-deploy-role
+NEXT_PUBLIC_SUPABASE_URL=<supabase-project-url>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<supabase-public-publishable-key>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+These variables are configured under GitHub repository settings:
+**Settings > Secrets and variables > Actions > Variables**.
+
+Configured AWS OIDC resources:
+
+- Identity provider:
+  `arn:aws:iam::575124957640:oidc-provider/token.actions.githubusercontent.com`
+- Deploy role:
+  `arn:aws:iam::575124957640:role/ordyn-life-github-web-deploy-role`
+- Trust scope:
+  `repo:vini-araujo/Productivity-App:ref:refs/heads/main`
+
+The deploy role should be assumable through GitHub Actions OIDC and should have
+least-privilege access to sync the frontend bucket and invalidate the CloudFront
+distribution:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": "arn:aws:s3:::ordynlife-web-prod"
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+      "Resource": "arn:aws:s3:::ordynlife-web-prod/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["cloudfront:CreateInvalidation", "cloudfront:GetInvalidation"],
+      "Resource": "arn:aws:cloudfront::575124957640:distribution/ES1QWM89S2DUQ"
+    }
+  ]
+}
+```
+
+Manual frontend deployment, if the workflow is unavailable:
 
 ```powershell
 cd "C:\Users\Orang\OneDrive\Desktop\Productivity App\apps\web"
@@ -158,9 +219,10 @@ production mode.
 
 Pull requests and pushes to `main` run frontend lint, typecheck, formatting, and
 static build checks, plus backend lint, formatting, tests, and Docker image
-builds. Main-branch deployment will later use GitHub Actions and AWS OIDC rather
-than long-lived AWS keys. The current deployment workflows remain manual-only
-placeholders.
+builds. Frontend pushes to `main` deploy through GitHub Actions and AWS OIDC
+rather than long-lived AWS keys. Backend deployment will later use GitHub
+Actions and AWS OIDC for ECR image push, explicit migrations, ECS task
+definition registration, ECS service update, and smoke tests.
 
 Migrations must be run as an explicit, observable deployment step before code
 that requires the new schema receives traffic.

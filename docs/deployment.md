@@ -33,7 +33,7 @@ Current production values:
 - Domain: `https://app.ordynlife.com`
 - S3 bucket: `ordynlife-web-prod`
 - CloudFront distribution: `ES1QWM89S2DUQ`
-- Production API URL: `https://api.ordynlife.com`
+- Production API URL: `http://localhost:8000`
 
 Automated frontend deployment:
 
@@ -45,7 +45,7 @@ Automated frontend deployment:
 - Cache invalidation: CloudFront distribution `ES1QWM89S2DUQ`
 
 The workflow runs frontend lint, typecheck, format check, static build, S3 sync,
-CloudFront invalidation, and smoke checks for the deployed frontend and API.
+CloudFront invalidation, and a smoke check for the deployed frontend.
 
 Required GitHub repository variables:
 
@@ -112,7 +112,7 @@ npm.cmd run build
 Build-time frontend environment must include:
 
 ```text
-NEXT_PUBLIC_API_URL=https://api.ordynlife.com
+NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_SUPABASE_URL=<supabase-project-url>
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<supabase-public-publishable-key>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
@@ -249,24 +249,20 @@ been removed.
 Cloudflare manages DNS:
 
 - `app.ordynlife.com` points to CloudFront.
-- `api.ordynlife.com` is a CNAME to the API ALB DNS name.
+- The previous `api.ordynlife.com` record was removed after backend teardown.
 
 ACM manages TLS:
 
 - `app.ordynlife.com` uses the CloudFront certificate.
-- `api.ordynlife.com` uses an ACM certificate attached to the ALB HTTPS
-  listener on port `443`.
-
-Keep the API DNS record in Cloudflare DNS-only mode unless Cloudflare proxying
-is intentionally tested with the ALB certificate and SSL/TLS mode.
+- The previous backend ACM certificate for `api.ordynlife.com` was deleted.
 
 ### Verification
 
-Production smoke checks:
+Local backend smoke checks:
 
 ```powershell
-Invoke-WebRequest -Uri "https://api.ordynlife.com/health" -UseBasicParsing
-Invoke-WebRequest -Uri "https://api.ordynlife.com/ready" -UseBasicParsing
+Invoke-WebRequest -Uri "http://localhost:8000/health" -UseBasicParsing
+Invoke-WebRequest -Uri "http://localhost:8000/ready" -UseBasicParsing
 ```
 
 Expected API results:
@@ -276,15 +272,15 @@ Expected API results:
 /ready -> {"status":"ready"}
 ```
 
-CORS should allow `https://app.ordynlife.com` and block local preview origins in
-production mode.
+CORS should allow the local frontend origin while developing locally.
 
 ### CI/CD
 
 Pull requests and pushes to `main` run frontend lint, typecheck, formatting, and
 static build checks, plus backend lint, formatting, tests, and Docker image
-builds. Frontend and backend pushes to `main` deploy through GitHub Actions and
-AWS OIDC rather than long-lived AWS keys.
+builds. Frontend pushes to `main` deploy through GitHub Actions and AWS OIDC
+rather than long-lived AWS keys. Backend deployment is disabled until backend
+cloud hosting is intentionally rebuilt.
 
 Migrations must be run as an explicit, observable deployment step before code
 that requires the new schema receives traffic.

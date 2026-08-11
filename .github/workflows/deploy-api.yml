@@ -1,11 +1,227 @@
-name: API Deployment Placeholder
+name: Deploy API
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/deploy-api.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-api-production
+  cancel-in-progress: false
+
+env:
+  AWS_ACCOUNT_ID: "575124957640"
+  AWS_REGION: us-east-1
+  AWS_ECR_REPOSITORY: ordyn-life-api
+  ECS_CLUSTER: ordyn-life
+  ECS_SERVICE: ordyn-life-api
+  ECS_TASK_FAMILY: ordyn-life-api
+  ECS_MIGRATION_TASK_FAMILY: ordyn-life-api-migration
+  ECS_CONTAINER_NAME: ordyn-life-api
+  ECS_NETWORK_CONFIGURATION: awsvpcConfiguration={subnets=[subnet-0cf464932c46ca189,subnet-0c6d399a461c5d3b4,subnet-05780e5703561850d,subnet-0287874b946eb8a1e,subnet-09f8b709f3389e8b4,subnet-0f99aeb2cc6810dc5],securityGroups=[sg-08cf2383fea115827],assignPublicIp=ENABLED}
+  API_BASE_URL: https://api.ordynlife.com
+
 jobs:
-  deployment-placeholder:
+  deploy:
+    name: Build and deploy backend
     runs-on: ubuntu-latest
+
     steps:
-      - name: Explain future workflow
-        run: echo "Containerized backend deployment will be activated in Milestone 9."
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up uv and Python
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: apps/api
+        run: uv sync --locked
+
+      - name: Install deployment tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes jq
+
+      - name: Validate production backend configuration
+        run: |
+          set -euo pipefail
+          : "${AWS_API_DEPLOY_ROLE_ARN:?Set AWS_API_DEPLOY_ROLE_ARN as a GitHub repository variable}"
+          : "${AWS_ACCOUNT_ID:?AWS_ACCOUNT_ID is required}"
+          : "${AWS_REGION:?AWS_REGION is required}"
+          : "${AWS_ECR_REPOSITORY:?AWS_ECR_REPOSITORY is required}"
+          : "${ECS_CLUSTER:?ECS_CLUSTER is required}"
+          : "${ECS_SERVICE:?ECS_SERVICE is required}"
+          : "${ECS_TASK_FAMILY:?ECS_TASK_FAMILY is required}"
+          : "${ECS_CONTAINER_NAME:?ECS_CONTAINER_NAME is required}"
+          : "${ECS_NETWORK_CONFIGURATION:?ECS_NETWORK_CONFIGURATION is required}"
+          : "${API_BASE_URL:?API_BASE_URL is required}"
+        env:
+          AWS_API_DEPLOY_ROLE_ARN: ${{ vars.AWS_API_DEPLOY_ROLE_ARN }}
+
+      - name: Lint
+        working-directory: apps/api
+        run: uv run ruff check .
+
+      - name: Check formatting
+        working-directory: apps/api
+        run: uv run ruff format --check .
+
+      - name: Test
+        working-directory: apps/api
+        run: uv run python -m pytest
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_API_DEPLOY_ROLE_ARN }}
+          role-session-name: ordyn-life-api-deploy
+
+      - name: Build and push backend image
+        id: image
+        run: |
+          set -euo pipefail
+          image_tag="${GITHUB_SHA}"
+          image_uri="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_ECR_REPOSITORY}:${image_tag}"
+          aws ecr get-login-password --region "${AWS_REGION}" |
+            docker login \
+              --username AWS \
+              --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+          docker build \
+            --file apps/api/Dockerfile \
+            --tag "${image_uri}" \
+            apps/api
+          docker push "${image_uri}"
+          echo "image-uri=${image_uri}" >> "$GITHUB_OUTPUT"
+
+      - name: Register service task definition
+        id: service-task-definition
+        run: |
+          set -euo pipefail
+          image_uri="${{ steps.image.outputs.image-uri }}"
+          aws ecs describe-task-definition \
+            --task-definition "${ECS_TASK_FAMILY}" \
+            --query taskDefinition \
+            --output json > current-task-definition.json
+          jq \
+            --arg image "${image_uri}" \
+            --arg container "${ECS_CONTAINER_NAME}" \
+            'del(
+              .taskDefinitionArn,
+              .revision,
+              .status,
+              .requiresAttributes,
+              .compatibilities,
+              .registeredAt,
+              .registeredBy
+            )
+            | (.containerDefinitions[] | select(.name == $container) | .image) = $image' \
+            current-task-definition.json > service-task-definition.json
+          task_definition_arn="$(aws ecs register-task-definition \
+            --cli-input-json file://service-task-definition.json \
+            --query taskDefinition.taskDefinitionArn \
+            --output text)"
+          echo "task-definition-arn=${task_definition_arn}" >> "$GITHUB_OUTPUT"
+
+      - name: Register migration task definition
+        id: migration-task-definition
+        run: |
+          set -euo pipefail
+          jq \
+            --arg family "${ECS_MIGRATION_TASK_FAMILY}" \
+            --arg container "${ECS_CONTAINER_NAME}" \
+            '.family = $family
+            | (.containerDefinitions[] | select(.name == $container)) |= (
+              del(.healthCheck)
+              | .command = [
+                "sh",
+                "-c",
+                "uv run --no-dev alembic upgrade head && uv run --no-dev alembic check"
+              ]
+              | .portMappings = []
+            )' \
+            service-task-definition.json > migration-task-definition.json
+          task_definition_arn="$(aws ecs register-task-definition \
+            --cli-input-json file://migration-task-definition.json \
+            --query taskDefinition.taskDefinitionArn \
+            --output text)"
+          echo "task-definition-arn=${task_definition_arn}" >> "$GITHUB_OUTPUT"
+
+      - name: Run database migrations
+        run: |
+          set -euo pipefail
+          run_task_output="$(aws ecs run-task \
+            --cluster "${ECS_CLUSTER}" \
+            --task-definition "${{ steps.migration-task-definition.outputs.task-definition-arn }}" \
+            --launch-type FARGATE \
+            --platform-version LATEST \
+            --network-configuration "${ECS_NETWORK_CONFIGURATION}" \
+            --count 1 \
+            --output json)"
+          failure_count="$(jq '.failures | length' <<< "${run_task_output}")"
+          if [ "${failure_count}" != "0" ]; then
+            jq '.failures' <<< "${run_task_output}"
+            exit 1
+          fi
+          task_arn="$(jq -r '.tasks[0].taskArn // empty' <<< "${run_task_output}")"
+          if [ -z "${task_arn}" ]; then
+            echo "Migration task was not created"
+            exit 1
+          fi
+          aws ecs wait tasks-stopped \
+            --cluster "${ECS_CLUSTER}" \
+            --tasks "${task_arn}"
+          task_details="$(aws ecs describe-tasks \
+            --cluster "${ECS_CLUSTER}" \
+            --tasks "${task_arn}" \
+            --output json)"
+          exit_code="$(jq \
+            --arg container "${ECS_CONTAINER_NAME}" \
+            -r '.tasks[0].containers[] | select(.name == $container) | .exitCode // 255' \
+            <<< "${task_details}")"
+          if [ "${exit_code}" != "0" ]; then
+            jq '.tasks[0] | {lastStatus, stoppedReason, containers}' <<< "${task_details}"
+            exit "${exit_code}"
+          fi
+
+      - name: Update ECS service
+        run: |
+          set -euo pipefail
+          aws ecs update-service \
+            --cluster "${ECS_CLUSTER}" \
+            --service "${ECS_SERVICE}" \
+            --task-definition "${{ steps.service-task-definition.outputs.task-definition-arn }}" \
+            --force-new-deployment \
+            --no-cli-pager > /dev/null
+          aws ecs wait services-stable \
+            --cluster "${ECS_CLUSTER}" \
+            --services "${ECS_SERVICE}"
+
+      - name: Smoke test deployed API
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 5 --retry-delay 10 "${API_BASE_URL}/health" > /dev/null
+          curl --fail --silent --show-error --retry 5 --retry-delay 10 "${API_BASE_URL}/ready" > /dev/null
+          status_code="$(curl \
+            --silent \
+            --show-error \
+            --output /tmp/api-me-response.json \
+            --write-out "%{http_code}" \
+            "${API_BASE_URL}/api/v1/me")"
+          if [ "${status_code}" != "401" ]; then
+            echo "Expected /api/v1/me without a bearer token to return 401, got ${status_code}"
+            cat /tmp/api-me-response.json
+            exit 1
+          fi

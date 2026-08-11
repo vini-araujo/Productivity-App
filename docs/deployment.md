@@ -6,9 +6,8 @@ Ordyn Life is deployed with a static frontend on AWS S3 and CloudFront, DNS in
 Cloudflare, and a Dockerized FastAPI backend on AWS ECS/Fargate behind an
 Application Load Balancer.
 
-Frontend deployment is automated with GitHub Actions. Backend deployment is
-currently manual. CI validates builds and tests, but the repository does not yet
-contain an automated backend production deployment workflow.
+Frontend and backend deployment are automated with GitHub Actions. CI validates
+builds and tests before deployment workflows publish production artifacts.
 
 ## Option A
 
@@ -160,7 +159,43 @@ DATABASE_URL=<injected from Secrets Manager>
 Do not commit runtime secrets. `DATABASE_URL` is injected through the ECS
 container `secrets` field from Secrets Manager.
 
-Manual backend image deployment, after code changes:
+Automated backend deployment:
+
+- Workflow: `.github/workflows/deploy-api.yml`
+- Triggers: pushes to `main` that touch `apps/api/**` or the workflow file, and
+  manual `workflow_dispatch`
+- Image target: `575124957640.dkr.ecr.us-east-1.amazonaws.com/ordyn-life-api`
+- Image tag: the full Git commit SHA
+- Migration strategy: one-off ECS Fargate task using the same Secrets Manager
+  `DATABASE_URL` injection as the API service
+- Service update: new ECS task definition revision for `ordyn-life-api`
+
+The workflow runs backend dependency install, lint, format check, tests, image
+build, ECR push, migration task registration, Alembic upgrade/check, service
+task definition registration, ECS service update, steady-state wait, and smoke
+checks for `/health`, `/ready`, and unauthenticated `/api/v1/me`.
+
+Required GitHub repository variables:
+
+```text
+AWS_API_DEPLOY_ROLE_ARN=arn:aws:iam::575124957640:role/ordyn-life-github-api-deploy-role
+```
+
+Configured AWS OIDC resources:
+
+- Identity provider:
+  `arn:aws:iam::575124957640:oidc-provider/token.actions.githubusercontent.com`
+- Deploy role:
+  `arn:aws:iam::575124957640:role/ordyn-life-github-api-deploy-role`
+- Trust scope:
+  `repo:vini-araujo/Productivity-App:ref:refs/heads/main`
+
+The backend deploy role should be assumable through GitHub Actions OIDC and
+should have least-privilege access for ECR image push, ECS task definition
+registration, ECS service updates, one-off ECS migration task runs, and
+`iam:PassRole` for `ordyn-life-ecs-task-execution-role`.
+
+Manual backend image deployment, if the workflow is unavailable:
 
 ```powershell
 docker build -t ordyn-life-api -f apps/api/Dockerfile apps/api
@@ -175,8 +210,9 @@ docker push `
   575124957640.dkr.ecr.us-east-1.amazonaws.com/ordyn-life-api:<git-sha>
 ```
 
-After pushing a new image, register a new ECS task definition revision with the
-new immutable image tag and update the ECS service to that revision.
+After pushing a new image manually, run migrations, register a new ECS task
+definition revision with the new immutable image tag, and update the ECS service
+to that revision.
 
 S3 cannot execute the backend; it hosts only the static frontend.
 
@@ -219,10 +255,8 @@ production mode.
 
 Pull requests and pushes to `main` run frontend lint, typecheck, formatting, and
 static build checks, plus backend lint, formatting, tests, and Docker image
-builds. Frontend pushes to `main` deploy through GitHub Actions and AWS OIDC
-rather than long-lived AWS keys. Backend deployment will later use GitHub
-Actions and AWS OIDC for ECR image push, explicit migrations, ECS task
-definition registration, ECS service update, and smoke tests.
+builds. Frontend and backend pushes to `main` deploy through GitHub Actions and
+AWS OIDC rather than long-lived AWS keys.
 
 Migrations must be run as an explicit, observable deployment step before code
 that requires the new schema receives traffic.

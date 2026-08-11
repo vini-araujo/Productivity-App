@@ -2,9 +2,11 @@
 
 ## Status
 
-Implemented manually on AWS ECS/Fargate. The FastAPI backend is deployed at
+Implemented on AWS ECS/Fargate. The FastAPI backend is deployed at
 `https://api.ordynlife.com` behind an Application Load Balancer with an ACM
-certificate. Deployment automation remains a future hardening task.
+certificate. GitHub Actions now automates image build, ECR push, explicit
+migration, ECS task definition registration, ECS service update, and smoke
+checks.
 
 ## Current Backend Shape
 
@@ -278,11 +280,9 @@ Completed manually:
 Remaining hardening tasks:
 
 1. Convert the manually created AWS resources to infrastructure as code.
-2. Add GitHub Actions deployment using OIDC, ECR push, explicit migration, ECS
-   task definition registration, service update, and smoke tests.
-3. Add CloudWatch alarms for ECS service health, ALB 5xx responses, and target
+2. Add CloudWatch alarms for ECS service health, ALB 5xx responses, and target
    health.
-4. Replace broad temporary IAM permissions used during manual setup with
+3. Replace broad temporary IAM permissions used during manual setup with
    least-privilege policies.
 
 ## Pricing References

@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
-import { FeatureTabs } from "@/components/navigation/feature-tabs";
+import { AppShell } from "@/components/layout/app-shell";
 import {
   createRun,
   deleteRun,
@@ -176,46 +175,33 @@ export default function RunningPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">
-      <header className="flex items-center justify-between gap-4">
-        <div>
-          <Link className="text-sm font-semibold text-emerald-300" href="/">
-            Ordyn Life
-          </Link>
-          <h1 className="mt-2 text-4xl font-semibold text-white">Running</h1>
-        </div>
-        <Link
-          className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
-          href="/profile"
-        >
-          Profile
-        </Link>
-      </header>
-
-      <FeatureTabs current="running" />
-
-      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 px-5 py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+    <AppShell
+      current="running"
+      description="Log distance and duration, then watch running consistency fill in across your year."
+      title="Running"
+    >
+      <section className="mt-7 rounded-lg border border-slate-200 bg-white px-5 py-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
           Simple running log
         </p>
-        <p className="mt-2 text-sm leading-6 text-slate-400">
+        <p className="mt-2 text-sm leading-6 text-slate-500">
           Record distance and duration after a run. Pace is calculated
           automatically, and every entry remains editable in your history.
         </p>
       </section>
 
-      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 p-5 sm:p-7">
-        <h2 className="text-xl font-semibold text-white">
+      <section className="mt-7 rounded-lg border border-slate-200 bg-white p-5 sm:p-7">
+        <h2 className="text-xl font-semibold text-slate-950">
           {editingId ? "Edit run" : "Log a run"}
         </h2>
         <form
           className="mt-5 grid gap-4 sm:grid-cols-2"
           onSubmit={handleSubmit}
         >
-          <label className="text-sm font-medium text-slate-200 sm:col-span-2">
+          <label className="text-sm font-medium text-slate-700 sm:col-span-2">
             Date and time
             <input
-              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               onChange={(event) =>
                 setForm({ ...form, startedAt: event.target.value })
               }
@@ -224,10 +210,10 @@ export default function RunningPage() {
               value={form.startedAt}
             />
           </label>
-          <label className="text-sm font-medium text-slate-200">
+          <label className="text-sm font-medium text-slate-700">
             Distance (km)
             <input
-              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               min="0.01"
               onChange={(event) =>
                 setForm({ ...form, distanceKm: event.target.value })
@@ -238,10 +224,10 @@ export default function RunningPage() {
               value={form.distanceKm}
             />
           </label>
-          <label className="text-sm font-medium text-slate-200">
+          <label className="text-sm font-medium text-slate-700">
             Duration (minutes)
             <input
-              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               min="0.1"
               onChange={(event) =>
                 setForm({ ...form, durationMinutes: event.target.value })
@@ -252,10 +238,10 @@ export default function RunningPage() {
               value={form.durationMinutes}
             />
           </label>
-          <label className="text-sm font-medium text-slate-200 sm:col-span-2">
+          <label className="text-sm font-medium text-slate-700 sm:col-span-2">
             Notes
             <textarea
-              className="mt-2 min-h-24 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 min-h-24 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               maxLength={4000}
               onChange={(event) =>
                 setForm({ ...form, notes: event.target.value })
@@ -265,7 +251,7 @@ export default function RunningPage() {
           </label>
           <div className="flex gap-3 sm:col-span-2">
             <button
-              className="rounded-md bg-emerald-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:opacity-60"
+              className="rounded-md bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
               disabled={isSaving}
               type="submit"
             >
@@ -273,7 +259,7 @@ export default function RunningPage() {
             </button>
             {editingId ? (
               <button
-                className="rounded-md border border-slate-700 px-5 py-3 font-semibold text-white"
+                className="rounded-md border border-slate-300 px-5 py-3 font-semibold text-slate-950"
                 onClick={() => {
                   setEditingId(null);
                   setForm(emptyForm());
@@ -288,65 +274,65 @@ export default function RunningPage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="text-xl font-semibold text-white">Running history</h2>
+        <h2 className="text-xl font-semibold text-slate-950">
+          Running history
+        </h2>
         {error ? (
-          <p className="mt-5 rounded-md border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
+          <p className="mt-5 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
             {error}
           </p>
         ) : null}
         <div className="mt-5 space-y-3">
           {isLoading ? (
-            <div className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center">
-              <p className="text-sm font-semibold text-white">
+            <div className="rounded-lg border border-dashed border-slate-300 px-5 py-10 text-center">
+              <p className="text-sm font-semibold text-slate-950">
                 Loading runs...
               </p>
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mt-2 text-sm text-slate-500">
                 Pulling your running history.
               </p>
             </div>
           ) : runs.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center text-slate-400">
+            <p className="rounded-lg border border-dashed border-slate-300 px-5 py-10 text-center text-slate-500">
               No runs logged yet.
             </p>
           ) : (
             runs.map((run) => (
               <article
-                className="rounded-lg border border-slate-800 bg-slate-900 p-5"
+                className="rounded-lg border border-slate-200 bg-white p-5"
                 key={run.id}
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-2xl font-semibold text-white">
+                    <h3 className="text-2xl font-semibold text-slate-950">
                       {Number(run.distance_km).toFixed(2)} km
                     </h3>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="mt-1 text-sm text-slate-500">
                       {new Date(run.started_at).toLocaleString()}
                     </p>
                   </div>
                   <div className="text-right text-sm">
-                    <p className="font-semibold text-emerald-300">
-                      {pace(run)}
-                    </p>
-                    <p className="mt-1 text-slate-400">
+                    <p className="font-semibold text-blue-600">{pace(run)}</p>
+                    <p className="mt-1 text-slate-500">
                       {duration(run.duration_seconds)}
                     </p>
                   </div>
                 </div>
                 {run.notes ? (
-                  <p className="mt-4 whitespace-pre-wrap text-sm text-slate-400">
+                  <p className="mt-4 whitespace-pre-wrap text-sm text-slate-500">
                     {run.notes}
                   </p>
                 ) : null}
                 <div className="mt-4 flex gap-4">
                   <button
-                    className="text-sm font-semibold text-emerald-300"
+                    className="text-sm font-semibold text-blue-600"
                     onClick={() => beginEdit(run)}
                     type="button"
                   >
                     Edit
                   </button>
                   <button
-                    className="text-sm font-semibold text-rose-300"
+                    className="text-sm font-semibold text-rose-600"
                     onClick={() => void removeRun(run)}
                     type="button"
                   >
@@ -359,13 +345,13 @@ export default function RunningPage() {
         </div>
         {total > 0 ? (
           <div className="mt-6 flex items-center justify-between gap-4">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-500">
               Showing {offset + 1}-{Math.min(offset + runs.length, total)} of{" "}
               {total}
             </p>
             <div className="flex gap-3">
               <button
-                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-40"
                 disabled={offset === 0 || isLoading}
                 onClick={() => {
                   setIsLoading(true);
@@ -376,7 +362,7 @@ export default function RunningPage() {
                 Previous
               </button>
               <button
-                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-40"
                 disabled={offset + pageSize >= total || isLoading}
                 onClick={() => {
                   setIsLoading(true);
@@ -390,6 +376,6 @@ export default function RunningPage() {
           </div>
         ) : null}
       </section>
-    </main>
+    </AppShell>
   );
 }

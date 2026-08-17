@@ -1,4 +1,5 @@
 export type CalendarItemKind = "task" | "workout" | "run" | "journal";
+export type ActivityKind = CalendarItemKind;
 
 export type CalendarItem = {
   kind: CalendarItemKind;
@@ -15,4 +16,18 @@ export type CalendarSnapshot = {
   start_date: string;
   end_date: string;
   items: CalendarItem[];
+};
+
+export type ActivityCounts = Record<ActivityKind, number>;
+
+export type ActivityDay = {
+  date: string;
+  counts: ActivityCounts;
+  total: number;
+};
+
+export type ActivitySummary = {
+  start_date: string;
+  end_date: string;
+  days: ActivityDay[];
 };

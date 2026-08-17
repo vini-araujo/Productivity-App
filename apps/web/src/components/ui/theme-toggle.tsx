@@ -1,5 +1,6 @@
 "use client";
 
+import { Moon, Sun } from "lucide-react";
 import { useEffect, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
@@ -51,24 +52,29 @@ export function ThemeToggle() {
   return (
     <div
       aria-label="Theme"
-      className="fixed bottom-4 right-4 z-50 rounded-lg border border-slate-800 bg-slate-900 p-1 shadow-xl shadow-black/10"
+      className="fixed bottom-20 right-4 z-50 rounded-lg border border-slate-200 bg-white/90 p-1 shadow-lg shadow-slate-950/10 backdrop-blur-xl lg:bottom-4"
       suppressHydrationWarning
     >
-      {(["light", "dark"] as const).map((option) => (
-        <button
-          aria-pressed={theme === option}
-          className={`rounded-md px-3 py-2 text-xs font-semibold capitalize transition ${
-            theme === option
-              ? "bg-emerald-300 text-slate-950"
-              : "text-slate-400 hover:bg-slate-950 hover:text-white"
-          }`}
-          key={option}
-          onClick={() => chooseTheme(option)}
-          type="button"
-        >
-          {option}
-        </button>
-      ))}
+      {(["light", "dark"] as const).map((option) => {
+        const Icon = option === "light" ? Sun : Moon;
+        return (
+          <button
+            aria-label={`Use ${option} theme`}
+            aria-pressed={theme === option}
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-md transition ${
+              theme === option
+                ? "bg-slate-100 text-blue-600"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-950"
+            }`}
+            key={option}
+            onClick={() => chooseTheme(option)}
+            title={`${option[0].toUpperCase()}${option.slice(1)} theme`}
+            type="button"
+          >
+            <Icon aria-hidden="true" size={17} strokeWidth={2.4} />
+          </button>
+        );
+      })}
     </div>
   );
 }

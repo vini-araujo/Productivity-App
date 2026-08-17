@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 
+import { AppShell } from "@/components/layout/app-shell";
 import { signOut } from "@/features/auth/api";
 import { getProfile, updateProfile } from "@/features/profile/api";
 import type { Profile, SupportedLocale } from "@/features/profile/types";
@@ -66,61 +67,46 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">
-      <header className="flex items-center justify-between gap-4">
-        <Link
-          className="font-semibold text-emerald-300 hover:text-emerald-200"
-          href="/"
+    <AppShell
+      actions={
+        <button
+          className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-blue-300"
+          onClick={handleSignOut}
+          type="button"
         >
-          Ordyn Life
-        </Link>
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          <Link
-            className="rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
-            href="/dashboard"
-          >
-            Dashboard
-          </Link>
-          <Link
-            className="rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
-            href="/calendar"
-          >
-            Calendar
-          </Link>
-          <button
-            className="rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
-            onClick={handleSignOut}
-            type="button"
-          >
-            Sign out
-          </button>
-        </div>
-      </header>
-
-      <section className="mx-auto mt-10 w-full max-w-3xl rounded-lg border border-slate-800 bg-slate-900 p-6 shadow-xl shadow-black/10 sm:p-8">
-        <p className="text-sm font-semibold uppercase text-emerald-300">
+          Sign out
+        </button>
+      }
+      current="profile"
+      description="Keep your account details aligned with your daily workspace."
+      title="Profile"
+    >
+      <section className="mx-auto mt-8 w-full max-w-3xl rounded-lg border border-slate-200 bg-white p-6 shadow-xl shadow-black/10 sm:p-8">
+        <p className="text-sm font-semibold uppercase text-blue-600">
           Account settings
         </p>
-        <h1 className="mt-3 text-4xl font-semibold text-white">Your account</h1>
-        <p className="mt-3 text-slate-400">
+        <h1 className="mt-3 text-4xl font-semibold text-slate-950">
+          Your account
+        </h1>
+        <p className="mt-3 text-slate-500">
           Keep your daily workspace matched to your name, timezone, and
           language.
         </p>
 
         {profile ? (
-          <p className="mt-6 rounded-md border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-300">
+          <p className="mt-6 rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
             Signed in as{" "}
-            <span className="font-semibold text-white">
+            <span className="font-semibold text-slate-950">
               {profile.email ?? "your account"}
             </span>
           </p>
         ) : null}
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-          <label className="block text-sm font-medium text-slate-200">
+          <label className="block text-sm font-medium text-slate-700">
             Display name
             <input
-              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               maxLength={80}
               onChange={(event) => setDisplayName(event.target.value)}
               placeholder="How should Ordyn Life address you?"
@@ -128,10 +114,10 @@ export default function ProfilePage() {
               value={displayName}
             />
           </label>
-          <label className="block text-sm font-medium text-slate-200">
+          <label className="block text-sm font-medium text-slate-700">
             Timezone
             <input
-              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               maxLength={64}
               onChange={(event) => setTimezone(event.target.value)}
               required
@@ -139,10 +125,10 @@ export default function ProfilePage() {
               value={timezone}
             />
           </label>
-          <label className="block text-sm font-medium text-slate-200">
+          <label className="block text-sm font-medium text-slate-700">
             Preferred language
             <select
-              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               onChange={(event) =>
                 setLocale(event.target.value as SupportedLocale)
               }
@@ -154,25 +140,39 @@ export default function ProfilePage() {
           </label>
 
           {error ? (
-            <p className="rounded-md border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
+            <p className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
               {error}
             </p>
           ) : null}
           {message ? (
-            <p className="rounded-md border border-emerald-900 bg-emerald-950 px-4 py-3 text-sm text-emerald-200">
+            <p className="rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
               {message}
             </p>
           ) : null}
 
           <button
-            className="rounded-md bg-emerald-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-md bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isSaving || !profile}
             type="submit"
           >
             {isSaving ? "Saving..." : "Save profile"}
           </button>
         </form>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-slate-500 hover:bg-slate-50"
+            href="/dashboard"
+          >
+            Dashboard
+          </Link>
+          <Link
+            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-slate-500 hover:bg-slate-50"
+            href="/calendar"
+          >
+            Calendar
+          </Link>
+        </div>
       </section>
-    </main>
+    </AppShell>
   );
 }

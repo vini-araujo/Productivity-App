@@ -37,6 +37,25 @@ class CalendarRepository:
         )
         return list(self.session.scalars(statement))
 
+    def list_completed_tasks(
+        self,
+        user_id: UUID,
+        start_at: datetime,
+        end_at: datetime,
+    ) -> list[Task]:
+        """Return owned tasks completed inside the range."""
+        statement = (
+            select(Task)
+            .where(
+                Task.user_id == user_id,
+                Task.completed_at.is_not(None),
+                Task.completed_at >= start_at,
+                Task.completed_at < end_at,
+            )
+            .order_by(Task.completed_at.asc(), Task.id.asc())
+        )
+        return list(self.session.scalars(statement))
+
     def list_workouts(
         self,
         user_id: UUID,
@@ -56,6 +75,33 @@ class CalendarRepository:
                 ),
             )
             .order_by(WorkoutSession.started_at.asc(), WorkoutSession.id.asc())
+        )
+        return list(self.session.scalars(statement))
+
+    def list_activity_workouts(
+        self,
+        user_id: UUID,
+        start_at: datetime,
+        end_at: datetime,
+    ) -> list[WorkoutSession]:
+        """Return owned workout sessions whose activity timestamp is in range."""
+        statement = (
+            select(WorkoutSession)
+            .where(
+                WorkoutSession.user_id == user_id,
+                or_(
+                    (WorkoutSession.completed_at >= start_at)
+                    & (WorkoutSession.completed_at < end_at),
+                    WorkoutSession.completed_at.is_(None)
+                    & (WorkoutSession.started_at >= start_at)
+                    & (WorkoutSession.started_at < end_at),
+                ),
+            )
+            .order_by(
+                WorkoutSession.completed_at.asc(),
+                WorkoutSession.started_at.asc(),
+                WorkoutSession.id.asc(),
+            )
         )
         return list(self.session.scalars(statement))
 

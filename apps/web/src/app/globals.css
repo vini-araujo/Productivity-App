@@ -1,18 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-white: var(--ordyn-text-strong);
-  --color-black: var(--ordyn-surface);
+  --color-white: #ffffff;
+  --color-black: #000000;
 
-  --color-slate-950: var(--ordyn-surface);
-  --color-slate-900: var(--ordyn-panel);
-  --color-slate-800: var(--ordyn-border-subtle);
-  --color-slate-700: var(--ordyn-border-strong);
-  --color-slate-600: var(--ordyn-muted-strong);
+  --color-slate-50: var(--ordyn-surface);
+  --color-slate-100: #edf5f8;
+  --color-slate-200: var(--ordyn-border-subtle);
+  --color-slate-300: var(--ordyn-border-strong);
+  --color-slate-400: var(--ordyn-muted-strong);
   --color-slate-500: var(--ordyn-muted);
-  --color-slate-400: var(--ordyn-text-muted);
-  --color-slate-300: var(--ordyn-text-soft);
-  --color-slate-200: var(--ordyn-text);
+  --color-slate-600: var(--ordyn-text-muted);
+  --color-slate-700: #344960;
+  --color-slate-800: #1f3048;
+  --color-slate-900: #10213b;
+  --color-slate-950: var(--ordyn-text-strong);
 
   --color-emerald-950: var(--ordyn-accent-soft);
   --color-emerald-900: var(--ordyn-accent-border);
@@ -31,74 +33,85 @@
   --color-amber-300: var(--ordyn-warning-strong);
   --color-sky-400: var(--ordyn-info);
   --color-sky-300: var(--ordyn-info-strong);
+  --color-sky-200: #bfdbfe;
+  --color-sky-100: #e0f2fe;
+  --color-sky-50: #f0f9ff;
+  --color-blue-700: #1d4ed8;
+  --color-blue-600: #2563eb;
+  --color-blue-500: #3b82f6;
+  --color-blue-300: #93c5fd;
+  --color-blue-200: #bfdbfe;
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-coral-700: #d63f2e;
+  --color-coral-600: #f0523d;
+  --color-coral-100: #ffe2dd;
+  --color-lavender-700: #6d45c6;
+  --color-lavender-600: #7c5ce7;
+  --color-lavender-100: #ebe4ff;
 }
 
 :root {
   scrollbar-gutter: stable;
   color-scheme: light;
-  --ordyn-surface: #f7f9fb;
+  --ordyn-surface: #f5f5f7;
   --ordyn-panel: #ffffff;
-  --ordyn-border-subtle: #d8e0ea;
-  --ordyn-border-strong: #aebccc;
-  --ordyn-muted-strong: #708094;
-  --ordyn-muted: #5b6a7c;
-  --ordyn-text-muted: #526173;
-  --ordyn-text-soft: #344154;
-  --ordyn-text: #1e293b;
-  --ordyn-text-strong: #0f172a;
-  --ordyn-accent-soft: #e7f7f3;
-  --ordyn-accent-border: #a9e6d6;
-  --ordyn-accent-border-strong: #4fbda4;
-  --ordyn-accent-muted: #14866e;
-  --ordyn-accent: #0f766e;
-  --ordyn-accent-strong: #0b4f49;
-  --ordyn-danger-soft: #fff1f2;
-  --ordyn-danger-border: #fecdd3;
-  --ordyn-danger: #e11d48;
-  --ordyn-danger-strong: #be123c;
-  --ordyn-danger-text: #881337;
-  --ordyn-warning: #b45309;
-  --ordyn-warning-strong: #92400e;
-  --ordyn-info: #2563eb;
-  --ordyn-info-strong: #1d4ed8;
+  --ordyn-border-subtle: #e5e5ea;
+  --ordyn-border-strong: #c7c7cc;
+  --ordyn-muted-strong: #8e8e93;
+  --ordyn-muted: #6e6e73;
+  --ordyn-text-muted: #515154;
+  --ordyn-text-soft: #3a3a3c;
+  --ordyn-text: #1d1d1f;
+  --ordyn-text-strong: #111113;
+  --ordyn-accent-soft: #edf5ff;
+  --ordyn-accent-border: #c8dcff;
+  --ordyn-accent-border-strong: #78a8ff;
+  --ordyn-accent-muted: #0a84ff;
+  --ordyn-accent: #007aff;
+  --ordyn-accent-strong: #0057c2;
+  --ordyn-danger-soft: #fff1ee;
+  --ordyn-danger-border: #ffd0c7;
+  --ordyn-danger: #f0523d;
+  --ordyn-danger-strong: #d63f2e;
+  --ordyn-danger-text: #922315;
+  --ordyn-warning: #f5b431;
+  --ordyn-warning-strong: #a86b00;
+  --ordyn-info: #287bd8;
+  --ordyn-info-strong: #195eb4;
   font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Segoe UI", system-ui, ui-sans-serif, sans-serif;
   background: var(--ordyn-surface);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ordyn-surface: #0f1115;
-  --ordyn-panel: #171b22;
-  --ordyn-border-subtle: #2a313d;
-  --ordyn-border-strong: #404b5c;
-  --ordyn-muted-strong: #687386;
-  --ordyn-muted: #8b97aa;
-  --ordyn-text-muted: #aab4c3;
-  --ordyn-text-soft: #cfd6e2;
-  --ordyn-text: #e8edf4;
-  --ordyn-text-strong: #f8fafc;
-  --ordyn-accent-soft: #10261f;
-  --ordyn-accent-border: #1f5547;
-  --ordyn-accent-border-strong: #2e846f;
-  --ordyn-accent-muted: #6ee7c8;
-  --ordyn-accent: #34d399;
-  --ordyn-accent-strong: #a7f3d0;
-  --ordyn-danger-soft: #2f131b;
-  --ordyn-danger-border: #7f1d35;
-  --ordyn-danger: #fb7185;
-  --ordyn-danger-strong: #fda4af;
-  --ordyn-danger-text: #fecdd3;
-  --ordyn-warning: #fbbf24;
-  --ordyn-warning-strong: #fde68a;
-  --ordyn-info: #60a5fa;
-  --ordyn-info-strong: #bfdbfe;
+  --ordyn-surface: #101012;
+  --ordyn-panel: #1c1c1e;
+  --ordyn-border-subtle: #2c2c2e;
+  --ordyn-border-strong: #3a3a3c;
+  --ordyn-muted-strong: #98989d;
+  --ordyn-muted: #c7c7cc;
+  --ordyn-text-muted: #d1d1d6;
+  --ordyn-text-soft: #e5e5ea;
+  --ordyn-text: #f2f2f7;
+  --ordyn-text-strong: #f8fbff;
+  --ordyn-accent-soft: #0e2f57;
+  --ordyn-accent-border: #174a82;
+  --ordyn-accent-border-strong: #2d7ed8;
+  --ordyn-accent-muted: #64b5ff;
+  --ordyn-accent: #0a84ff;
+  --ordyn-accent-strong: #d8ecff;
+  --ordyn-danger-soft: #3a1918;
+  --ordyn-danger-border: #8a2d24;
+  --ordyn-danger: #ff7b68;
+  --ordyn-danger-strong: #ffc2ba;
+  --ordyn-danger-text: #ffdeda;
+  --ordyn-warning: #f8c24a;
+  --ordyn-warning-strong: #ffe6a6;
+  --ordyn-info: #6cb7ff;
+  --ordyn-info-strong: #d1e9ff;
 }
 
 body {
@@ -125,4 +138,168 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled),
+a {
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea {
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ordyn-float-in {
+    animation: ordyn-float-in 520ms ease-out both;
+  }
+
+  .ordyn-soft-pulse {
+    animation: ordyn-soft-pulse 2.8s ease-in-out infinite;
+  }
+}
+
+.ordyn-app,
+.ordyn-public {
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(8, 15, 25, 0.42), rgba(5, 10, 18, 0.86)),
+    url("/brand/ordyn-glass-mountain-bg.png") center / cover fixed;
+  color: #f8fbff;
+}
+
+.ordyn-app::before,
+.ordyn-public::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(168, 196, 230, 0.16),
+      transparent 34%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(2, 6, 12, 0.36),
+      transparent 28%,
+      transparent 72%,
+      rgba(2, 6, 12, 0.38)
+    );
+}
+
+.ordyn-glass {
+  background: rgba(8, 22, 34, 0.68);
+  border: 1px solid rgba(221, 232, 244, 0.22);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(26px) saturate(125%);
+}
+
+.ordyn-glass-soft {
+  background: rgba(12, 28, 42, 0.48);
+  border: 1px solid rgba(221, 232, 244, 0.16);
+  backdrop-filter: blur(20px) saturate(120%);
+}
+
+.ordyn-app :where(.bg-white),
+.ordyn-public :where(.bg-white) {
+  background-color: rgba(8, 22, 34, 0.66) !important;
+  backdrop-filter: blur(24px) saturate(125%);
+}
+
+.ordyn-app :where(.bg-slate-50),
+.ordyn-public :where(.bg-slate-50) {
+  background-color: rgba(238, 245, 252, 0.07) !important;
+}
+
+.ordyn-app :where(.bg-slate-100),
+.ordyn-public :where(.bg-slate-100) {
+  background-color: rgba(238, 245, 252, 0.1) !important;
+}
+
+.ordyn-app :where(.border-slate-200, .border-slate-300),
+.ordyn-public :where(.border-slate-200, .border-slate-300) {
+  border-color: rgba(221, 232, 244, 0.18) !important;
+}
+
+.ordyn-app :where(.text-slate-950),
+.ordyn-public :where(.text-slate-950) {
+  color: #f8fbff !important;
+}
+
+.ordyn-app :where(.text-slate-700, .text-slate-600),
+.ordyn-public :where(.text-slate-700, .text-slate-600) {
+  color: rgba(230, 238, 248, 0.82) !important;
+}
+
+.ordyn-app :where(.text-slate-500),
+.ordyn-public :where(.text-slate-500) {
+  color: rgba(216, 226, 238, 0.66) !important;
+}
+
+.ordyn-app :where(input, select, textarea),
+.ordyn-public :where(input, select, textarea) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(221, 232, 244, 0.18) !important;
+  color: #f8fbff !important;
+}
+
+.ordyn-app :where(input::placeholder, textarea::placeholder),
+.ordyn-public :where(input::placeholder, textarea::placeholder) {
+  color: rgba(216, 226, 238, 0.52);
+}
+
+.ordyn-app :where(select option),
+.ordyn-public :where(select option) {
+  background-color: #0b1724;
+  color: #f8fbff;
+}
+
+.ordyn-app :where(.divide-slate-200 > :not([hidden]) ~ :not([hidden])),
+.ordyn-public :where(.divide-slate-200 > :not([hidden]) ~ :not([hidden])) {
+  border-color: rgba(221, 232, 244, 0.14) !important;
+}
+
+.ordyn-heat-cell {
+  aspect-ratio: 1;
+  min-width: 0.72rem;
+  border-radius: 0.22rem;
+}
+
+@keyframes ordyn-float-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ordyn-soft-pulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
 }

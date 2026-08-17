@@ -8,13 +8,20 @@ from sqlalchemy.orm import Session
 
 from app.core.auth import AuthenticatedUser
 from app.modules.calendar.repository import CalendarRepository, start_of_day
-from app.modules.calendar.schemas import CalendarItem, CalendarResponse
+from app.modules.calendar.schemas import (
+    ActivityDay,
+    ActivitySummaryResponse,
+    CalendarItem,
+    CalendarResponse,
+)
 from app.modules.journal.models import JournalEntry
 from app.modules.running.models import RunSession
 from app.modules.tasks.models import Task
 from app.modules.workouts.models import WorkoutSession
 
 MAX_RANGE_DAYS = 62
+MAX_ACTIVITY_RANGE_DAYS = 366
+ACTIVITY_KINDS = ("task", "workout", "run", "journal")
 
 
 class CalendarService:
@@ -75,17 +82,77 @@ class CalendarService:
             items=items,
         )
 
+    def get_activity_summary(
+        self,
+        user: AuthenticatedUser,
+        start_date: date,
+        end_date: date,
+    ) -> ActivitySummaryResponse:
+        """Return zero-filled daily activity counts for a validated range."""
+        self._validate_range(start_date, end_date, MAX_ACTIVITY_RANGE_DAYS)
+        start_at = start_of_day(start_date)
+        end_at = start_of_day(end_date + timedelta(days=1))
+
+        counts_by_day = {
+            start_date + timedelta(days=offset): {kind: 0 for kind in ACTIVITY_KINDS}
+            for offset in range((end_date - start_date).days + 1)
+        }
+
+        for task in self.repository.list_completed_tasks(
+            user.user_id,
+            start_at,
+            end_at,
+        ):
+            assert task.completed_at is not None
+            counts_by_day[task.completed_at.date()]["task"] += 1
+
+        for workout in self.repository.list_activity_workouts(
+            user.user_id,
+            start_at,
+            end_at,
+        ):
+            timestamp = workout.completed_at or workout.started_at
+            counts_by_day[timestamp.date()]["workout"] += 1
+
+        for run in self.repository.list_runs(user.user_id, start_at, end_at):
+            counts_by_day[run.started_at.date()]["run"] += 1
+
+        for entry in self.repository.list_journal_entries(
+            user.user_id,
+            start_date,
+            end_date,
+        ):
+            counts_by_day[entry.entry_date]["journal"] += 1
+
+        days = [
+            ActivityDay(
+                date=day,
+                counts=counts,
+                total=sum(counts.values()),
+            )
+            for day, counts in counts_by_day.items()
+        ]
+        return ActivitySummaryResponse(
+            start_date=start_date,
+            end_date=end_date,
+            days=days,
+        )
+
     @staticmethod
-    def _validate_range(start_date: date, end_date: date) -> None:
+    def _validate_range(
+        start_date: date,
+        end_date: date,
+        max_range_days: int = MAX_RANGE_DAYS,
+    ) -> None:
         if end_date < start_date:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="end_date must be on or after start_date",
             )
-        if (end_date - start_date).days + 1 > MAX_RANGE_DAYS:
+        if (end_date - start_date).days + 1 > max_range_days:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-                detail=f"date range cannot exceed {MAX_RANGE_DAYS} days",
+                detail=f"date range cannot exceed {max_range_days} days",
             )
 
     @staticmethod

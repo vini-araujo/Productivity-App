@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-import { FeatureTabs } from "@/components/navigation/feature-tabs";
+import { AppShell } from "@/components/layout/app-shell";
 import { getCalendar } from "@/features/calendar/api";
 import type {
   CalendarItem,
@@ -99,12 +99,12 @@ function kindClass(kind: CalendarItemKind): string {
     return "border-amber-300 text-amber-300";
   }
   if (kind === "workout") {
-    return "border-emerald-800 text-emerald-300";
+    return "border-blue-200 text-blue-600";
   }
   if (kind === "run") {
     return "border-sky-300 text-sky-300";
   }
-  return "border-slate-700 text-slate-400";
+  return "border-slate-300 text-slate-500";
 }
 
 function kindDotClass(kind: CalendarItemKind): string {
@@ -112,7 +112,7 @@ function kindDotClass(kind: CalendarItemKind): string {
     return "bg-amber-300";
   }
   if (kind === "workout") {
-    return "bg-emerald-300";
+    return "bg-blue-600";
   }
   if (kind === "run") {
     return "bg-sky-300";
@@ -350,36 +350,20 @@ export default function CalendarPage() {
   const agendaHeading = agendaTitle(agendaMode, visibleMonth, selectedDay);
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <Link className="text-sm font-semibold text-emerald-300" href="/">
-            Ordyn Life
-          </Link>
-          <h1 className="mt-2 text-4xl font-semibold text-white sm:text-5xl">
-            Calendar
-          </h1>
-          <p className="mt-2 text-sm text-slate-400">
-            {totalVisibleItems === 1
-              ? "One item in view"
-              : `${totalVisibleItems} items in view`}
-          </p>
-        </div>
-        <Link
-          className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
-          href="/profile"
-        >
-          Profile
-        </Link>
-      </header>
-
-      <FeatureTabs current="calendar" />
-
-      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 px-5 py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+    <AppShell
+      current="calendar"
+      description={
+        totalVisibleItems === 1
+          ? "One source item is in view."
+          : `${totalVisibleItems} source items are in view.`
+      }
+      title="Calendar"
+    >
+      <section className="mt-7 rounded-lg border border-slate-200 bg-white px-5 py-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
           Date-based overview
         </p>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
           Calendar pulls from what you already log: task due dates, gym
           sessions, runs, and journal entries. Select a day to focus the agenda,
           or switch between this week and the full month.
@@ -389,7 +373,7 @@ export default function CalendarPage() {
       <section className="mt-7 grid gap-3 sm:grid-cols-4">
         {calendarKinds.map((kind) => (
           <Link
-            className="rounded-lg border border-slate-800 bg-slate-900 p-4 transition hover:-translate-y-0.5 hover:border-emerald-300"
+            className="rounded-lg border border-slate-200 bg-white p-4 transition hover:border-blue-300"
             href={
               kind === "task"
                 ? "/tasks"
@@ -410,40 +394,40 @@ export default function CalendarPage() {
                 className={`h-2.5 w-2.5 rounded-full ${kindDotClass(kind)}`}
               />
             </div>
-            <p className="mt-3 text-3xl font-semibold text-white">
+            <p className="mt-3 text-3xl font-semibold text-slate-950">
               {counts[kind]}
             </p>
           </Link>
         ))}
       </section>
 
-      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 p-4 sm:p-6">
+      <section className="mt-7 rounded-lg border border-slate-200 bg-white p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
               Showing
             </p>
-            <h2 className="mt-1 text-2xl font-semibold text-white">
+            <h2 className="mt-1 text-2xl font-semibold text-slate-950">
               {monthLabel(visibleMonth)}
             </h2>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
-              className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-950"
+              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-slate-500 hover:bg-slate-50"
               onClick={() => showMonth(addMonths(visibleMonth, -1))}
               type="button"
             >
               Previous
             </button>
             <button
-              className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-950"
+              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-slate-500 hover:bg-slate-50"
               onClick={showToday}
               type="button"
             >
               Today
             </button>
             <button
-              className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-950"
+              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-slate-500 hover:bg-slate-50"
               onClick={() => showMonth(addMonths(visibleMonth, 1))}
               type="button"
             >
@@ -453,10 +437,10 @@ export default function CalendarPage() {
         </div>
 
         {error ? (
-          <div className="mt-5 rounded-lg border border-rose-900 bg-rose-950 px-4 py-4 text-sm text-rose-200">
+          <div className="mt-5 rounded-lg border border-rose-200 bg-rose-50 px-4 py-4 text-sm text-rose-700">
             <p>{error}</p>
             <button
-              className="mt-3 rounded-md border border-rose-900 px-4 py-2 text-sm font-semibold text-rose-200"
+              className="mt-3 rounded-md border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-700"
               onClick={reloadCalendar}
               type="button"
             >
@@ -489,12 +473,12 @@ export default function CalendarPage() {
                       items.length === 1 ? "" : "s"
                     }`}
                     aria-pressed={isSelected}
-                    className={`min-h-28 rounded-lg border p-2 text-left transition hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300 ${
+                    className={`min-h-28 rounded-lg border p-2 text-left transition hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200 ${
                       isSelected
-                        ? "border-emerald-300 bg-emerald-950"
+                        ? "border-blue-300 bg-blue-50"
                         : isToday
-                          ? "border-emerald-800 bg-slate-950"
-                          : "border-slate-800 bg-slate-950"
+                          ? "border-blue-200 bg-slate-50"
+                          : "border-slate-200 bg-slate-50"
                     } ${isCurrentMonth ? "" : "opacity-45"}`}
                     key={day}
                     onClick={() => selectDay(day)}
@@ -505,7 +489,7 @@ export default function CalendarPage() {
                         {dayNumber}
                       </span>
                       {items.length > 0 ? (
-                        <span className="rounded-md border border-slate-800 px-2 py-0.5 text-[0.65rem] font-semibold text-slate-500">
+                        <span className="rounded-md border border-slate-200 px-2 py-0.5 text-[0.65rem] font-semibold text-slate-500">
                           {items.length}
                         </span>
                       ) : null}
@@ -522,7 +506,7 @@ export default function CalendarPage() {
                               item.kind,
                             )}`}
                           />
-                          <span className="truncate text-[0.7rem] font-semibold text-slate-400">
+                          <span className="truncate text-[0.7rem] font-semibold text-slate-500">
                             {item.title}
                           </span>
                         </div>
@@ -541,16 +525,16 @@ export default function CalendarPage() {
         </div>
       </section>
 
-      <section className="mt-7 rounded-lg border border-slate-800 bg-slate-900 p-5 sm:p-6">
+      <section className="mt-7 rounded-lg border border-slate-200 bg-white p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
               Agenda
             </p>
-            <h2 className="mt-2 text-2xl font-semibold text-white">
+            <h2 className="mt-2 text-2xl font-semibold text-slate-950">
               {agendaHeading}
             </h2>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-slate-500">
               {agendaItems.length === 1
                 ? "One item"
                 : `${agendaItems.length} items`}
@@ -560,8 +544,8 @@ export default function CalendarPage() {
             <button
               className={`rounded-md border px-4 py-2 text-sm font-semibold transition ${
                 agendaMode === "month"
-                  ? "border-emerald-300 bg-emerald-950 text-white"
-                  : "border-slate-700 text-white hover:border-slate-500 hover:bg-slate-950"
+                  ? "border-blue-300 bg-blue-50 text-slate-950"
+                  : "border-slate-300 text-slate-950 hover:border-slate-500 hover:bg-slate-50"
               }`}
               onClick={() => {
                 setAgendaMode("month");
@@ -574,8 +558,8 @@ export default function CalendarPage() {
             <button
               className={`rounded-md border px-4 py-2 text-sm font-semibold transition ${
                 agendaMode === "week"
-                  ? "border-emerald-300 bg-emerald-950 text-white"
-                  : "border-slate-700 text-white hover:border-slate-500 hover:bg-slate-950"
+                  ? "border-blue-300 bg-blue-50 text-slate-950"
+                  : "border-slate-300 text-slate-950 hover:border-slate-500 hover:bg-slate-50"
               }`}
               onClick={showCurrentWeek}
               type="button"
@@ -585,8 +569,8 @@ export default function CalendarPage() {
             <button
               className={`rounded-md border px-4 py-2 text-sm font-semibold transition ${
                 agendaMode === "day"
-                  ? "border-emerald-300 bg-emerald-950 text-white"
-                  : "border-slate-700 text-white hover:border-slate-500 hover:bg-slate-950"
+                  ? "border-blue-300 bg-blue-50 text-slate-950"
+                  : "border-slate-300 text-slate-950 hover:border-slate-500 hover:bg-slate-50"
               }`}
               onClick={showSelectedDay}
               type="button"
@@ -597,44 +581,44 @@ export default function CalendarPage() {
         </div>
 
         {isLoading ? (
-          <div className="mt-5 rounded-lg border border-dashed border-slate-700 px-5 py-12 text-center">
-            <p className="text-sm font-semibold text-white">
+          <div className="mt-5 rounded-lg border border-dashed border-slate-300 px-5 py-12 text-center">
+            <p className="text-sm font-semibold text-slate-950">
               Loading your calendar...
             </p>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-slate-500">
               Pulling tasks, workouts, runs, and journal entries into one view.
             </p>
           </div>
         ) : agendaDays.length === 0 ? (
-          <div className="mt-5 rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center">
-            <h3 className="text-lg font-semibold text-white">
+          <div className="mt-5 rounded-lg border border-dashed border-slate-300 px-5 py-10 text-center">
+            <h3 className="text-lg font-semibold text-slate-950">
               Nothing here yet
             </h3>
-            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-400">
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-500">
               Add a task due date, complete a workout, log a run, or write a
               journal entry and it will show up automatically.
             </p>
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <Link
-                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950"
                 href="/tasks"
               >
                 Add task
               </Link>
               <Link
-                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950"
                 href="/gym"
               >
                 Open gym
               </Link>
               <Link
-                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950"
                 href="/running"
               >
                 Log run
               </Link>
               <Link
-                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950"
                 href="/journal"
               >
                 Write journal
@@ -651,7 +635,7 @@ export default function CalendarPage() {
                 <div className="mt-2 space-y-2">
                   {items.map((item) => (
                     <Link
-                      className="flex flex-col gap-3 rounded-lg border border-slate-800 bg-slate-950 px-4 py-4 transition hover:border-emerald-300 sm:flex-row sm:items-center sm:justify-between"
+                      className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-blue-300 sm:flex-row sm:items-center sm:justify-between"
                       href={item.href}
                       key={`${item.kind}-${item.source_id}`}
                     >
@@ -668,16 +652,16 @@ export default function CalendarPage() {
                             {displayTime(item.timestamp)}
                           </span>
                         </div>
-                        <h4 className="mt-2 font-semibold text-white">
+                        <h4 className="mt-2 font-semibold text-slate-950">
                           {item.title}
                         </h4>
                         {item.detail ? (
-                          <p className="mt-1 text-sm text-slate-400">
+                          <p className="mt-1 text-sm text-slate-500">
                             {item.detail}
                           </p>
                         ) : null}
                       </div>
-                      <span className="text-sm font-semibold text-emerald-300">
+                      <span className="text-sm font-semibold text-blue-600">
                         {item.status}
                       </span>
                     </Link>
@@ -688,6 +672,6 @@ export default function CalendarPage() {
           </div>
         )}
       </section>
-    </main>
+    </AppShell>
   );
 }

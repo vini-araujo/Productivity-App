@@ -1,7 +1,7 @@
 import { getApiBaseUrl } from "@/lib/api";
 import { getSupabaseClient } from "@/lib/supabase";
 
-import type { CalendarSnapshot } from "./types";
+import type { ActivitySummary, CalendarSnapshot } from "./types";
 
 const apiUrl = getApiBaseUrl();
 
@@ -61,4 +61,35 @@ export async function getCalendar(
     throw new Error(errorDetail(body?.detail));
   }
   return (await response.json()) as CalendarSnapshot;
+}
+
+export async function getActivitySummary(
+  startDate: string,
+  endDate: string,
+): Promise<ActivitySummary> {
+  const {
+    data: { session },
+  } = await getSupabaseClient().auth.getSession();
+  if (!session) {
+    throw new Error("Authentication required");
+  }
+  const params = new URLSearchParams({
+    start_date: startDate,
+    end_date: endDate,
+  });
+  const response = await fetch(
+    `${apiUrl}/api/v1/calendar/activity-summary?${params}`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    },
+  );
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as {
+      detail?: unknown;
+    } | null;
+    throw new Error(errorDetail(body?.detail));
+  }
+  return (await response.json()) as ActivitySummary;
 }

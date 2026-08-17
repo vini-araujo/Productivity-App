@@ -4,7 +4,10 @@ from app.core.config import Settings
 
 
 def test_settings_derive_supabase_auth_urls() -> None:
-    settings = Settings(supabase_url="https://example.supabase.co/")
+    settings = Settings(
+        supabase_url="https://example.supabase.co/",
+        _env_file=None,
+    )
 
     assert (
         settings.resolved_supabase_jwks_url
@@ -20,6 +23,7 @@ def test_settings_prefer_explicit_supabase_auth_urls() -> None:
         supabase_url="https://example.supabase.co",
         supabase_jwks_url="https://keys.example.test/jwks",
         supabase_jwt_issuer="https://issuer.example.test",
+        _env_file=None,
     )
 
     assert settings.resolved_supabase_jwks_url == "https://keys.example.test/jwks"

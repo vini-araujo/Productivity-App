@@ -1,37 +1,46 @@
+import {
+  BookOpen,
+  CheckSquare,
+  Dumbbell,
+  Footprints,
+  Sprout,
+} from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 const metrics = [
-  { label: "Open tasks", value: "7" },
-  { label: "This week", value: "18 km" },
-  { label: "Journal", value: "Saved" },
+  { label: "Gym", tone: "bg-blue-600", value: "7" },
+  { label: "Running", tone: "bg-sky-400", value: "5" },
+  { label: "Tasks", tone: "bg-coral-600", value: "12" },
+  { label: "Journal", tone: "bg-lavender-600", value: "4" },
 ];
 
-const calendarItems = [
-  { day: "Mon", label: "Upper", tone: "bg-emerald-300" },
-  { day: "Tue", label: "Journal", tone: "bg-slate-500" },
-  { day: "Wed", label: "Run", tone: "bg-sky-300" },
-  { day: "Thu", label: "Task", tone: "bg-amber-300" },
+const featureLinks = [
+  { href: "/tasks", icon: CheckSquare, label: "Tasks" },
+  { href: "/gym", icon: Dumbbell, label: "Gym" },
+  { href: "/running", icon: Footprints, label: "Running" },
+  { href: "/journal", icon: BookOpen, label: "Journal" },
 ];
 
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
-      <header className="flex items-center justify-between gap-4">
-        <Link
-          className="shrink-0 whitespace-nowrap text-base font-semibold text-white"
-          href="/"
-        >
-          Ordyn Life
+    <main className="ordyn-public text-slate-950">
+      <header className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8">
+        <Link className="flex items-center gap-3 font-semibold" href="/">
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <Sprout aria-hidden="true" size={22} strokeWidth={2.5} />
+          </span>
+          <span className="text-xl">Ordyn Life</span>
         </Link>
         <nav aria-label="Public navigation" className="flex items-center gap-2">
           <Link
-            className="rounded-md border border-slate-800 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-700 hover:bg-slate-900"
+            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-blue-300"
             href="/login"
           >
             Sign in
           </Link>
           <Link
-            className="hidden rounded-md bg-emerald-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200 sm:inline-flex"
+            className="hidden rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 sm:inline-flex"
             href="/register"
           >
             Create account
@@ -39,28 +48,27 @@ export default function Home() {
         </nav>
       </header>
 
-      <section className="grid flex-1 items-center gap-8 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
-        <div className="max-w-3xl">
-          <p className="mb-4 text-sm font-semibold uppercase text-emerald-300">
-            Private daily systems
+      <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 pb-12 pt-4 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pb-16 lg:pt-8">
+        <div>
+          <p className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-blue-200 backdrop-blur-xl">
+            Private productivity workspace
           </p>
-          <h1 className="text-4xl font-semibold text-white sm:text-6xl">
+          <h1 className="mt-5 max-w-2xl text-5xl font-semibold tracking-normal text-slate-950 sm:text-7xl">
             Ordyn Life
           </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">
-            A focused workspace for planning tasks, logging training, capturing
-            runs, writing privately, and seeing the whole rhythm on one
-            calendar.
+          <p className="mt-5 max-w-xl text-base font-semibold leading-7 text-slate-500 sm:text-lg">
+            A simple place to manage tasks, calendar, training, running, and
+            private journal entries.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              className="rounded-md bg-emerald-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-200"
+              className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
               href="/register"
             >
               Create account
             </Link>
             <Link
-              className="rounded-md border border-slate-700 px-5 py-3 font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
+              className="rounded-lg border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-950 transition hover:border-blue-300"
               href="/login"
             >
               Sign in
@@ -70,81 +78,66 @@ export default function Home() {
 
         <section
           aria-label="Ordyn Life product preview"
-          className="rounded-lg border border-slate-800 bg-slate-900 p-4 shadow-xl shadow-black/10 sm:p-5"
+          className="ordyn-glass overflow-hidden rounded-lg"
         >
-          <div className="flex items-center justify-between gap-4 border-b border-slate-800 pb-4">
-            <div>
-              <p className="text-sm font-semibold text-white">Today</p>
-              <p className="mt-1 text-xs text-slate-400">
-                Tasks, training, running, journal
-              </p>
-            </div>
-            <span className="rounded-md border border-emerald-800 px-3 py-1 text-xs font-semibold text-emerald-300">
-              Private
-            </span>
+          <div className="relative min-h-64 overflow-hidden">
+            <Image
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              height={500}
+              priority
+              src="/brand/ordyn-desk-banner.png"
+              width={1100}
+            />
+            <div className="absolute inset-0 bg-slate-950/35" />
           </div>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            {metrics.map((metric) => (
-              <div
-                className="rounded-lg border border-slate-800 bg-slate-950 p-4"
-                key={metric.label}
-              >
-                <p className="text-xs font-semibold text-slate-500">
-                  {metric.label}
+          <div className="p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">
+                  Activity
                 </p>
-                <p className="mt-2 text-2xl font-semibold text-white">
-                  {metric.value}
-                </p>
+                <h2 className="mt-1 text-2xl font-semibold text-slate-950">
+                  Year overview
+                </h2>
               </div>
-            ))}
-          </div>
-
-          <div className="mt-4 rounded-lg border border-slate-800 bg-slate-950 p-4">
-            <div className="flex items-center justify-between gap-4">
-              <p className="text-sm font-semibold text-white">
-                Calendar snapshot
-              </p>
-              <p className="text-xs font-semibold text-slate-500">
-                Weekly overview
-              </p>
+              <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600">
+                Read-only calendar
+              </span>
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {calendarItems.map((item) => (
-                <div
-                  className="min-h-24 rounded-md border border-slate-800 bg-slate-900 p-3"
-                  key={item.day}
-                >
-                  <p className="text-xs font-semibold text-slate-500">
-                    {item.day}
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-4">
+              {metrics.map((metric) => (
+                <div className="rounded-lg bg-slate-50 p-4" key={metric.label}>
+                  <span
+                    aria-hidden="true"
+                    className={`block h-2 w-10 rounded-full ${metric.tone}`}
+                  />
+                  <p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                    {metric.label}
                   </p>
-                  <div className="mt-6 flex items-center gap-2">
-                    <span
-                      aria-hidden="true"
-                      className={`h-2 w-2 rounded-full ${item.tone}`}
-                    />
-                    <span className="truncate text-xs font-semibold text-slate-300">
-                      {item.label}
-                    </span>
-                  </div>
+                  <p className="mt-1 text-3xl font-semibold text-slate-950">
+                    {metric.value}
+                  </p>
                 </div>
               ))}
             </div>
-          </div>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Link
-              className="rounded-md border border-slate-800 bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:border-emerald-300"
-              href="/register"
-            >
-              Start planning
-            </Link>
-            <Link
-              className="rounded-md border border-slate-800 bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:border-emerald-300"
-              href="/register"
-            >
-              Track training
-            </Link>
+            <div className="mt-5 grid gap-2 sm:grid-cols-4">
+              {featureLinks.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-3 text-sm font-semibold text-slate-950 transition hover:border-blue-300"
+                    href="/register"
+                    key={item.label}
+                  >
+                    <Icon aria-hidden="true" size={17} strokeWidth={2.4} />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </section>
       </section>

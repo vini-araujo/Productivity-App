@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
-import { FeatureTabs } from "@/components/navigation/feature-tabs";
+import { AppShell } from "@/components/layout/app-shell";
 import {
   createTask,
   deleteTask,
@@ -179,39 +178,23 @@ export default function TasksPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">
-      <header className="flex items-center justify-between gap-4">
-        <div>
-          <Link
-            className="text-sm font-semibold text-emerald-300 hover:text-emerald-200"
-            href="/"
-          >
-            Ordyn Life
-          </Link>
-          <h1 className="mt-2 text-4xl font-semibold text-white">Tasks</h1>
-        </div>
-        <Link
-          className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-900"
-          href="/profile"
-        >
-          Profile
-        </Link>
-      </header>
-
-      <FeatureTabs current="tasks" />
-
-      <section className="mt-8 rounded-lg border border-slate-800 bg-slate-900 p-5 sm:p-7">
-        <h2 className="text-xl font-semibold text-white">
+    <AppShell
+      current="tasks"
+      description="Capture priorities, schedule due dates, and turn finished tasks into activity-grid check-ins."
+      title="Tasks"
+    >
+      <section className="mt-8 rounded-lg border border-slate-200 bg-white p-5 sm:p-7">
+        <h2 className="text-xl font-semibold text-slate-950">
           {editingId ? "Edit task" : "Add a task"}
         </h2>
         <form
           className="mt-5 grid gap-4 md:grid-cols-2"
           onSubmit={handleSubmit}
         >
-          <label className="block text-sm font-medium text-slate-200 md:col-span-2">
+          <label className="block text-sm font-medium text-slate-700 md:col-span-2">
             Title
             <input
-              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               maxLength={200}
               onChange={(event) =>
                 setForm({ ...form, title: event.target.value })
@@ -220,10 +203,10 @@ export default function TasksPage() {
               value={form.title}
             />
           </label>
-          <label className="block text-sm font-medium text-slate-200 md:col-span-2">
+          <label className="block text-sm font-medium text-slate-700 md:col-span-2">
             Description
             <textarea
-              className="mt-2 min-h-24 w-full resize-y rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 min-h-24 w-full resize-y rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               maxLength={4000}
               onChange={(event) =>
                 setForm({ ...form, description: event.target.value })
@@ -231,10 +214,10 @@ export default function TasksPage() {
               value={form.description}
             />
           </label>
-          <label className="block text-sm font-medium text-slate-200">
+          <label className="block text-sm font-medium text-slate-700">
             Due date
             <input
-              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               onChange={(event) =>
                 setForm({ ...form, dueAt: event.target.value })
               }
@@ -242,10 +225,10 @@ export default function TasksPage() {
               value={form.dueAt}
             />
           </label>
-          <label className="block text-sm font-medium text-slate-200">
+          <label className="block text-sm font-medium text-slate-700">
             Priority
             <select
-              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500"
               onChange={(event) =>
                 setForm({
                   ...form,
@@ -261,7 +244,7 @@ export default function TasksPage() {
           </label>
           <div className="flex flex-wrap gap-3 md:col-span-2">
             <button
-              className="rounded-md bg-emerald-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:opacity-60"
+              className="rounded-md bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
               disabled={isSaving}
               type="submit"
             >
@@ -269,7 +252,7 @@ export default function TasksPage() {
             </button>
             {editingId ? (
               <button
-                className="rounded-md border border-slate-700 px-5 py-3 font-semibold text-white"
+                className="rounded-md border border-slate-300 px-5 py-3 font-semibold text-slate-950"
                 onClick={() => {
                   setEditingId(null);
                   setForm(emptyForm);
@@ -285,14 +268,14 @@ export default function TasksPage() {
 
       <section className="mt-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold text-white">Your tasks</h2>
-          <div className="flex rounded-lg border border-slate-800 bg-slate-900 p-1">
+          <h2 className="text-xl font-semibold text-slate-950">Your tasks</h2>
+          <div className="flex rounded-lg border border-slate-200 bg-white p-1">
             {(["open", "all", "completed"] as TaskFilter[]).map((option) => (
               <button
                 className={`rounded-md px-4 py-2 text-sm font-semibold capitalize transition ${
                   filter === option
-                    ? "bg-emerald-300 text-slate-950"
-                    : "text-slate-300 hover:text-white"
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-600 hover:text-slate-950"
                 }`}
                 key={option}
                 onClick={() => {
@@ -311,29 +294,29 @@ export default function TasksPage() {
         </div>
 
         {error ? (
-          <p className="mt-5 rounded-md border border-rose-900 bg-rose-950 px-4 py-3 text-sm text-rose-200">
+          <p className="mt-5 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
             {error}
           </p>
         ) : null}
 
         <div className="mt-5 space-y-3">
           {isLoading ? (
-            <div className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center">
-              <p className="text-sm font-semibold text-white">
+            <div className="rounded-lg border border-dashed border-slate-300 px-5 py-10 text-center">
+              <p className="text-sm font-semibold text-slate-950">
                 Loading tasks...
               </p>
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mt-2 text-sm text-slate-500">
                 Pulling your current task list.
               </p>
             </div>
           ) : tasks.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-slate-700 px-5 py-10 text-center text-slate-400">
+            <p className="rounded-lg border border-dashed border-slate-300 px-5 py-10 text-center text-slate-500">
               No tasks in this view.
             </p>
           ) : (
             tasks.map((task) => (
               <article
-                className="rounded-lg border border-slate-800 bg-slate-900 p-5"
+                className="rounded-lg border border-slate-200 bg-white p-5"
                 key={task.id}
               >
                 <div className="flex items-start gap-4">
@@ -343,8 +326,8 @@ export default function TasksPage() {
                     }
                     className={`mt-1 h-6 w-6 shrink-0 rounded-full border-2 transition ${
                       task.completed_at
-                        ? "border-emerald-300 bg-emerald-300"
-                        : "border-slate-600 hover:border-emerald-300"
+                        ? "border-blue-300 bg-blue-600"
+                        : "border-slate-300 hover:border-blue-300"
                     }`}
                     onClick={() => void toggleTask(task)}
                     type="button"
@@ -355,7 +338,7 @@ export default function TasksPage() {
                         className={`font-semibold ${
                           task.completed_at
                             ? "text-slate-500 line-through"
-                            : "text-white"
+                            : "text-slate-950"
                         }`}
                       >
                         {task.title}
@@ -363,7 +346,7 @@ export default function TasksPage() {
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
                           task.priority === "high"
-                            ? "bg-rose-400/10 text-rose-300"
+                            ? "bg-rose-400/10 text-rose-600"
                             : task.priority === "low"
                               ? "bg-sky-400/10 text-sky-300"
                               : "bg-amber-400/10 text-amber-300"
@@ -373,7 +356,7 @@ export default function TasksPage() {
                       </span>
                     </div>
                     {task.description ? (
-                      <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-400">
+                      <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-500">
                         {task.description}
                       </p>
                     ) : null}
@@ -384,14 +367,14 @@ export default function TasksPage() {
                     ) : null}
                     <div className="mt-4 flex gap-4">
                       <button
-                        className="text-sm font-semibold text-emerald-300 hover:text-emerald-200"
+                        className="text-sm font-semibold text-blue-600 hover:text-blue-700"
                         onClick={() => beginEdit(task)}
                         type="button"
                       >
                         Edit
                       </button>
                       <button
-                        className="text-sm font-semibold text-rose-300 hover:text-rose-200"
+                        className="text-sm font-semibold text-rose-600 hover:text-rose-700"
                         onClick={() => void removeTask(task)}
                         type="button"
                       >
@@ -406,13 +389,13 @@ export default function TasksPage() {
         </div>
         {total > 0 ? (
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-500">
               Showing {offset + 1}-{Math.min(offset + tasks.length, total)} of{" "}
               {total}
             </p>
             <div className="flex gap-3">
               <button
-                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
                 disabled={offset === 0 || isLoading}
                 onClick={() => {
                   setIsLoading(true);
@@ -423,7 +406,7 @@ export default function TasksPage() {
                 Previous
               </button>
               <button
-                className="rounded-md border border-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
                 disabled={offset + pageSize >= total || isLoading}
                 onClick={() => {
                   setIsLoading(true);
@@ -437,6 +420,6 @@ export default function TasksPage() {
           </div>
         ) : null}
       </section>
-    </main>
+    </AppShell>
   );
 }

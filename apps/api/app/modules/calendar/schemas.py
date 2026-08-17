@@ -7,6 +7,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 CalendarItemKind = Literal["task", "workout", "run", "journal"]
+ActivityKind = CalendarItemKind
 
 
 class CalendarItem(BaseModel):
@@ -28,3 +29,19 @@ class CalendarResponse(BaseModel):
     start_date: date
     end_date: date
     items: list[CalendarItem]
+
+
+class ActivityDay(BaseModel):
+    """Daily activity counts for the dashboard frequency grid."""
+
+    date: date
+    counts: dict[ActivityKind, int]
+    total: int
+
+
+class ActivitySummaryResponse(BaseModel):
+    """Year-scale activity counts for an authenticated user."""
+
+    start_date: date
+    end_date: date
+    days: list[ActivityDay]

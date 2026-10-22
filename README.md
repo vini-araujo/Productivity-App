@@ -1,5 +1,7 @@
 # Ordyn Life
 
+This project was built to explore Codex’s multi-agent orchestration capabilities. I developed a full-stack application with a static Next.js frontend deployed to Amazon S3 and delivered through CloudFront, and a Dockerized FastAPI backend deployed on Amazon ECS with Fargate. Supabase provided PostgreSQL and authentication. The frontend remains live, while the AWS backend infrastructure was later removed to avoid ongoing costs.
+
 Ordyn Life is a planned productivity, routine, fitness, and self-improvement
 platform. It will bring tasks, journaling, gym tracking, running, and personal
 progress into one mobile-first application.
